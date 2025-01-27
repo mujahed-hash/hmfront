@@ -1,0 +1,81 @@
+<div style="overflow: hidden;" class="main-prod">
+  <div *ngIf="isLoading" class="loader">Submitting...</div>
+  <div style="width: 80%;position: fixed; z-index: 5;">
+    <div style="position: relative; " *ngFor="let notification of notifications" class="notification" [ngClass]="notification.type">
+      {{ notification.message }}
+    </div>
+    
+  </div>
+
+<div style="overflow: hidden;" class="product">
+  <div style="margin-bottom: 1rem;" *ngIf="this.product" >
+    <!-- Edit Button -->
+    <div style="position: relative; float: right; width: 100%; margin-bottom: 3remm;">
+ 
+      <button class="cancel" (click)="goto()" >Cancel</button>
+    </div>
+    <div>
+
+    </div>
+
+  </div>
+   <!-- Edit Form -->
+
+<form  [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label for="prodName">Product Name:</label>
+    <input id="prodName" formControlName="prodName" class="form-control" />
+  </div>
+  <div class="form-group">
+    <label for="prodDesc">Description:</label>
+    <textarea id="prodDesc" formControlName="prodDesc" class="form-control"></textarea>
+  </div>
+  
+
+  <div class="form-group">
+    <div class="form-group">
+      <label for="category">Category:</label>
+      <mat-form-field style="border: none; padding: 0; margin: 0;">
+      <mat-label>{{ selectedCategory ? 'You Selected' : this.product?.category?.itemType || 'Select Category' }}</mat-label>
+
+        <mat-select  formControlName="category" (selectionChange)="onCategorySelect($event)" [value]="">
+          <div *ngFor="let category of categories">
+            <mat-option  [value]="category.id">
+              {{ category.itemType }}
+            </mat-option>
+            
+          </div>
+        </mat-select>
+        {{selectedCategory?.itemType}}
+
+      </mat-form-field>
+    </div>
+    
+
+  </div>
+
+  
+  
+  <div class="form-group">
+    <label for="prodPrice">Price:</label>
+    <input id="prodPrice" type="number" formControlName="prodPrice" class="form-control" />
+  </div>
+  <div class="form-group">
+    <label for="countInStock">Stock Count:</label>
+    <input id="countInStock" type="number" formControlName="countInStock" class="form-control" />
+  </div>
+  <div class="form-group">
+    <label for="prodSize">Size:</label>
+    <input id="prodSize" formControlName="prodSize" class="form-control" />
+  </div>
+  <div class="form-group">
+    <label for="files">Images:</label>
+    <img class="img-preview" src="{{imagesDisplay[0]}}" alt="">
+    <input id="images" type="file" (change)="onFileChange($event)"   accept=".png, .jpg, .jpeg"  class="form-control-file" />
+  </div>
+  <p *ngIf="form.invalid">Please fill all the fields</p>
+
+  <button  [ngClass]="{'form-invalid': form.invalid, 'form-valid': form.valid}" type="submit" [disabled]="form.invalid" >{{editmode ? (form.invalid ? 'Please fill all the fields' : 'Update') : 'Add'}}</button>  </form>
+</div>
+
+</div>

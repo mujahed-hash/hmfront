@@ -1,0 +1,39 @@
+<div class="position-item">
+  <div style="position: relative;" *ngFor="let notification of notifications" class="notification" [ngClass]="notification.type">
+    {{ notification.message }}
+  </div>
+
+    
+  <div class="view-main" style="width: 100%; margin: 0;padding: 0; background-color: #EBF4F6; padding-left: 1rem;">
+      <div class="view-prod">
+          <div class="product-details" *ngIf="product">
+              <div class="product-image">
+                <img style="border-radius: 5px;" *ngIf="product?.images[0]" [src]="product.images[0]" alt="{{ product.prodName }}" />
+              </div>
+              <div class="product-info">
+                <div class="pro-a">
+                  <h2>{{ product.prodName }}</h2>
+                  <p class="price">{{ product.prodPrice | currency:'INR' }} per {{product?.prodSize}}</p>
+                  <p><strong>Category:</strong> {{ product.category.itemType }}</p>
+                  <div>
+                      <p-inputNumber [(ngModel)]="quantities[product.id]" name="quantity" inputId="minmax" mode="decimal" [showButtons]="true" [min]="1" [max]="product.countInStock"></p-inputNumber>
+                  </div>
+                  <p><strong>In Stock:</strong> {{ product.countInStock }}</p>
+                  <p>
+                      <strong>Description: </strong>{{product.prodDesc}}
+                  </p>
+                </div>
+                
+                <div style="">
+                  <button style=" border: none; border-radius: 5px; background-color: #071952; color: white; padding: 3px 8px; display: flex; align-items: center; width: max-content; text-align: center; " (click)="addProductToCart(product.id)">
+                    <mat-icon style="color:#F0DE36">add_shopping_cart</mat-icon>
+                    Add to cart
+                  </button>
+                </div>
+              </div>
+           
+            </div>
+            
+      </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+.component-container{
+   width:100%;
+}
+.delivery{
+    width:100%;
+    // display:grid;
+}
+.del-prod{
+    width: 20%;
+    height: 18rem;
+    display: inline-block;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    padding: 20px;
+    margin: 0 5px 5px 5px;
+}
+.del-prod img{
+    height: 5rem;
+    width: 8rem;
+    border-radius: 7px;
+    object-fit: cover;
+}
+@media screen and (orientation:portrait){
+    .del-prod{
+        width: 50%;
+        position: relative;
+        left:-1.3rem;
+        padding: 0 7px;
+        margin: 0;
+    }
+}

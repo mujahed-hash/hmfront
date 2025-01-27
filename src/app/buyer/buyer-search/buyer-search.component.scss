@@ -1,0 +1,121 @@
+/* src/app/components/search/search.component.scss */
+
+.search-main{
+    width:98%;
+  }
+/* Search Container */
+.search-container {
+    display: flex;
+    margin: 20px 0;
+  }
+  
+  .search-input {
+    width: 300px;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 9px;
+    box-shadow: rgba(66, 66, 231, 0.16) 0px 1px 4px;
+    color: #071952;
+  }
+  .search-container input::placeholder{
+        color: #071952;
+    
+  }
+  .search-button {
+    // padding: 8px 16px;]
+    width: 100%;
+    font-size: 16px;
+    background-color: #071952;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .search-button:hover {
+    background-color: #071952;
+  }
+  
+  /* Product List */
+  .product-list {
+    width: 96%;
+    list-style: none;
+    display: inline-block;
+    justify-content: flex-start;
+    padding: 0;
+    margin: 0 auto;
+  }
+  
+  .product-item {
+    padding: 15px;
+    width: 25%;
+    display: inline-block;
+    margin: 10px 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  .product-item img{
+    width: 8rem;
+    height: 5rem;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .in-cart {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .not-in-cart {
+    color: red;
+    font-weight: bold;
+  }
+  
+  /* Pagination Controls */
+  .pagination {
+    width: 95%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+ 
+  .search-container button {
+    padding: 8px 16px;
+    border: none;
+    width: max-content;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #071952;
+    color: white;
+    transition: background-color 0.3s;
+    margin: 5px;
+  }
+  
+  button[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  button:hover:not([disabled]) {
+    background-color: #0056b3;
+  }
+  @media screen and (orientation:portrait) {
+    .search-container button {
+        padding: 8px 20px;
+        text-align: center;
+    }
+    .pagination{
+        width: 100%;
+    }
+    .product-item{
+        width: 95%;
+    }
+    .search-container button {
+      width:200px;
+      padding: 0;
+      font-size: small;
+      text-align: center;
+    }
+  }

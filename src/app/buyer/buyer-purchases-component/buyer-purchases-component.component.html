@@ -1,0 +1,45 @@
+<div style="overflow: hidden;">
+    <div style="margin: 2rem;overflow-x: hidden; text-align: center;">
+        <h3 style="background-color: #d5e8fa; color: #11468F; padding: 4px 9px; border-radius: 5px; width: max-content;    overflow-x: hidden;
+        ">    Orders you have made
+        </h3>
+    </div>
+</div>
+<div class="order-container"  *ngIf="order.length >0 "   style="  overflow-x: hidden;">
+ 
+    <div class="order" *ngFor="let or of order">
+
+      <div class="order-item" [routerLink]="['/s/view-order', or.customIdentifer]" *ngFor="let oitem of or.orderItems; let i = index">
+        <div *ngIf="oitem.product != 'null'">
+        <div style="width:max-content;position: relative; float: right;">
+            <small class="order-index" style="width: max-content; position: relative; float: right; background-color: #E3FEF7; color: #003C43; padding: 2px 4px; border-radius: 5px;">
+                Orders: {{i + 1}} of {{or?.orderItems?.length}}
+            </small>
+        </div>
+            <div *ngIf="oitem?.product?.images[0]!">
+               <img style="width:1.8rem; height: 1.8rem;" src="{{oitem?.product?.images[0]}}" alt="">
+            </div>
+            <div>
+                <div class="product-name">{{ oitem?.product?.prodName! }}</div>
+                <div class="product-details">
+                  {{ or?.totalPrice! | currency:'INR' }} for {{ oitem?.quantity! }}
+                </div>
+                <div class="approval-status">
+                 <span style="color: #153448;"> Approval Status:</span>
+                 <span class="status" *ngIf="or.status == 'Pending' " style="color:#86469C; background-color: #EEF7FF; padding: 4px 7px; border-radius: 4px; position: relative; left:0.4rem; text-align: center;">       
+                         {{ or?.status! }}
+                </span>
+                <span class="status" *ngIf="or.status == 'Approved' " style="color:#387F39; background-color: #EEF7FF; padding: 4px 7px; border-radius: 4px; position: relative; left:0.4rem; text-align: center;">       
+                  {{ or?.status! }}
+                </span>
+                <span class="status delivered" [routerLink]="['/view-order', or.customIdentifer]" *ngIf="or?.status! == 'Delivered' " style="">       
+                 <mat-icon class="mt-ic" style="">receipt_long</mat-icon> {{ or?.status! }}
+                </span>
+                </div>
+            </div>
+          </div>
+          </div>
+
+    </div>
+  </div>
+  

@@ -1,0 +1,48 @@
+.component-container{
+    width:100%;
+ }
+ .delivery{
+     width:100%;
+     // display:grid;
+ }
+ .delivery ul{
+    margin-left: -2rem;
+ }
+ .del-prod{
+     width: 22%;
+     height: 15rem;
+     display: inline-block;
+     background-color: white;
+     padding: 5px;
+     margin: 0 8px 0 0;
+     overflow-x: scroll;
+ }
+ .del-prod img{
+     height: 5rem;
+     width: 8rem;
+     border-radius: 7px;
+     object-fit: cover;
+ }
+ .del-prod button{
+    border:none;
+    border-radius: 5px;
+    padding: 7px 0;
+ }
+ .btn-cmplt{
+   background-color: #16325B;
+   color:#FFF5E4
+ }
+ @media screen and (orientation:portrait){
+    .delivery ul{
+      margin-left: -1rem;
+    }
+     .del-prod{
+         width: 50%;
+         position: relative;
+         left:0;
+         padding: 0;
+         margin: 0;
+         padding: 0 5px;
+         font-size: small;
+     }
+ }

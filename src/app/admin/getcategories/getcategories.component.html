@@ -1,0 +1,26 @@
+<div class="container">
+    <h2>Categories</h2>
+    <div class="button">
+        <button mat-raised-button color="primary" (click)="openDialog()"> 
+            <mat-icon>add</mat-icon>
+            Add Category</button>
+
+    </div>    
+    <div class="cat">
+      <div class="cat-sub" *ngFor="let cat of categories">
+        <div class="cat-sub2">
+          <img style="width: 20px; height: 20px; border-radius: 100%;" src="{{cat.image[0]}}" alt="">
+          <span>{{cat.itemType}}</span>
+          <span>
+            <mat-icon style="font-size: 28px;" (click)="openDialog(cat)">edit_note</mat-icon>
+
+          </span>
+          <span>
+            <mat-icon style="color: #D71313;" (click)="deleteCategory(cat._id)">delete</mat-icon>
+
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  

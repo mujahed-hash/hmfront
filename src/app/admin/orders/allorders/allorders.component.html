@@ -1,0 +1,33 @@
+<div class="hh">
+    <p style="background-color:#EBF4F6; color:#2657C1; width:max-content; padding: 4px 8px">
+      Orders placed by customers
+    </p>
+  
+    <div class="items">
+      <div class="item" *ngFor="let order of orders">
+        <div 
+        [routerLink]="['/s/view-order', order.customIdentifer]"
+          routerLinkActive="router-link-active" 
+          style="width:80%; display: flex; margin-bottom: 1rem; box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; overflow: hidden; border-radius: 5px;">
+          
+          <img [src]="order.orderItems[0]?.product?.images[0]" alt="{{ order.orderItems[0]?.product?.prodName }}" />
+  
+          <div class="itemName">
+            <p>
+              Order ID: {{ order._id }}<br />
+              Total Price: {{ order.totalPrice | currency:'INR' }}<br />
+              Status: {{ order.status }}<br />
+              Placed by: {{ order.user?.name || 'Unknown' }}<br />
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div *ngIf="orders.length != 0" class="itm-btn">
+      <button #loadingIndicator style="" *ngIf="hasMoreOrders && !isLoading" (click)="loadOrders()" [disabled]="isLoading">
+        {{ orders.length ? 'Load More' : 'No more orders' }}
+      </button>
+    </div>
+  </div>
+  

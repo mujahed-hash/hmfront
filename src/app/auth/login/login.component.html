@@ -1,0 +1,33 @@
+<!-- login.component.html -->
+<div *ngIf="this.loggedIn">
+     Want to logout session?
+</div>
+<div *ngIf="!this.loggedIn" class="login">
+  <div class="login-sub" style="">
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
+    </div>
+    <h3 style=" text-align: center; color: #041562;">Login to Hotel Mart</h3>
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <label>
+        Email:
+        <input formControlName="email" name="email" type="email" required>
+        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-danger">
+          A valid email is required.
+        </div>
+      </label>
+      <label>
+        Password:
+        <input formControlName="password" name="password" type="password" required>
+        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger">
+          Password is required.
+        </div>
+  
+      </label>
+      <button type="submit" [disabled]="loginForm.invalid">Login</button>
+    </form>
+  </div>
+      <!-- Error message display -->
+     
+  
+</div>

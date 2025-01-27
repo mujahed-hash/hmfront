@@ -1,0 +1,352 @@
+.nav-items li{
+  display: inline-block;
+  list-style: none;
+  text-decoration: none;
+  cursor: pointer;
+  width: max-content;
+  margin: 0 12px;
+}
+mat-list-item{
+  height: max-content; 
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding-bottom: 0.5rem;
+}
+mat-list-item details{
+  padding: 0.5rem 0;
+}
+details{
+  overflow: hidden;
+}
+sidenav-container summary{
+  width: 100%;
+  overflow: hidden;
+  height: max-content;
+}
+mat-toolbar{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: #071952;
+    color:white;
+    font-weight: bold;
+}
+
+.sidenav-container {
+    height: 100vh;
+  }
+
+  mat-sidenav {
+    width: 250px;
+  }
+  
+  mat-sidenav-content {
+    padding: 20px;
+    width: 100%;
+
+  }
+  mat-toolbar{
+    position:fixed;
+    top:0;
+    z-index: 2;
+}
+
+mat-sidenav-container {
+    height:100%;
+    width: 100%;
+}
+.mat-list-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .mat-icon {
+    margin-right: 16px;
+    position: relative;
+    top:5px;
+  }
+//   details p{
+//     background-color: #071952;
+//     color: white;
+//     padding: 8px 5px;
+//  }
+  .active-link  {
+    // font-weight: bold;
+    color: #FCD59B; /* Change this to your desired active color */
+    background-color: #163172;
+    border-radius:none;
+    // padding: 2px 4px;
+  }
+  .active-link span{
+    color: white; /* Change this to your desired active color */
+    // padding-bottom: 0.5rem;
+
+  }
+  .active-link p{
+    background-color: who;
+  }
+  
+  .active-link mat-icon {
+    color: white; /* Change this to your desired active color */
+  }
+  .active-link .shop-icon  {
+    color: #dfc548; /* Change this to your desired active color */
+  }
+  .active-link details{
+    // background-color: white;
+    color: #071952;
+  }
+  .active-link .side-sub{
+    color: white;
+
+  }
+   .active-link summary {
+    color: white;
+  }
+  .active-2 .nav-icon{
+    color: #dfc548;
+    background-color:none;
+
+  }
+  details{
+    display: grid;
+    align-content: center;
+    vertical-align: middle;
+  }
+  details p{
+
+    border: #FCD59B 2px solid;
+    border-radius: none;
+    padding: 0;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+  }
+// Move the content down so that it won't be hidden by the toolbar
+mat-sidenav {
+    padding-top: 3.5rem;
+    @media screen and (min-width: 600px) {
+      padding-top: 4rem;
+    }
+
+    .entry{
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding:0.75rem;
+    }
+  }
+
+// Move the content down so that it won't be hidden by the toolbar
+mat-sidenav-content{
+    padding-top: 3.5rem;
+    @media screen and (min-width: 600px) {
+        padding-top: 4rem;
+    }
+}
+.logo{
+  width: 3rem;
+  height: 2.7rem;
+  border-radius: 4px;
+  position: relative;
+  top: 0.2rem;
+  border: white 2px solid;
+}
+.side-sub{
+   width:100%;
+   display:grid;
+   justify-items: center;
+   margin-bottom: 0.5rem;
+}
+
+.side-sub p{
+  margin-bottom: 0rem;
+  padding: 0;
+  padding-top: 13px;
+  padding-bottom: 13px;
+  border: #D6E4F0 2px solid;
+  border-radius: none;
+}
+mat-list-item span{
+  padding-bottom: 0.5rem;
+}
+.not-num{
+  position: relative;
+  background-color:#F2AE66;
+  color: #071952;
+  width: max-content;
+  left:0.3rem;
+  border-radius: 100%;
+  padding: 2px 5px;
+  font-size: 10px;
+  top:-0.8rem;
+  left:1.5rem;
+}
+
+nav mat-icon{
+  nav mat-icon {
+    filter: 
+      drop-shadow(0px 54px 55px rgba(0, 0, 0, 0.25)) 
+      drop-shadow(0px -12px 30px rgba(0, 0, 0, 0.12)) 
+      drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.12)) 
+      drop-shadow(0px 12px 13px rgba(0, 0, 0, 0.17)) 
+      drop-shadow(0px -3px 5px rgba(0, 0, 0, 0.09));
+  }
+  }
+.wa{
+  display: flex;
+  width: 100%;
+  gap:1rem;
+  padding-left: 1rem;
+}
+.wa img{
+  width: 1.5rem;
+
+}
+.wa button{
+  width:max-content;
+  background-color: green;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0 12px;
+}
+.nav-items{
+  display: flex;
+}
+
+
+
+///
+/// 
+/// 
+/// 
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #071952;
+  color: white;
+  // padding: 0 1rem;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 3rem;
+  height: 2.7rem;
+  border-radius: 4px;
+  border: 2px solid white;
+}
+
+.nav-items {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  float: right;
+  width: 100%;;
+  justify-self: flex-end;
+  position: relative;
+  right:auto
+  // gap: 1rem;
+}
+
+.nav-item {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.notification, .cart {
+  // display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.not-num {
+  position: absolute;
+  top: 0rem;
+  left: 0.5rem;
+  background-color: #F2AE66;
+  color: #071952;
+  font-size: 10px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.nav-icon{
+  z-index: -1;
+}
+
+.logout a {
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+
+}
+.sidenav-container mat-icon{
+  color: #163172;
+
+}
+.sidenav-container .active-link mat-icon{
+  color:white;
+
+}
+.logout a{
+  background-color: white;
+  color: #961313;
+  font-weight: bold;
+  padding: 7px 8px;
+  border-radius: 6px;
+ 
+box-shadow: rgba(240, 82, 82, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+.nav-icon{
+  // margin: 0;
+  // padding: 0;
+  // margin-right: 1rem;
+}
+.bdg{
+  // margin-right: 1rem;
+  position: relative;
+  top:7%;
+  left: -1.3rem;
+  color: #961313;
+
+}
+@media (max-width: 768px) {
+  .nav-items li{
+    margin: 0;
+    padding: 0;
+    font-size: small;
+   }
+}
+.wa{
+  margin-top: 0.7rem;
+}
+*{
+  overflow: hidden;
+}
+@media screen {
+  .nav-items li{
+   margin: 0;
+   padding: 0;
+  }
+}
+mat-sidenav-container span,p, .logout a{
+  font-family: "Fira Sans", serif;
+  font-weight: 500;
+  font-style: normal;
+}

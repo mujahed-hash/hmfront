@@ -1,0 +1,70 @@
+.re-div{
+    width: 30%;
+    font-size: small;
+    margin-top: 1rem;
+    z-index: 100;
+}
+.req{
+    width: max-content;
+    font-size: small;
+    padding: 4px 17px;
+    background-color: #161D6F;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    z-index: 100;
+
+}
+
+.get-reqs {
+    width: 100%;
+    padding: 10px;
+}
+
+.g-t-sub {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.g-t-s-zero {
+    width: 30%;
+    display: inline-block;
+    padding-right: 15px;
+}
+.btn-cncl{
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 0;
+}
+.btn-pst{
+    background: green;
+    color: white;
+    border: none;
+    margin-bottom: 0.4rem;
+    border-radius: 4px;
+    padding: 8px 0;
+
+}
+@media (max-width: 768px) {
+    .g-t-sub {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .g-t-s-zero {
+        width: 100%;
+        padding-right: 0;
+    }
+    
+     .re-div{
+        width: 50%;
+    }
+    .req{
+        width: 100%;
+    }
+}

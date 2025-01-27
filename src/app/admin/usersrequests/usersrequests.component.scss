@@ -1,0 +1,38 @@
+.request-list {
+   width: 70%;
+  }
+  
+  .request-item {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  h3 {
+    margin: 0;
+  }
+  
+  button {
+    padding: 5px 10px;
+    margin-top: 5px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  .full-details {
+    margin-top: 10px;
+    color: #333;
+  }
+  @media screen and (orientation:portrait){
+    .request-list{
+        width: 90%;
+    }
+  }

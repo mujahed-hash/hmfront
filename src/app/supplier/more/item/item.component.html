@@ -1,0 +1,50 @@
+<div class="product">
+    <div style="display: flex; position: relative; float: right; width: max-content; gap: 5px;">
+        <button 
+          style="width:100%; padding: 5px; font-size: large; background-color: black; color: white; border: none; border-radius: 5px;"
+          (click)="toggleEdit()"
+        >
+        <mat-icon>edit</mat-icon>
+
+        </button>
+        <button class="del-btn"
+        style="padding: 5px; font-size: large;  background-color: black; color: red; border: none; border-radius: 5px; background-color: rgb(194, 220, 255);"
+        (click)="deleteItem(this.product._id)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+      </div>
+    <div *ngIf="this.product" >
+      <!-- Edit Button -->
+   
+    
+      <div>
+        <div>
+          <img class="prd-img"
+            [src]="this.product.images[0]" 
+            alt="Product Image"
+            accept=".jpg, .png, .jpeg"
+          />
+        </div>
+        <h2>{{ this.product.prodName }}</h2>
+        <small>
+          Price: {{ product.prodPrice | currency:'INR':'symbol':'1.2-2' }} per 
+          {{ this.product.prodSize ? this.product.prodSize : 'Unknown' }}
+        </small>
+        <p>
+          <strong>In Stock:</strong> {{ this.product.countInStock }} | 
+          <strong>Quantity Type/Size:</strong> {{ this.product.prodSize ? this.product.prodSize : 'Unknown' }}
+        </p>
+        <div>
+          <small>
+            <strong>Category:</strong> {{ this.product.category.itemType }} 
+          </small>
+        </div>
+         <div>
+          <p>
+           Descriptipn: {{this.product.prodDesc}} 
+          </p>
+         </div>
+      </div>
+      </div>
+     </div> 

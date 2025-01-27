@@ -1,0 +1,126 @@
+img{
+    width:5rem;
+   height: 5.2rem;
+}
+.card-main {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.checkout-all {
+    /* Add any additional styling needed for the checkout-all div here */
+}
+
+.cart-item {
+    width: 30%;
+    display: inline-block;
+}
+
+.c-i-sub {
+    display: flex;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.c-i-sub2 {
+    width: 70%;
+    height: max-content;
+    display: flex;
+    align-items: center;
+    background-color: #EBF4F6;
+    padding: 8px;
+    margin: 0.4rem 0rem;
+    border-radius: 5px;
+
+}
+
+.product-image {
+    position: relative;
+    left: 1rem;
+    border-radius: 5px;
+}
+
+.product-details {
+    width: 85%;
+    margin-left: -6rem;
+}
+
+.quantity {
+    color: #0D1282;
+}
+
+.checkout-button-container {
+    width: 100%;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.checkout-single-button .b1 {
+    // width: 40%;
+    // margin-right: 2rem;
+    background-color: #0D1282;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 4px 4px;
+    margin-right: 5px;
+}
+.c-i-sub2 .b1, .checkout-all button{
+        background-color: #0D1282;
+        color: white;
+        border:none;
+        border-radius: 5px;
+        padding: 4px 6px;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+.checkout-all{
+    width: 100%;
+    text-align:start;
+    display: flex;
+    justify-content: flex-start;
+    cursor: pointer;
+}
+.checkout-all button{
+    margin-top: 1rem;
+    width: max-content;
+    background-color: #2657C1;
+    margin-bottom: 0.4rem;
+    font-size: large;
+    font-weight: bold;
+    padding: 5px 10px;
+}
+.c-i-sub2 button{
+    // margin-right: 0.5rem;
+
+}
+.c-i-sub2 img{
+    border-radius: 5px;
+
+}
+@media screen and (orientation:portrait) {
+    .card-main{
+        width: 100%;
+        justify-content: center;
+        position: relative;
+
+    }
+    .cart{
+
+    }
+    .c-i-sub{
+     width: 100%;
+     display: grid;
+     justify-items: center;
+    }
+    .cart-item {
+        width: 50%;
+        display: inline-block;
+        font-size: small;
+    }
+    .c-i-sub2{
+        display: block;
+        padding: 8px;
+    }
+   
+}

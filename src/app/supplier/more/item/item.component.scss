@@ -1,0 +1,33 @@
+.product{
+    width:80%;
+    height:max-content;
+    background-color:#EBF4F6;
+    margin: 5px;
+    padding:20px; 
+    border-radius: 14px;
+    margin-top: 10px;
+}
+img{
+    width: 20rem;
+    height: 17rem;
+    margin-top: 1rem;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+@media screen and (orientation:portrait) {
+    .product{
+        width:95%;
+        height:100%;
+  
+     
+    }
+    .prd-img{
+        width:14rem
+    }
+    // img{
+    //     width: 20rem;
+    //     height: 17rem;
+    //     margin-top: 1rem;
+    // }
+}

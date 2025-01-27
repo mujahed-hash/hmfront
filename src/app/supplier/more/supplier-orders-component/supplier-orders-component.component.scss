@@ -1,0 +1,137 @@
+.order-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    width: 80%;
+    overflow: scroll;
+
+  }
+  *{
+    overflow: auto ;
+  }
+  .order-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    background-color: #f9f9f9;
+    height: 20rem;
+  }
+  
+  .order-item {
+    // display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+    // height: 5rem;
+    // max-height: 5rem;
+    // overflow: hidden;
+    // overflow-y: scroll;
+  }
+  
+  .product-name,
+  .order-details,
+  .order-status {
+    margin: 0;
+  }
+  
+  .status-select {
+    margin-top: 0.2rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .update-button {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .update-button:hover {
+    background-color: #0056b3;
+  }
+  .item p, .order-head p{
+    margin-bottom: 0.4rem;
+  }
+  .order-head{
+    background-color: #EBF4F6;
+    padding: 0 8px;
+    border-radius: 5px;
+    color: #041562;
+    // margin: 0.4rem;
+  }
+  .order-head2 p{
+      margin-top: 0.4rem;
+      margin-bottom: 0;
+  }
+  @media (min-width: 768px) {
+    .order-container {
+      flex-direction: row;
+      flex-wrap: wrap;
+      
+    }
+  
+    .order-card {
+      flex: 1 1 calc(50% - 2rem);
+      margin: 0.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .order-card {
+      flex: 1 1 calc(33.333% - 2rem);
+    }
+  }
+@media screen and (orientation:portrait){
+  .order-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    font-size: small;
+    width: 100%;
+    overflow: scroll;
+  }
+  .order-card {
+  }
+  .order-head{
+    margin: 0;
+
+    // margin-bottom: 0.5rem;
+  }
+  // .order-head , .order-head2{
+  //   // height: 20%;
+  //   height:max-content;
+  //   padding: 0;
+  //   margin: 0;
+  // }
+  // .order-header{
+  //   height: 60%;
+  // }
+  .order-card {
+    flex: 1 1 calc(50% - 1rem);
+    // margin: 0.5rem;
+    height: 17rem;
+    overflow: scroll;
+
+  }
+  .order-status button{
+      font-size: small;
+  }
+  .update-button {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: small;
+  }
+  
+}

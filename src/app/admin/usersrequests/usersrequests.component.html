@@ -1,0 +1,42 @@
+<div class="request-list">
+    <h2>User Requests</h2>
+    
+    <!-- Loop through each request -->
+    <div *ngFor="let request of requests; let i = index" class="request-item">
+      <!-- Basic request and user info -->
+      <h3>Request from {{ request.user.name }}</h3>
+      <p>Email: {{ request.user.email }}</p>
+      <p>Phone: {{ request.user.phone }}</p>
+      <p>Role: {{ request.role }}</p>
+      <p>Status: {{ request.status }}</p>
+      
+      <!-- Preview of note (first 20 words) -->
+      <p>
+        {{ request.note | slice: 0: 50 }}
+        <span *ngIf="!expandedRequests[i]">...</span>
+        <span *ngIf="expandedRequests[i]">{{ request.note.slice(50) }}</span>
+      </p>
+  
+      <!-- Toggle button for full details -->
+      <button (click)="toggleRequestDetails(i)">
+        {{ expandedRequests[i] ? 'Show Less' : 'View Full Details' }}
+      </button>
+  
+      <!-- Expanded section with full details -->
+      <div *ngIf="expandedRequests[i]" class="full-details">
+        <p><strong>Full Note:</strong> {{ request.note }}</p>
+        <p><strong>Date:</strong> {{ request.date | date: 'medium' }}</p>
+        
+        <!-- Display additional user details -->
+        <p><strong>user id:</strong> {{ request.user._id }}</p>
+        <p><strong>Apartment:</strong> {{ request.user.apartment }}</p>
+        <p><strong>City:</strong> {{ request.user.city }}</p>
+        <p><strong>Country:</strong> {{ request.user.country }}</p>
+        <p><strong>Street:</strong> {{ request.user.street }}</p>
+        <p><strong>Zip Code:</strong> {{ request.user.zip }}</p>
+      </div>
+  
+      <hr />
+    </div>
+  </div>
+  

@@ -1,0 +1,52 @@
+.requests{
+    width: 100%;
+    display: inline-block;
+    gap:2px; /* Space between text and button */
+}
+.request{
+    width: 15%;
+    display: inline-block;
+    margin: 1rem;
+    border: 1px solid #161D6F;
+    border-radius: 20px;
+}
+.requests p{
+    position: relative;
+    left:1rem
+}
+.r-s-btn{
+    width: 100%;
+    text-align: center;
+}
+.request button{
+    border-radius: 8px;
+    padding: 8px 0;
+    width: 90%;
+    border: none;
+    margin-bottom: 0.4rem;
+}
+.f-d{
+    background-color: #BDE8CA;
+    color: #0D7C66;
+    font-weight: bold;
+}
+.f-s{
+    background-color: #E9EFEC;
+    color: #16325B;
+    font-weight: bold;  
+}
+.f-s:hover{
+    background-color: #16325B;
+    color: #E9EFEC;
+    font-weight: bold;  
+}
+@media screen and (orientation: portrait) {
+    .requests{
+        display: inline-block;
+    }
+    .request{
+        width: 40%;
+        display: inline-grid;
+        height: 10rem;
+    }
+}

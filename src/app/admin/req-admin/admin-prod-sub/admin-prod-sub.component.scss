@@ -1,0 +1,52 @@
+.table {
+    width: 40rem;
+    margin-bottom: 1rem;
+    color: #212529;
+  }
+  
+  .table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+  }
+  
+  .table tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .img-fluid {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .btn-primary, .btn-success {
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+  .table th{
+    width: max-content;
+  }
+
+
+  th {
+    white-space: nowrap; /* Prevents wrapping */
+    text-align: left; /* Optional: Aligns the header content to the left */
+  }
+  
+  .table {
+    table-layout: auto; /* Ensures table columns adjust to the content */
+  }
+  @media screen and (orientation: portrait) {
+    .table{
+      width: 50%;
+      font-size: small;
+      overflow: scroll;
+    }
+    .table-responsive{
+      overflow: scroll;
+    }
+  } 

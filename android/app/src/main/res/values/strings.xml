@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">hmfront</string>
+    <string name="title_activity_main">hmfront</string>
+    <string name="package_name">in.hotelmart.in</string>
+    <string name="custom_url_scheme">in.hotelmart.in</string>
+</resources>

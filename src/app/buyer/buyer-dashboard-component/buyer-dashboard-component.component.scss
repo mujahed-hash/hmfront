@@ -1,0 +1,119 @@
+.b-d-i{
+    width: max-content;
+    display: flex;
+    align-items: center;
+    margin: 0.5rem 1rem;
+    justify-content: space-between;
+    padding: 4px 8px;
+    border-radius: 5px;
+    background-color: white;
+    color: #161D6F;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+
+}
+.buyer-data{
+    display: flex;
+    width: 100%;
+    
+}
+.b-d-i mat-icon{
+    margin-right: 4px;
+    width: max-content;
+    padding-right: 8px;
+}
+.categories-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Enable momentum scrolling on iOS */
+}
+
+.categories {
+  display: flex;
+  // gap: 1rem;
+  padding: 1rem;
+  width: max-content;
+  margin-left: -0.3rem;
+}
+
+.category {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 20px;
+  text-align: center;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: rgba(19, 10, 145, 0.306) 0px 3px 8px;
+  margin-bottom: 1rem;
+  margin-left: 0.3rem;
+  margin-right: 0.3rem;
+}
+
+.category img{
+    width:100%;
+    height: 4.5rem;
+    border-radius: 8px;
+    object-fit: cover;
+    // margin-top: 1rem;
+}
+.category span{
+    margin:0.5rem 0 1rem 0;
+}
+
+/* Hide the scrollbar for all browsers */
+.categories-container::-webkit-scrollbar {
+  display: none;
+}
+
+.categories-container {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+@media screen and (orientation:portrait) {
+    .buyer-data{
+        width: 100%;
+        display: flex;
+        overflow-x: scroll;
+    }
+    .b-d-i{
+        width: min-content;
+        font-size: small;
+        display: flex;
+        align-items: center;
+        vertical-align: middle;
+    }
+    .b-d-i span{
+        width: 100%;
+    }
+    .buy-head{
+      height: max-content;
+      overflow: hidden;
+    }
+    .buy-head h1{
+        font-size: x-large;
+        height: 100%;
+    }
+    .b-d-i mat-icon{
+      width: auto;
+      font-size: 20px;
+      margin-right: 2px;
+
+    }
+     .n1 {
+       width: 10px;
+
+    }
+}
+h1 .span{
+  font-family: "Bebas Neue", serif;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0.5px;
+  background-color: white;
+  padding: 4px 8px;
+  border-radius: 5px;
+  box-shadow: rgba(100, 100, 255, 0.2) 0px 7px 29px 0px;
+}

@@ -1,0 +1,116 @@
+img{
+    width:5rem;
+    // min-height: 3rem;
+    height: 5rem;
+    max-height: 5rem;
+    margin-right: 0.7rem;
+}
+.hh{
+    height: 100%;
+}
+/* Example styling to ensure scrolling */
+// .hh {
+//     height: 100vh; /* Adjust as necessary */
+//     overflow-y: auto;
+//   }
+  
+/* Styles for larger screens */
+.items {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  .item {
+    width: 30%;
+    display: inline-block;
+    margin: 0 0%;
+    box-sizing: border-box;
+        padding: 8px;
+    border-radius: 5px;
+  }
+  
+  .itemName {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .itemName p{
+    margin: 0;
+    margin-top: 8px;
+    margin-bottom: 4PX;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  .itm-btn{
+    width: 100%;
+    // display: flex;
+    // justify-content: center;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .itm-btn button{
+    width: max-content;
+    padding: 5px;
+    position: relative;
+    right: 8rem;
+    font-size: large;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  }
+  /* Styles for tablets and small desktops */
+  @media (max-width: 1024px) {
+    .item {
+      width: 45%;
+      margin: 0 2.5%;
+    }
+  }
+  
+  /* Styles for mobile devices */
+  @media (max-width: 768px) {
+    .item {
+      width: 100%;
+      margin: 0 0 20px 0;
+    }
+  }
+  @media screen and (orientation:portrait) {
+    .items {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    
+    .item {
+      width: 50%;
+      display: inline-block;
+      margin: 0 0%;
+      box-sizing: border-box;
+          padding: 6px;
+      border-radius: 5px;
+      font-size: small;
+    }
+    img {
+      max-width: 80%;
+      height: 4rem;
+    }
+    .itm-btn{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      right:0rem;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .itm-btn button{
+      width: 80%;
+      right:0rem;
+
+    }
+  }

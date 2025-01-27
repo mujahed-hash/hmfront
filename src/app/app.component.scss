@@ -1,0 +1,22 @@
+.nav{
+    width: 100%;
+    height: max-content;
+    background-color: white;
+    cursor: pointer;
+    display: flex;
+}
+.nav nav ul li{
+    list-style: none;
+}
+
+router-outlet{
+    height: 100vh;
+    margin-top: 1rem;
+    margin-bottom: 5rem;
+}
+@media screen and (orientation:portrait) {
+    .nav{
+        width:99%;
+        overflow-x:hidden;
+    }
+}

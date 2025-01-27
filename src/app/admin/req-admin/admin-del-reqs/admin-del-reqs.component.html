@@ -1,0 +1,38 @@
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="error">{{ error }}</div>
+<div class="del-req" *ngIf="!loading && requestedSubmissions.length > 0">
+  <h2>Requested Deliveries</h2>
+  <ul>
+    <li *ngFor="let submission of requestedSubmissions">
+      <p><strong>Product Name:</strong> {{ submission.name }}</p>
+      <p><strong>Price:</strong> {{ submission.price }}</p>
+       <img src="{{submission.image}}" alt="">
+      <!-- Supplier Information -->
+      <h3>Supplier Details</h3>
+      <p><strong>Name:</strong> {{ submission.supplier.name }}</p>
+      <p><strong>Email:</strong> {{ submission.supplier.email }}</p>
+      <p><strong>Phone:</strong> {{ submission.supplier.phone }}</p>
+      <p><strong>Address:</strong> {{ submission.supplier.street }}, 
+                                    {{ submission.supplier.apartment }},
+                                    {{ submission.supplier.city }},
+                                    {{ submission.supplier.zip }},
+                                    {{ submission.supplier.country }}</p>
+
+      <!-- Buyer Information -->
+      <h3>Buyer Details</h3>
+      <p><strong>Name:</strong> {{ submission.requirement.buyer.name }}</p>
+      <p><strong>Email:</strong> {{ submission.requirement.buyer.email }}</p>
+      <p><strong>Phone:</strong> {{ submission.requirement.buyer.phone }}</p>
+      <p><strong>Address:</strong> {{ submission.requirement.buyer.street }}, 
+                                    {{ submission.requirement.buyer.apartment }},
+                                    {{ submission.requirement.buyer.city }},
+                                    {{ submission.requirement.buyer.zip }},
+                                    {{ submission.requirement.buyer.country }}</p>
+
+      <button (click)="confirmDelivery(submission._id)">Confirm Delivery</button>
+    </li>
+  </ul>
+</div>
+<div *ngIf="!loading && requestedSubmissions.length === 0">
+  <p>No requested deliveries found.</p>
+</div>

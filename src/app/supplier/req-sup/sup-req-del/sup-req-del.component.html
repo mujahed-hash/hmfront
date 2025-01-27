@@ -1,0 +1,27 @@
+<!-- components/completed-products/completed-products.component.html -->
+
+<div class="component-container">
+    <div class="delivery">
+
+
+    <h2>Products Deliveries</h2>
+  
+    <div *ngIf="loading" class="loading">Loading completed products...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+  
+    <ul *ngIf="!loading && !error">
+      <li class="del-prod" *ngFor="let product of completedProducts">
+        <h3>{{ product.name }} - {{ product.price | currency: 'INR' }}</h3>
+        
+        <p><strong>Requirement:</strong> {{ product.requirement.reqDetails }}</p>
+        <p *ngIf="product.status === 'Completed'"> status: <strong>Delivery Requested </strong></p>
+        <p *ngIf="product.status === 'Delivered'"> status: <strong>Delivered </strong></p>
+
+        <img [src]="product.image" alt="{{ product.name }}" class="product-image">
+
+      </li>
+    </ul>
+</div>
+
+  </div>
+  

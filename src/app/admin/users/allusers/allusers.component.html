@@ -1,0 +1,9 @@
+<div class="s-dashboard">
+    <div *ngFor="let user of users" class="s-d-i">
+     <div [routerLink]="['/admin/aeuser', user.customIdentifer]">
+        <h2>{{ user.name }}</h2>
+        <p>{{ user.email }}</p>
+     </div>
+    </div>
+  </div>
+  

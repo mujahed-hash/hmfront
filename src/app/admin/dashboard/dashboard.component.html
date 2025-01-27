@@ -1,0 +1,136 @@
+<div class="search-all">
+
+  <div class="search-container">
+    <div class="search-sub">
+      <input
+      type="text"
+      [(ngModel)]="query"
+      placeholder="Enter search query"
+      (keyup.enter)="onSearch()"
+    />
+  <br>
+  <div class="button-group">
+    <button class="srch" (click)="onSearch()">Search</button>
+    <button class="rst" (click)="resetSearch()">Reset Search</button>
+  </div>
+    </div>
+    <!-- Tag-based model filter -->
+  
+    <div class="model-tags">
+      <span
+        *ngFor="let model of models"
+        class="tag"
+        [class.selected]="model === selectedModel"
+        (click)="selectModel(model)"
+      >
+        {{ model }}
+      </span>
+      <span
+        class="tag clear"
+        [class.selected]="selectedModel === 'All'"
+        (click)="clearModel()"
+      >
+        All
+      </span>
+    </div>
+  </div>
+  
+  <div *ngIf="sPerformed" class="results-container">
+    <h3>Total Results: {{ totalResults }}</h3>
+  
+  
+    <!-- Group results by model -->
+    <div *ngFor="let group of groupedResults | keyvalue">
+      <h4>Model: {{ group.key }}</h4>
+  
+      <div *ngFor="let item of group.value" class="result-item">
+        <ul>
+          <li *ngFor="let field of objectEntries(item)">
+            <strong>{{ field[0] }}:</strong> {{ field[1] }}
+          </li>
+        </ul>
+        <button class="delete-btn" (click)="deleteDocument(group.key, item._id)">Delete</button>
+      </div>
+    </div>
+  
+   
+    
+    <div class="pagination">
+      <button (click)="previousPage()" [disabled]="!canGoPrevious()">Previous</button>
+      <button (click)="nextPage()" [disabled]="!canGoNext()">Next</button>
+    </div>
+  </div>
+</div>
+
+
+<!---hh-->
+
+<div class="dash-main">
+  <div class="s-dashboard">
+    <div routerLink="/supplier/orders-recieved/pending" class="s-d-i s-r">
+      <div *ngIf="order">
+        <h2>Order Received</h2>
+        <div class="stat-value">
+          <h1>{{order.totalOrders}}</h1>
+        </div>
+      </div>
+    </div>
+    <div routerLink="/supplier/orders-recieved/delivered" *ngIf="order" class="s-d-i s-d">
+      <div>
+        <h2>Order Delivered</h2>
+        <div class="stat-value">
+          <h1>{{order.deliveredOrders}}</h1>
+        </div>
+      </div>
+    </div>
+    <div routerLink="/supplier/orders-recieved/delivered" *ngIf="order" class="s-d-i s-s">
+      <div>
+        <h2>Total Sales..</h2>
+        <div class="stat-value">
+          <h1>{{order.deliveredOrders}}</h1>
+        </div>
+      </div>
+    </div>
+    <div routerLink="/buyer/marketplace" class="s-d-i s-i">
+      <div *ngIf="products">
+        <h2>Total Items</h2>
+        <div class="stat-value">
+          <h1>{{products.count}}</h1>
+        </div>
+      </div>
+    </div>
+    <div routerLink="/admin/allusers" class="s-d-i s-i">
+        <div *ngIf="users">
+          <h2>Total Users</h2>
+          <div class="stat-value">
+            <h1>{{users.totalUsers}}</h1>
+          </div>
+        </div>
+      </div>
+    <div routerLink="/admin/allusers"  class="s-d-i s-i">
+        <div *ngIf="users">
+          <h2>Total Admins</h2>
+          <div class="stat-value">
+            <h1>{{users.admins}}</h1>
+          </div>
+        </div>
+      </div>
+          <div routerLink="/admin/allusers"  class="s-d-i s-i">
+        <div *ngIf="users">
+          <h2>Total Buyers</h2>
+          <div class="stat-value">
+            <h1>{{users.buyers}}</h1>
+          </div>
+        </div>
+      </div>
+        <div  routerLink="/admin/allusers" class="s-d-i s-i">
+        <div *ngIf="users">
+          <h2>Total Suppliers</h2>
+          <div class="stat-value">
+            <h1>{{users.suppliers}}</h1>
+          </div>
+        </div>
+      </div>
+  </div>
+  
+</div>

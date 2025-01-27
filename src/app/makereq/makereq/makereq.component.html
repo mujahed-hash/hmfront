@@ -1,0 +1,25 @@
+<div class="request-form-container">
+    <h2>Create Request</h2>
+   
+    <form [formGroup]="requestForm" class="req-form" (ngSubmit)="onSubmit()">
+     
+      <div>
+        <label for="note">Request Note</label>
+        <div class="req-info">
+            <small>
+               In this request you can report admin regarding your purchase, account issues, or to perform any admin activity.
+            </small>
+         </div>
+        <textarea id="note" formControlName="note" rows="4" cols="50"></textarea>
+      </div>
+     
+      <!-- Display validation error if the field is invalid -->
+      <div *ngIf="requestForm.get('note')!.invalid && requestForm.get('note')!.touched">
+        <small class="error-text" *ngIf="requestForm.get('note')!.hasError('required')">Note is required.</small>
+        <small class="error-text" *ngIf="requestForm.get('note')!.hasError('maxlength')">Note cannot be more than 500 characters.</small>
+      </div>
+  
+      <button type="submit" [disabled]="requestForm.invalid">Submit Request</button>
+    </form>
+  </div>
+  

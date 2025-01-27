@@ -1,0 +1,66 @@
+<div class="container my-5">
+    <h2 class="text-center mb-4">Submitted Product Information</h2>
+  
+    <!-- Display error message if any -->
+    <div *ngIf="errorMessage" class="alert alert-danger text-center">
+      {{ errorMessage }}
+    </div>
+  
+    <!-- Loading state -->
+    <div *ngIf="!requirements.length && !errorMessage" class="text-center">
+      <!-- <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div> -->
+      <p class="mt-2">Loading product submissions...</p>
+    </div>
+  
+    <!-- List of product submissions -->
+    <div *ngIf="requirements.length" class="table-responsive">
+      <table class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Requirement</th>
+            <th>Supplier</th>
+            <th>Product Detail</th>
+            <th>Price</th>
+            <th>Image</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let submission of requirements">
+            <td>{{ truncateText(submission.requirement.reqDetails, 15) }}..</td>
+            <td>{{ submission.supplier.name }}</td>
+            <td>{{ truncateText(submission.name, 15) }}</td>
+            <td>{{ submission.price | currency: 'INR' }}</td>
+            <td>
+              <img [src]="submission.image" alt="{{ submission.name }}" class="img-fluid rounded shadow-sm" width="100">
+            </td>
+            <td>
+              <form (ngSubmit)="forwardSubmission(submission._id, submission.requirement._id, this.token)">
+                <div class="form-group" *ngIf="submission.status === 'Pending'">
+                  <select
+                    id="requirementId-{{submission._id}}"
+                    class="form-select"
+                    [(ngModel)]="submission.requirement._id"
+                    name="requirementId"
+                    required
+                  >
+                    <option *ngFor="let requirement of requirements" [value]="requirement.requirement._id">
+                      {{ truncateText(requirement.requirement.reqDetails, 15) }}..
+                    </option>
+                  </select>
+                </div>
+                <div>
+                  <button *ngIf="submission.status === 'Pending'" type="submit" class="btn btn-primary mt-2 w-100">Forward</button>
+                  <small *ngIf="submission.status !== 'Pending'" class="btn btn-success mt-2 w-100">{{submission.status}}</small>
+
+                </div>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  

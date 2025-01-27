@@ -1,0 +1,59 @@
+<div style="width: 80%;position: fixed; z-index: 8; top:9%;">
+  <div style="position: relative; " *ngFor="let notification of notifications" class="notification" [ngClass]="notification.type">
+    {{ notification.message }}
+  </div>
+  
+</div>
+<div>
+  <app-buyer-search></app-buyer-search>
+</div>
+<div class="hh" >
+
+    <div class="items-" >
+        <div    
+     class="item " *ngFor="let product of products">
+          <div   class="sub-item" style="overflow-x: hidden;" *ngIf="product.countInStock>=1" routerLinkActive="router-link-active"   style="">
+            <div class="img">
+              <img [routerLink]="['/buyer/item/view', product.customIdentifer]"  [src]="product.images[0]" alt="{{ product.prodName }}" />
+
+            </div>
+           <div class="itemName">
+            <p style="font-weight: bold;">{{ product.prodName }}</p>
+            <!-- <p class="truncate-single-line">{{ product.prodDesc }}</p> -->
+            <button  [routerLink]="['/buyer/item/view', product.customIdentifer]" style="overflow: hidden; width: max-content;display: flex; justify-content: center; vertical-align: middle; align-items: center;  border: none; border-radius: 5px; background-color: #37AFE1; color: white; padding: 2px 8px;">   
+               <mat-icon style="overflow: hidden; color:white; font-size: 15px; position: relative; top:0.35rem">visibility</mat-icon>
+              View</button>
+            <p>{{product.prodPrice | currency:'INR'}}/{{product.prodSize}}</p>
+            <div class="count" style="">
+              <p-inputNumber [(ngModel)]="quantities[product._id]" name="quantity" inputId="minmax" mode="decimal" [showButtons]="true" [min]="1" [max]="product.countInStock"></p-inputNumber>
+          </div>
+<!-- Assuming `product` and `quantity` are defined in your component -->
+<div *ngIf="!product.inCart" style=" width:max-content; display: flex; align-items: center; margin-top: 0.5rem;">
+  <button style=" width:100%; display: flex; align-items: center; justify-content: center; border: none; border-radius: 5px; background-color: #071952; color: white; padding: 3px 8px; box-shadow: 6px 6px 12px #c5c5c5,
+  -6px -6px 12px #ffffff;" (click)="addProductToCart(product._id)">
+    <mat-icon style="color:#F0DE36">add_shopping_cart</mat-icon>
+    Add to cart
+  </button>
+</div>
+<div *ngIf="product.inCart" style=" width:max-content; display: flex; align-items: center; margin-top: 0.5rem;">
+  <button style=" width:100%; display: flex; align-items: center; justify-content: center; border: none; border-radius: 5px; background-color: #4CC9FE; color: white; padding: 3px 8px; " routerLink="/buyer/cart">
+    <mat-icon style="color:#F0DE36">add_shopping_cart</mat-icon>
+    Go to cart
+  </button>
+</div>
+           </div>
+           
+          </div>
+          <!-- Add more product details here -->
+        </div>
+      </div>
+     <div class="itm-btn" >
+        <button #loadingIndicator style="" *ngIf="hasMoreProducts && !isLoading" (click)="loadProducts()" [disabled]="isLoading">
+            Load More
+          </button>
+     </div>
+  <!-- <button *ngIf="hasMoreProducts" (click)="loadProducts()" [disabled]="isLoading">
+    Load More
+  </button> -->
+</div>
+

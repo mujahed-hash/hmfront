@@ -1,0 +1,76 @@
+<div class="container">
+    <h2 style="background-color: white; padding: 4px 8px; border: #c8c9d4 1.5px solid; color:#0D1282; width:max-content; border-radius: 9px;">Requirements</h2>
+
+    <div class="main-req" *ngIf="requirement">
+      <p><strong>Requirement Details: </strong> {{ requirement.reqDetails }}</p>  
+     
+      <div class="product-card" *ngIf="requirement.status === 'Delivered' || requirement.status === 'Completed'" >
+        <div class="posted-prods">
+          <h3 *ngIf="requirement?.productDetails?.length>0" style="color:#0D1282">Deliveries</h3>  
+  
+
+
+        </div>
+        <div class="p-c-m">
+        <div *ngIf="requirement?.productDetails?.length<1" >
+          <p style="color:#0D1282">No Deliveries</p>  
+
+        </div>
+        <div class="del-prod" *ngFor="let product of requirement?.productDetails">
+            <!-- <span class="delivery-requested" *ngIf="requirement.status === 'Completed'">About to Deliver</span>
+            <span class="delivery-requested" *ngIf="requirement.status === 'Delivered'">Delivered</span> -->
+
+            <div class="p-m-1">
+              <img src="{{product.image}}" alt="">
+            </div>
+            <div class="product-info">
+              <p><strong>Product Name:</strong> {{ product.name }}</p>
+              <p><strong>Price:</strong> {{ product.price | currency:'INR' }}</p>
+              <p *ngIf="product.supplier"><strong>Supplier:</strong> {{ product.supplier.name }}</p>
+
+              <!-- <button  (click)="requestDelivery(requirement._id, product.submissionId)" class="btn btn-primary">Request More</button> -->
+              <button *ngIf="RequestStatus[product._id] "  class="btn btn-primary">About To Deliver</button>
+              <button *ngIf="!RequestStatus[product._id] && product.submissionId.status === 'Requested'"  class="btn btn-primary">Requested Deliver</button>
+
+              <button *ngIf="!RequestStatus[product._id] && product.submissionId.status === 'Delivered'"  class="btn btn-primary">Delivered</button>
+            </div>
+      </div>
+      
+    </div>
+
+       <br>
+       </div>
+       <div >
+         <div class="posted-prods">
+             <h3>All Posted product</h3>
+         </div>
+        <div class="product-card1" *ngFor="let product of requirement.productDetails">
+          <div class="product-image">
+            <img src="{{product.image}}" alt="">
+          </div>
+          <div class="product-info">
+            <p><strong>Product Name:</strong> {{ product.name }}</p>
+            <p><strong>Price:</strong> {{ product.price | currency:'INR' }}</p>
+            <!-- <p *ngIf="product.supplier"><strong>Supplier:</strong> {{ product.supplier.name }}</p> -->
+                <!-- <button *ngIf="requirement.status !== 'Requested'  && this.requirement.buyer._id === this.loggedIn" (click)="requestDelivery(requirement._id, product.submissionId)" class="btn btn-primary">Request Delivery</button>
+                <button class="btn" *ngIf="requirement.status === 'Requested'  && this.requirement.buyer._id === this.loggedIn">Delivery Requested</button> -->
+             <!-- Button visibility based on delivery request status -->
+         
+      <!-- Buttons based on delivery request status -->
+      <button *ngIf="!deliveryRequestStatus[product._id] && (product.submissionId.status !== 'Requested' &&  product.submissionId.status !== 'Completed') && requirement.buyer._id === loggedIn" 
+      (click)="requestDelivery(requirement._id, product.submissionId._id)" 
+      class="btn btn-primary">
+       Request Delivery
+     </button>
+<button *ngIf="deliveryRequestStatus[product._id] && requirement.buyer._id === loggedIn" 
+      class="btn">
+Delivery Requested
+</button>
+<button *ngIf="!deliveryRequestStatus[product._id] && requirement.buyer._id === loggedIn && product.submissionId.status === 'Completed'"  class="btn btn-primary">About to Deliver</button>
+</div>
+    
+      </div>
+    </div>
+
+    </div>
+  </div> 

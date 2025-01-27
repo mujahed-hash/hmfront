@@ -1,0 +1,16 @@
+<div class="requests">
+    <!-- admin.component.html -->
+    <div class="request" *ngFor="let req of requirements">
+        <div class="r-s-t">
+            <p>{{ truncateText(req.reqDetails, 15) }}..</p>
+       
+        </div>
+        <div class="r-s-btn">
+            <button class="v-b" *ngIf="req.reqDetails.length > 1" [routerLink]="['/buyer/request-requirement/', req.customIdentifier]" >View</button>
+            <button class="f-s" *ngIf="req.status === 'Pending'" (click)="forwardToSuppliers(req._id)">Forward to Suppliers</button>
+            <button class="f-d" *ngIf="req.status === 'Forwarded'">Forwarded</button>
+            <button class="f-d" *ngIf="req.status !== 'Forwarded' && req.status !=='Pending'">{{req.status}}</button>
+
+        </div>
+    </div>
+</div>

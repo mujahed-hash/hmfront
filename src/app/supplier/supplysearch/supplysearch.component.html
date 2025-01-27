@@ -1,0 +1,26 @@
+<div class="search-container">
+    <input 
+      type="text" 
+      placeholder="Search your products, e.g., 'gajar 50-100'" 
+      [(ngModel)]="searchInput" 
+      (keyup.enter)="searchProducts()" />
+  <div>
+    <button class="srch-btn" *ngIf="searchInput" (click)="searchProducts()">Search</button>
+    <button class="rst-btn" *ngIf="hasSearched" (click)="resetSearch()">Reset</button>
+
+  </div>
+  </div>
+  
+  <div class="results-container" *ngIf="products.length > 0; else noResults">
+   <div class="product-card" *ngFor="let product of products"  [routerLink]="['/supplier/product/view', product.customIdentifer]">
+      <h3>Name: {{ product.prodName }}</h3>
+      <p>Description: {{ product.prodDesc }}</p>
+      <span class="price">Price: ₹{{ product.prodPrice }}</span>
+    </div>
+  </div> 
+
+    <ng-template #noResults>
+        <p  *ngIf="hasSearched">No products found. Try refining your search criteria.</p>
+      </ng-template>
+
+  

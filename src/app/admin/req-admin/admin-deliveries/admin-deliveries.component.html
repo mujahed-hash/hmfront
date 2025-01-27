@@ -1,0 +1,56 @@
+<!-- components/completed-products/completed-products.component.html -->
+
+<div class="component-container">
+    <div class="delivery">
+
+
+    <h2>Products Deliveries</h2>
+  
+    <div *ngIf="loading" class="loading">Loading completed products...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+  
+    <ul  *ngIf="!loading && !error">
+      <li class="del-prod" *ngFor="let product of completedProducts">
+        <h3>{{ product.name }} - {{ product.price | currency: 'INR' }}</h3>
+        
+        <p style="text-decoration: underline;" [routerLink]="['/buyer/request-requirement/',product.requirement.customIdentifier]"><strong>Requirement:</strong> {{ truncateText( product.requirement.reqDetails, 15 )}}</p>
+        <p *ngIf="product.status === 'Completed'"> status: <strong>Delivery Requested </strong></p>
+        <p *ngIf="product.status === 'Delivered'"> status: <strong> Delivered </strong></p>
+
+        <img [src]="product.image" alt="{{ product.name }}" class="product-image">
+        <div>
+          <details>
+            <summary>Supplier Details</summary>
+            <p>ID: {{product.supplier._id}}</p>
+
+            <p>Name: {{product.supplier.name}}</p>
+            <p>Phone: {{product.supplier.phone}}</p>
+            <p>email: {{product.supplier.email}}</p>
+            <p>Street: {{product.supplier.street}}</p>
+            <p>City: {{product.supplier.city}}</p>
+            <p>Zip: {{product.supplier.zip}}</p>
+          </details>
+   
+        </div>
+        <div>
+          <details>
+            <summary>Buyer Details</summary>
+            <p>ID: {{product.requirement.buyer._id}}</p>
+            <p>Name: {{product.requirement.buyer.name}}</p>
+            <p>Phone: {{product.requirement.buyer.phone}}</p>
+            <p>email: {{product.requirement.buyer.email}}</p>
+            <p>Street: {{product.requirement.buyer.street}}</p>
+            <p>City: {{product.requirement.buyer.city}}</p>
+            <p>Zip: {{product.requirement.buyer.zip}}</p>
+          </details>
+   
+        </div>
+        <button class="btn-cmplt" *ngIf="product.status === 'Completed'" (click)="updateDelivery(product.requirement._id,product._id)">Mark Delivered</button>
+        <button class="btn-dlvd" *ngIf="product.status === 'Delivered'" disabled>Delivered</button>
+
+      </li>
+    </ul>
+</div>
+
+  </div>
+  

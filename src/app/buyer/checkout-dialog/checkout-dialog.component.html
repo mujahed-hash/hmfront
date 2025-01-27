@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Checkout</h1>
+<div mat-dialog-content>
+  <p>Shipping Details:</p>
+  <p>Street: {{ user.street }}</p>
+  <p>City: {{ user.city }}</p>
+  <p>Postal Code: {{ user.postalCode }}</p>
+  <p>Country: {{ user.country }}</p>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Add a note to your order</mat-label>
+    <textarea matInput [(ngModel)]="note"></textarea>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel..</button>
+  <button mat-button (click)="onConfirm()">Confirm</button>
+</div>

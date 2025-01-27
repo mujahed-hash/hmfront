@@ -1,0 +1,18 @@
+<div *ngIf="authService.isLoggedIn()">
+    <ul>
+      <li *ngIf="authService.isAdmin()">
+       Admin
+       <router-outlet></router-outlet>
+
+      </li>
+      <li *ngIf="authService.isSupplier() || authService.isAdmin()">
+        <!-- <a routerLink="/supplier">Supplier Dashboard</a> -->
+        <router-outlet></router-outlet>
+      </li>
+      <li *ngIf="authService.isBuyer() || authService.isAdmin()">
+        <router-outlet></router-outlet>
+
+      </li>
+      
+    </ul>
+</div>

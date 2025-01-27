@@ -1,0 +1,122 @@
+.requested{
+    // box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    width: max-content;
+    padding: 5px 12px;
+}
+.main-req{
+    width: 100%;
+}
+
+ .product-card1{
+    display: inline-block;
+    width: 25%;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 8px 5px;
+}
+
+.product-card{
+    width: 50% auto;
+    max-width: 70%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    max-height: max-content;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    background-color: #E1F7F5;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 8px 5px;
+}
+.p-c-m{
+    display: flex;
+    width: 85rem;
+    max-width: max-content;
+}
+.del-prod{
+    width: 20rem;
+    margin: 1rem;
+
+}
+.product-card1{
+    
+    height: 26rem;
+
+}
+.product-card img, .product-card1 img{
+    border-radius: 5px;
+    width: 100%;
+    object-fit: cover;
+    width: 95%;
+}
+.main-req span {
+    background-color: aliceblue;
+    color: darkgreen;
+    padding: 5px 9px;
+    border-radius: 5px;
+}
+.btn{
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    padding: 5px 0;
+}
+.product-image {
+    width: 99%;
+    height: 60%;
+    overflow: hidden;
+}
+
+.product-image img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+   overflow: hidden;
+}
+.p-m-1 {
+    width: 99%;
+    height: 14rem;
+    overflow: hidden;
+}
+.p-m-1 img{
+    width: 100%;
+    height: 90%;
+    object-fit: cover;
+
+}
+.posted-prods h3{
+    color: #0D1282;
+    width: max-content;
+    border-bottom: 3px #0D1282 solid ;
+    // padding: 5px 12px;
+}
+@media screen and (orientation:portrait) {
+    .product-card{
+        width: 95%;
+        max-width: 95%;
+        font-size: small;
+    }
+    .btn{
+        padding: 5px 3px;
+    }
+    .p-c-m{
+        margin-left: -0.4rem;
+
+    }
+    .del-prod{
+        width: 47%;
+        margin: 0;
+        margin-right: 0.5rem;
+    }
+    .product-card1{
+        width: 45%;
+        font-size: small;
+        padding: 3px 4px 0 4px;
+        height: 23rem;
+    }
+    
+    // .product-card, .product-card1{
+    //     height: 17rem;
+    // }
+}

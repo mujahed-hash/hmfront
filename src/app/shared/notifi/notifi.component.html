@@ -1,0 +1,30 @@
+<div *ngIf="notifications && !adminView" class="notifi-main">
+    <div *ngFor="let noti of notifications" class="notification" [ngClass]="{'unread': !noti.isRead}">
+        <span class="icon">🔔</span>
+        <div class="content"  [routerLink]="getNotificationLink(noti)" *ngIf="noti">
+       <!-- {{ noti?.message }} -->
+   
+          <div class="message">{{ noti.message }}</div>
+          <div class="date">{{ noti.date | date: 'mediumDate' }}</div>
+        </div>
+        <div class="status" [ngClass]="{'unread-status': !noti.isRead, 'read-status': noti.isRead}">
+          {{ noti.isRead ? 'Read' : 'Unread' }}
+        </div>
+      </div>
+      
+</div>
+<div *ngIf="adminNotofication && adminView" class="notifi-main">
+  <div *ngFor="let noti of adminNotofication" class="notification" [ngClass]="{'unread': !noti.isRead}">
+      <span class="icon">🔔</span>
+      <div class="content"  [routerLink]="getNotificationLink(noti)" *ngIf="noti">
+     <!-- {{ noti?.message }} -->
+ 
+        <div class="message">{{ noti.message }}</div>
+        <div class="date">{{ noti.date | date: 'mediumDate' }}</div>
+      </div>
+      <div class="status" [ngClass]="{'unread-status': !noti.isRead, 'read-status': noti.isRead}">
+        {{ noti.isRead ? 'Read' : 'Unread' }}
+      </div>
+    </div>
+    
+</div>

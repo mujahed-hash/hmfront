@@ -1,0 +1,26 @@
+.request-form-container{
+    width:50%;
+
+}
+textarea{
+    padding: 5px 7px;
+}
+.req-info{
+    background-color: #F5F7F8;
+    padding: 8px 14px;
+    margin: 5px;
+    color: #185519;
+}
+.req-form button{
+    background-color: #6A9C89;
+    border-radius: 6px;
+    color: #E9EFEC;
+    border: none;
+    padding: 5px 0;
+}
+@media screen and (orientation:portrait) {
+    .request-form-container{
+        width:80%;
+    
+    }
+}

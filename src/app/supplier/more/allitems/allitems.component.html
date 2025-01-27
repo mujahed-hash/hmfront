@@ -1,0 +1,31 @@
+<div class="hh">
+  <div>
+    <app-supplysearch></app-supplysearch>
+  </div>
+    <p style="background-color:#EBF4F6; color:#2657C1; width:max-content; padding: 4px 8px">Items you posted for selling</p>
+
+    <div class="items">
+        <div class="item" *ngFor="let product of products">
+          <div [routerLink]="['/supplier/product/view', product.customIdentifer]" routerLinkActive="router-link-active" 
+           style="width:80%; display: flex; margin-bottom: 1rem;box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; overflow: hidden;     border-radius: 5px;
+          ">
+            <img [src]="product.images[0]" alt="{{ product.prodName }}" />
+           <div class="itemName">
+             <p>{{ product.prodName }}
+            </p>     
+            <span>{{ product.prodPrice | currency:'INR' }}
+            </span>      
+           </div>
+          </div>
+          <!-- Add more product details here -->
+        </div>
+      </div>
+     <div *ngIf="products.length != 0" class="itm-btn">
+        <button #loadingIndicator style="" *ngIf="hasMoreProducts && !isLoading" (click)="loadProducts()" [disabled]="isLoading">
+        {{products? 'Load More': 'No items' }}
+        </button>
+     </div>
+  <!-- <button *ngIf="hasMoreProducts" (click)="loadProducts()" [disabled]="isLoading">
+    Load More
+  </button> -->
+</div>

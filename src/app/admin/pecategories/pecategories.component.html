@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>{{ isEditing ? 'Edit Category' : 'Add Category' }}</h2>
+<form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="fill">
+    <mat-label>Item Type</mat-label>
+    <input matInput formControlName="itemType" />
+    <mat-error *ngIf="categoryForm.get('itemType')!.hasError('required')">
+      Item Type is required.
+    </mat-error>
+  </mat-form-field>
+
+  <div class="form-group">
+    <label for="files">Images:</label>
+    <img style="width: 4rem; height: 4rem;" class="img-preview" src="{{imageDisplay[0]}}" alt="">
+    <input id="images" type="file" (change)="onFileChange($event)"   accept=".png, .jpg, .jpeg"  class="form-control-file" />
+  </div>
+
+  <!-- <mat-form-field appearance="fill">
+    <mat-label>Item Name</mat-label>
+    <input matInput formControlName="itemName" />
+    <mat-error *ngIf="categoryForm.get('itemName')!.hasError('required')">
+      Item Name is required.
+    </mat-error>
+  </mat-form-field> -->
+
+  <div class="button" mat-dialog-actions>
+    <button class="b1" mat-button (click)="onCancel()">Cancel</button>
+    <button class="b2" mat-raised-button color="primary" type="submit">
+      {{ isEditing ? 'Save Changes' : 'Add Category' }}
+    </button>
+  </div>
+</form>

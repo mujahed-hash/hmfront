@@ -1,0 +1,115 @@
+.order-main{
+    width:100%;
+    display:grid;
+    justify-items: center;
+    height: 100%;
+    margin-left: -10rem;
+    padding-left: 0;
+
+}
+.order-sub{
+    width:max-content;
+    height: max-content;
+    
+}
+.order-details-container {
+    // max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  h2, h3 {
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .order-summary {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .order-info, .user-info, .shipping-info {
+    width: 48%;
+  }
+  
+  p {
+    margin: 5px 0;
+    color: #555;
+  }
+  
+  .order-items {
+    margin-top: 20px;
+  }
+  
+  .item {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+ 
+  }
+  
+  .total-price {
+    margin-top: 20px;
+    text-align: right;
+    font-size: 1.2em;
+    color: #2657C1;
+    font-weight: bold;
+  }
+  
+  .download-pdf-button{
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #2657C1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .download-pdf-button:hover {
+    background-color: #1d4b8b;
+  }
+  
+  @media print {
+    * {
+      margin: 0;
+      padding: 0;
+      border: none;
+      box-shadow: none;
+      overflow: hidden;
+    }
+  
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .print-button {
+        display: none;
+      }
+  }
+  @media screen and (max-width:1000px) {
+    .order-main{
+        margin-left: 0;
+        // width: 80%;
+     }
+  }
+  @media screen and (orientation:portrait) {
+     .order-main{
+        margin-left: 0;
+        // width: 80%;
+     }
+     .order-sub{
+        width: 90%;
+        font-size: small;
+     }
+  }
+  
+//   @media screen and (max-width:) {
+    
+//   }

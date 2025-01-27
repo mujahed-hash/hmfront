@@ -1,0 +1,52 @@
+<div class="search-main">
+    <div class="search-container">
+        <input
+          type="text"
+          [(ngModel)]="query"
+          placeholder="Search products..."
+          (keyup.enter)="onSearch()"
+          class="search-input"
+        /><button (click)="onSearch()" class="search-button">Search</button>
+      </div>
+      
+      <!-- Display search results -->
+      <div *ngIf="products.length > 0; else noResults">
+        <ul class="product-list">
+          <li *ngFor="let product of products" class="product-item">
+            <h3>{{ product.prodName }}</h3>
+            <div class="img">
+                <img [routerLink]="['/buyer/item/view', product.customIdentifer]"  [src]="product.images[0]" alt="{{ product.prodName }}" />
+  
+              </div>
+            <!-- <p>{{ product.prodDesc }}</p> -->
+            <p>Price: {{ product.prodPrice | currency: 'INR' }}</p>
+            <p>{{product.prodPrice | currency:'INR'}}/{{product.prodSize}}</p>
+            <!-- <div class="count" style="">
+              <p-inputNumber [(ngModel)]="quantities[product._id]" name="quantity" inputId="minmax" mode="decimal" [showButtons]="true" [min]="1" [max]="product.countInStock"></p-inputNumber>
+          </div> -->
+            <p *ngIf="product.inCart" class="in-cart">In Cart</p>
+            <p *ngIf="!product.inCart" class="not-in-cart">Not in Cart</p>
+            <button  [routerLink]="['/buyer/item/view', product.customIdentifer]" style="width: max-content;display: flex; justify-content: center; vertical-align: middle; align-items: center;  border: none; border-radius: 5px; background-color: #37B7C3; color: white; padding: 2px 8px;">   
+                <mat-icon style="color:white; font-size: 15px; position: relative; top:0.35rem">visibility</mat-icon>
+               View</button>
+          </li>
+        </ul>
+      
+        <!-- Pagination Controls -->
+        <div class="pagination">
+          <button (click)="prevPage()" [disabled]="start === 0">Previous</button>
+          <button
+            (click)="nextPage()"
+            [disabled]="start + limit >= totalProducts"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+      
+      <!-- Template if no results are found -->
+      <ng-template #noResults>
+        <p *ngIf="searchPerformed">No products found.</p>
+     </ng-template>
+      
+</div>

@@ -1,0 +1,55 @@
+<!-- requirement-detail.component.html -->
+<div *ngIf="requirement" class="container my-4">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="text-center">Requirement Details</h2>
+      <p>Details: </p>
+      <p style="max-width: 85%;">{{ requirement.reqDetails }}</p>
+    </div>
+  </div>
+
+  <div *ngIf="requirement.hasPosted != true" class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+      <h3 class="text-center mt-4">Post Product Information</h3>
+      <form (ngSubmit)="postProductInfo()">
+        <div class="form-group">
+          <label for="name">Product Details:</label>
+          <textarea id="name" class="form-control" [(ngModel)]="name" name="name" required>
+            </textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="price">Price:</label>
+          <input id="price" type="number" class="form-control" [(ngModel)]="price" name="price" required>
+        </div>
+
+        <div *ngIf="imagePreview" class="my-3 text-center">
+          <h4>Image Preview:</h4>
+          <img [src]="imagePreview" alt="Image Preview" class="img-fluid" style="max-width: 100px; height: auto;"/>
+        </div>
+
+        <div class="form-group">
+          <label for="image">Product Image:</label>
+          <input id="image" type="file" class="form-control"   accept=".png, .jpg, .jpeg"  (change)="onFileChange($event)" required>
+        </div>
+
+        <div class="text-center mt-4">
+          <button [disabled]="!isFormValid()"type="submit" class="btn btn-primary">Submit Product Info</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div *ngIf="requirement.hasPosted" class="row mt-4">
+    <div class="col-12 col-md-8 offset-md-2">
+      <h3 class="text-center">Posted Product Information</h3>
+      <p><strong>Name:</strong> {{ SubmittedProd.name }}</p>
+      <p><strong>Price:</strong> {{ SubmittedProd.price }}</p>
+      <p><strong>Status:</strong> {{ SubmittedProd.status }}</p>
+
+      <div class="text-center my-3">
+        <img [src]="SubmittedProd.image" alt="Product Image" class="img-fluid" style="max-width: 100px; height: auto;">
+      </div>
+    </div>
+  </div>
+</div>
