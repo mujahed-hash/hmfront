@@ -15,6 +15,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { UsersrequestsComponent } from './usersrequests/usersrequests.component';
 import { ServerMonitorComponent } from './server-monitor/server-monitor.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -35,8 +39,12 @@ import { ServerMonitorComponent } from './server-monitor/server-monitor.componen
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
+    MatCardModule,
+    MatButtonModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule
   ],
-  exports:[AEUserComponent],
+  exports: [AEUserComponent],
   providers: [NavigationService],
 
 })
