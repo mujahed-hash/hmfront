@@ -1,31 +1,120 @@
 <div class="hh">
-  <div>
-    <app-supplysearch></app-supplysearch>
+  <!-- Error State -->
+  <div *ngIf="error && products.length === 0" class="error-container">
+    <mat-icon style="color: #f44336; font-size: 48px;">error</mat-icon>
+    <p style="color: #f44336; margin-top: 16px;">{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadProducts()" style="margin-top: 16px;">
+      Retry
+    </button>
   </div>
+
+  <div *ngIf="!error">
+    <app-supplysearch></app-supplysearch>
     <p style="background-color:#EBF4F6; color:#2657C1; width:max-content; padding: 4px 8px">Items you posted for selling</p>
 
-    <div class="items">
-        <div class="item" *ngFor="let product of products">
-          <div [routerLink]="['/supplier/product/view', product.customIdentifer]" routerLinkActive="router-link-active" 
-           style="width:80%; display: flex; margin-bottom: 1rem;box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; overflow: hidden;     border-radius: 5px;
-          ">
-            <img [src]="product.images[0]" alt="{{ product.prodName }}" />
-           <div class="itemName">
-             <p>{{ product.prodName }}
-            </p>     
-            <span>{{ product.prodPrice | currency:'INR' }}
-            </span>      
-           </div>
+    <!-- View Style Controls -->
+    <div class="view-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 20px;">
+      <div class="view-style-toggle">
+        <span style="font-weight: 600; color: #1e293b; margin-right: 15px;">View:</span>
+        <button
+          *ngFor="let style of viewStyles"
+          mat-icon-button
+          [class.active]="viewStyle === style.value"
+          (click)="setViewStyle(style.value)"
+          [attr.title]="style.label"
+          [style.background-color]="viewStyle === style.value ? '#3b82f6' : '#f8fafc'"
+          [style.color]="viewStyle === style.value ? 'white' : '#64748b'"
+          [style.border-color]="viewStyle === style.value ? 'gray' : 'blue'"
+          [style.border-radius]="viewStyle === style.value ? '20px' : '20px'"
+          style="margin: 0 2px;"
+          class="view-style-toggle-btn"
+        >
+          <mat-icon>{{ style.icon }}</mat-icon>
+        </button>
+      </div>
+
+      <div class="results-info" *ngIf="products.length > 0" style="color: #64748b; font-size: 0.9rem;">
+        {{ products.length }} {{ products.length === 1 ? 'product' : 'products' }} found
+      </div>
+    </div>
+
+    <div class="items-container">
+      <div class="product-grid" [class]="getViewStyleClass()">
+        <div class="product-card" *ngFor="let product of products" [class]="getViewStyleClass()">
+          <div class="product-image-container" *ngIf="product.countInStock >= 1">
+            <img [src]="product.images[0]" [alt]="product.prodName" class="product-image" [routerLink]="['/supplier/more/product/view', product.customIdentifier]"/>
+
+            <!-- Stock Status -->
+            <div style="width:max-content;" class="stock-badge" [class.in-stock]="product.countInStock > 0" [class.out-of-stock]="product.countInStock === 0">
+              <span>{{ product.countInStock > 0 ? 'In Stock' : 'Out of Stock' }}</span>
+            </div>
           </div>
-          <!-- Add more product details here -->
+
+          <div class="product-info">
+            <h3 class="product-title">{{ product.prodName }}</h3>
+            <p class="product-price">{{ product.prodPrice | currency:'INR' }} <span *ngIf="product.prodSize">/ {{ product.prodSize }}</span></p>
+
+            <!-- Location Pills (simplified for supplier's own products, assuming 'All India' or single location is typical) -->
+            <div class="location-pills" *ngIf="product.locations">
+              <span class="location-pill all-india" *ngIf="product.locations.length === 0">
+                <mat-icon>public</mat-icon>
+                All India
+              </span>
+              <ng-container *ngIf="product.locations.length > 0">
+                <span class="location-pill" *ngFor="let location of product.locations.slice(0, 2)">
+                  {{ location.city }}
+                </span>
+                <span class="location-pill more-locations" *ngIf="product.locations.length > 2">
+                  +{{ product.locations.length - 2 }} more
+                </span>
+              </ng-container>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="product-actions">
+              <button class="edit-product-btn" [routerLink]="['/supplier/more/product/edit', product.customIdentifier]">
+                <mat-icon>edit</mat-icon>
+                Edit
+              </button>
+              <button class="view-details-btn" [routerLink]="['/supplier/more/product/view', product.customIdentifier]">
+                <mat-icon>visibility</mat-icon>
+                View Details
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-     <div *ngIf="products.length != 0" class="itm-btn">
-        <button #loadingIndicator style="" *ngIf="hasMoreProducts && !isLoading" (click)="loadProducts()" [disabled]="isLoading">
-        {{products? 'Load More': 'No items' }}
+
+      <!-- Load More Button -->
+      <div class="load-more-container" *ngIf="hasMoreProducts && !isLoading">
+        <button #loadingIndicator class="load-more-btn" (click)="loadProducts()">
+          <mat-icon>expand_more</mat-icon>
+          Load More Products
         </button>
-     </div>
-  <!-- <button *ngIf="hasMoreProducts" (click)="loadProducts()" [disabled]="isLoading">
-    Load More
-  </button> -->
+      </div>
+
+      <!-- No More Products Message -->
+      <div class="no-more-container" *ngIf="!hasMoreProducts && products.length > 0 && !isLoading">
+        <div class="no-more-message">
+          <mat-icon>check_circle</mat-icon>
+          <p>All your products loaded! You've seen everything you have posted.</p>
+        </div>
+      </div>
+
+      <!-- No Products Found -->
+      <div class="no-products-container" *ngIf="products.length === 0 && !isLoading && !error">
+        <div class="no-products-message">
+          <mat-icon>search_off</mat-icon>
+          <h3>No products posted yet</h3>
+          <p>Start by adding your first product to reach buyers!</p>
+        </div>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div class="loading-container" *ngIf="isLoading">
+        <div class="loading-spinner"></div>
+        <p>Loading your products...</p>
+      </div>
+    </div>
+  </div>
 </div>

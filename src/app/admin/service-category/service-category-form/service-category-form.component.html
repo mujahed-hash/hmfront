@@ -1,0 +1,77 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'New' }} Service Category</h2>
+
+<form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="form-container">
+      <!-- Image Upload -->
+      <div class="image-upload-section">
+        <div class="image-preview" *ngIf="imagePreview">
+          <img [src]="imagePreview" alt="Category Preview">
+          <button mat-icon-button type="button" color="warn" class="remove-image" (click)="removeImage()" matTooltip="Remove Image">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        
+        <div class="image-upload" *ngIf="!imagePreview">
+          <button mat-stroked-button type="button" color="primary" (click)="fileInput.click()">
+            <mat-icon>add_photo_alternate</mat-icon>
+            Upload Image
+          </button>
+        </div>
+        
+        <input type="file" hidden #fileInput id="categoryImage" (change)="onFileSelected($event)" accept="image/*">
+        
+        <div class="image-info" *ngIf="!imagePreview">
+          <small>Recommended size: 300x300px, Max: 5MB</small>
+        </div>
+      </div>
+      
+      <!-- Category Details -->
+      <div class="form-fields">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" required>
+          <mat-error *ngIf="categoryForm.get('name')?.errors?.['required']">Name is required</mat-error>
+          <mat-error *ngIf="categoryForm.get('name')?.errors?.['minlength']">Name must be at least 2 characters</mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="3"></textarea>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Parent Category (Optional)</mat-label>
+          <mat-select formControlName="parentCategory">
+            <mat-option [value]="">None</mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category._id">
+              {{ category.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Sort Order</mat-label>
+            <input matInput type="number" formControlName="sortOrder" min="0">
+            <mat-error *ngIf="categoryForm.get('sortOrder')?.errors?.['min']">Cannot be negative</mat-error>
+          </mat-form-field>
+          
+          <div class="status-toggle">
+            <mat-slide-toggle formControlName="isActive" color="primary">
+              {{ categoryForm.get('isActive')?.value ? 'Active' : 'Inactive' }}
+            </mat-slide-toggle>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button" [disabled]="loading">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="loading || categoryForm.invalid">
+      <mat-spinner *ngIf="loading" [diameter]="24"></mat-spinner>
+      <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Create' }}</span>
+    </button>
+  </mat-dialog-actions>
+</form>

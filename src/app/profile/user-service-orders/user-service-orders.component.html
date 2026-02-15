@@ -1,0 +1,78 @@
+<div class="user-service-orders-container">
+  <h2>My Service Orders</h2>
+  
+
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading your service orders...</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="error-message-card">
+    <mat-card>
+      <mat-card-content>
+        <p class="error-icon"><mat-icon color="warn">error_outline</mat-icon></p>
+        <p class="error-text">{{ errorMessage }}</p>
+        <button mat-raised-button color="primary" (click)="loadUserOrders()">Retry</button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!isLoading && !error && orders.length === 0" class="no-orders-message">
+    <mat-card>
+      <mat-card-content>
+        <p><mat-icon>info_outline</mat-icon></p>
+        <p>You haven't placed any service orders yet.</p>
+        <button mat-button routerLink="/all-services">Browse Services</button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!isLoading && !error && orders.length > 0" class="orders-list">
+    <mat-card *ngFor="let order of orders; let i = index" class="order-card" [style.animation-delay]="(i * 0.1) + 's'" (click)="viewOrderDetails(order.customIdentifier)">
+      <div class="order-header">
+        <img [src]="getImageUrl(order.service.images ? order.service.images[0] : undefined)" alt="Service Image" class="service-image">
+        <div class="order-info">
+          <h3>{{ order.service.serviceName }}</h3>
+          <p class="order-id">Order ID: #{{ order.customIdentifier }}</p>
+          <p class="order-date">Placed on: {{ order.date | date:'mediumDate' }}</p>
+        </div>
+      </div>
+      <mat-card-content>
+        <div class="order-details">
+          <p><span>Total Price:</span> ₹{{ order.totalPrice | number:'1.2-2' }}</p>
+          <p class="order-status" [ngClass]="getStatusClass(order.status)">
+            <span>Status:</span> <span class="status-text">{{ getDisplayStatus(order.status) }}</span>
+          </p>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary">View Details</button>
+      </mat-card-actions>
+    </mat-card>
+
+  </div>
+
+
+    <!-- Load More Button -->
+    <div *ngIf="hasMoreOrders && orders.length > 0" class="load-more-container">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="loadMoreOrders()"
+        [disabled]="isLoading"
+        class="load-more-btn">
+        <mat-icon *ngIf="!isLoading">expand_more</mat-icon>
+        <mat-icon *ngIf="isLoading">hourglass_empty</mat-icon>
+        {{ isLoading ? 'Loading Orders...' : 'Load More Orders' }}
+      </button>
+      <p class="load-more-info">
+        Showing {{ getDisplayRange().start }} - {{ getDisplayRange().end }} of {{ totalOrders }} orders
+      </p>
+    </div>
+
+    <!-- End of results message -->
+    <div *ngIf="!hasMoreOrders && orders.length > 0" class="end-message">
+      <p>No more orders to load</p>
+    </div>
+</div>

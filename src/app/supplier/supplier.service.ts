@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpClientModule, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, tap, throwError } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { baseUrl } from '../services/allurls';
 import { LocalStorageService } from '../auth/login/local-storage.service';
 import { AuthService } from '../auth/auth.service';
@@ -11,7 +12,7 @@ import { environment } from 'environments/environment.prod';
 export class SupplierService {
   baseUrl = environment.baseUrl;
 
-  constructor(private http: HttpClient, private lService:LocalStorageService, public authService: AuthService    ) {}
+  constructor(private http: HttpClient, private lService: LocalStorageService, public authService: AuthService) { }
 
 
 
@@ -38,61 +39,64 @@ export class SupplierService {
     const options = { headers: new HttpHeaders(headers) };
 
     return this.http.get<any>(`${this.baseUrl}/supplier/products/search`, { params, ...options });
-  
+
   }
 
 
-  getItems(start: number, limit: number,token:any):Observable<{ totalProducts: number, products: any[] }>{
+  getItems(start: number, limit: number, token: any): Observable<{ totalProducts: number, products: any[] }> {
     const headers = {
       Authorization: `Bearer ${token}`
     };
-  
+
     // Create an HTTP request with headers
     const options = { headers: new HttpHeaders(headers) };
-         return this.http.get<{ totalProducts: number, products: any[] }>(`${this.baseUrl}/supplier/items?start=${start}&limit=${limit}`, options);
+    return this.http.get<{ totalProducts: number, products: any[] }>(`${this.baseUrl}/supplier/items?start=${start}&limit=${limit}`, options);
   }
 
   // getProducts(start: number, limit: number, token:any): Observable<{ totalProducts: number, products: any[] }> {
   //   const headers = new HttpHeaders({
   //     'Authorization': `Bearer ${token}`
   //   });
-  
+
   //   const options = { headers: headers };
   //   return this.http.get<{ totalProducts: number, products: any[] }>(`${this.baseUrl}/products?start=${start}&limit=${limit}`, options);
   // }
   getProducts(start: number, limit: number): Observable<{ totalProducts: number, products: any[] }> {
     const token = localStorage.getItem('token');
     if (!token) {
-        console.error('Token is missing');
-        return throwError('Token is missing');
+      console.error('Token is missing');
+      return throwError(() => new Error('Token is missing'));
     }
 
     const headers = new HttpHeaders({
-        'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`
     });
 
     return this.http.get<{ totalProducts: number, products: any[] }>(
-        `${this.baseUrl}/products?start=${start}&limit=${limit}`, 
-        { headers }
+      `${this.baseUrl}/products?start=${start}&limit=${limit}`,
+      { headers }
     );
-}
-deleteProduct(productId: string, token: string): Observable<any> {
-  const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json' // Set Content-Type to application/json
-  });
+  }
+  deleteProduct(productId: string, token: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json' // Set Content-Type to application/json
+    });
 
-  // Construct the body with the productId
-  const body = { _id: productId };
+    // Construct the body with the productId
+    const body = { _id: productId };
 
-  return this.http.request<any>('DELETE', `${this.baseUrl}/product/delete`, {
-    body: body,
-    headers: headers
-  });
-}
+    return this.http.request<any>('DELETE', `${this.baseUrl}/product/delete`, {
+      body: body,
+      headers: headers
+    });
+  }
 
   getProductByCustomIdentifier(customIdentifier: string): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/product/${customIdentifier}`);
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+    });
+    return this.http.get<any>(`${this.baseUrl}/product/${customIdentifier}`, { headers });
   }
   // Method to update a product by customIdentifier
   // updateProduct(customIdentifier: string, productData: any, files: File[], token:any): Observable<any> {
@@ -110,7 +114,7 @@ deleteProduct(productId: string, token: string): Observable<any> {
   //   const headers = {
   //     Authorization: `Bearer ${token}`
   //   };
-  
+
   //   // Create an HTTP request with headers
   //   const options = { headers: new HttpHeaders(headers) };
   //   return this.http.put(`${this.baseUrl}/product/${customIdentifier}`, formData, options);
@@ -120,115 +124,125 @@ deleteProduct(productId: string, token: string): Observable<any> {
   //   const headers = new HttpHeaders({
   //     'Authorization': `Bearer ${token}`
   //   });
-  
+
   //   const options = { headers: headers };
-  
+
   //   return this.http.put<any>(`${this.baseUrl}/product/${customIdentifier}`, formData, options);
   // }
-  createProduct(productData:FormData, token:any): Observable<any>{
-        const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-  
-    const options = { headers: headers };
-    return this.http.post<any>(`${this.baseUrl}/product`, productData, options);
-  }
-  updateProduct(productData: FormData, customIdentifier: string, token:any): Observable<any> {
+  createProduct(productData: FormData, token: any): Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-  
+
+    const options = { headers: headers };
+    return this.http.post<any>(`${this.baseUrl}/product`, productData, options);
+  }
+  updateProduct(productData: FormData, customIdentifier: string, token: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
     const options = { headers: headers };
     return this.http.put<any>(`${this.baseUrl}/product/${customIdentifier}`, productData, options);
   }
-  getCategories():Observable<any[]> {
+  getCategories(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/categories`)
- }
+  }
 
- getCategory(categoryId:string):Observable<any> {
-   return this.http.get<any>(`${this.baseUrl}/${categoryId}`)
-}
-getPlacedOrders(start: number, limit: number,token:any, status?:any, ):Observable<any>{
-      const headers = new HttpHeaders({
+  getCategory(categoryId: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/${categoryId}`)
+  }
+  getPlacedOrders(start: number, limit: number, token: string, status: string = 'Pending', isServiceOrder: boolean = false): Observable<any> {
+    const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-    let params = new HttpParams()
-    .set('start', start.toString())
-    .set('limit', limit.toString());
-    const options = { headers: headers, params };
-    
-    if(this.authService.isAdmin()){
-      return this.http.get<any>(`${this.baseUrl}/admin/allorders/Pending?start=${start}&limit=${limit}`, options)
 
+    const params = new HttpParams()
+      .set('start', start.toString())
+      .set('limit', limit.toString());
+
+    const options = { headers, params };
+
+    if (isServiceOrder) {
+      // For service orders
+      const endpoint = this.authService.isAdmin()
+        ? `${this.baseUrl}/service-orders/admin/all`
+        : `${this.baseUrl}/service-orders/supplier`;
+
+      return this.http.get<any>(endpoint, options);
     }
-    else{
-      return this.http.get<any>(`${this.baseUrl}/supplier/orders/pending?start=${start}&limit=${limit}`, options)
 
-    }
-}
-getOrdersCount(token:any):Observable<any>{
-  const headers = new HttpHeaders({
-  'Authorization': `Bearer ${token}`
-});
+    // For product orders, use existing logic
+    const endpoint = this.authService.isAdmin()
+      ? `${this.baseUrl}/admin/allorders/${status}`
+      : `${this.baseUrl}/supplier/orders/${status.toLowerCase()}`;
 
-const options = { headers: headers };
+    return this.http.get<any>(endpoint, options);
+  }
 
-  return this.http.get<any>(`${this.baseUrl}/supplier/orderscount`, options)
-
-
-}
-getProductsCount(token:any):Observable<any>{
-  const headers = new HttpHeaders({
-  'Authorization': `Bearer ${token}`
-});
-
-const options = { headers: headers };
-
-  return this.http.get<any>(`${this.baseUrl}/supplier/productscount`, options)
-
-
-}
-getDeliveredOrders(token:any):Observable<any>{
-      const headers = new HttpHeaders({
+  getOrdersCount(token: any): Observable<any> {
+    const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-  
+
     const options = { headers: headers };
-    if(this.authService.isAdmin()){
+
+    return this.http.get<any>(`${this.baseUrl}/supplier/orderscount`, options)
+
+
+  }
+  getProductsCount(token: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const options = { headers: headers };
+
+    return this.http.get<any>(`${this.baseUrl}/supplier/productscount`, options)
+
+
+  }
+  getDeliveredOrders(token: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const options = { headers: headers };
+    if (this.authService.isAdmin()) {
       return this.http.get<any>(`${this.baseUrl}/admin/allorders/Delivered`, options)
     }
-  return this.http.get<any>(`${this.baseUrl}/supplier/orders/delivered`, options)
-}
-getApprovedOrders(token:any):Observable<any>{
-      const headers = new HttpHeaders({
+    return this.http.get<any>(`${this.baseUrl}/supplier/orders/delivered`, options)
+  }
+  getApprovedOrders(token: any): Observable<any> {
+    const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-  
+
     const options = { headers: headers };
-    if(this.authService.isAdmin()){
+    if (this.authService.isAdmin()) {
       return this.http.get<any>(`${this.baseUrl}/admin/allorders/Approved`, options)
 
     }
-  return this.http.get<any>(`${this.baseUrl}/supplier/orders/approved`, options)
-} 
-getCancelledOrders(token:any):Observable<any>{
-  const headers = new HttpHeaders({
-  'Authorization': `Bearer ${token}`
-});
+    return this.http.get<any>(`${this.baseUrl}/supplier/orders/approved`, options)
+  }
+  getCancelledOrders(token: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
 
-const options = { headers: headers };
-if(this.authService.isAdmin()){
-  return this.http.get<any>(`${this.baseUrl}/admin/allorders/Cancelled`, options)
+    const options = { headers: headers };
+    if (this.authService.isAdmin()) {
+      return this.http.get<any>(`${this.baseUrl}/admin/allorders/Cancelled`, options)
 
-}
-return this.http.get<any>(`${this.baseUrl}/supplier/orders/cancelled`, options)
-} 
-updateOrderStatus(orderId: string,userId: string, newStatus: string, token:any): Observable<any> {
-  const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`
-  });
+    }
+    return this.http.get<any>(`${this.baseUrl}/supplier/orders/cancelled`, options)
+  }
+  updateOrderStatus(orderId: string, userId: string, newStatus: string, token: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
 
-  const options = { headers: headers };
-  return this.http.put(`${this.baseUrl}/supplier/orders/${orderId}/status`, {userId, newStatus }, options);
-}
+    const options = { headers: headers };
+    return this.http.put(`${this.baseUrl}/supplier/orders/${orderId}/status`, { userId, newStatus }, options);
+  }
 }

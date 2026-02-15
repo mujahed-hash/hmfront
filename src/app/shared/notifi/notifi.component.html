@@ -1,30 +1,92 @@
-<div *ngIf="notifications && !adminView" class="notifi-main">
-    <div *ngFor="let noti of notifications" class="notification" [ngClass]="{'unread': !noti.isRead}">
-        <span class="icon">🔔</span>
-        <div class="content"  [routerLink]="getNotificationLink(noti)" *ngIf="noti">
-       <!-- {{ noti?.message }} -->
-   
-          <div class="message">{{ noti.message }}</div>
-          <div class="date">{{ noti.date | date: 'mediumDate' }}</div>
-        </div>
-        <div class="status" [ngClass]="{'unread-status': !noti.isRead, 'read-status': noti.isRead}">
-          {{ noti.isRead ? 'Read' : 'Unread' }}
-        </div>
+<div class="notifications-page-container">
+
+  <!-- Header -->
+  <div class="notifications-header">
+    <div class="header-content">
+      <h1>Notifications</h1>
+      <!-- <p class="subtitle">Stay updated with your latest activities</p> -->
+    </div>
+    <div class="header-actions">
+      <button class="mark-read-btn" (click)="markAllAsRead()" *ngIf="unreadCount > 0 || true">
+        <mat-icon>done_all</mat-icon>
+        <span>Mark all read</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="(isLoading && !adminView) || (isAdminLoading && adminView)" class="loading-state">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading updates...</p>
+  </div>
+
+  <!-- Notifications List (Regular) -->
+  <div class="notifications-list" *ngIf="notifications && !adminView && !isLoading" #notificationList>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="notifications.length === 0">
+      <div class="icon-circle">
+        <mat-icon>notifications_off</mat-icon>
       </div>
-      
-</div>
-<div *ngIf="adminNotofication && adminView" class="notifi-main">
-  <div *ngFor="let noti of adminNotofication" class="notification" [ngClass]="{'unread': !noti.isRead}">
-      <span class="icon">🔔</span>
-      <div class="content"  [routerLink]="getNotificationLink(noti)" *ngIf="noti">
-     <!-- {{ noti?.message }} -->
- 
-        <div class="message">{{ noti.message }}</div>
-        <div class="date">{{ noti.date | date: 'mediumDate' }}</div>
+      <h3>No notifications yet</h3>
+      <p>We'll let you know when something important happens.</p>
+    </div>
+
+    <!-- List Items -->
+    <div *ngFor="let noti of notifications" class="notification-card" [class.unread]="!noti.isRead"
+      [routerLink]="getNotificationLink(noti)">
+      <div class="card-indicator"></div>
+      <div class="card-icon">
+        <mat-icon>notifications</mat-icon>
       </div>
-      <div class="status" [ngClass]="{'unread-status': !noti.isRead, 'read-status': noti.isRead}">
-        {{ noti.isRead ? 'Read' : 'Unread' }}
+      <div class="card-content">
+        <p class="message">{{ noti.message }}</p>
+        <span class="time">{{ noti.date | date: 'mediumDate' }} • {{ noti.date | date: 'shortTime' }}</span>
+      </div>
+      <div class="card-actions">
+        <!-- Optional: Individual actions like delete or mark read could go here -->
       </div>
     </div>
-    
+
+    <!-- Load More -->
+    <div class="load-more-wrapper" *ngIf="hasMoreNotifications">
+      <button class="btn-load-more" (click)="loadNotifications()" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Load Older Notifications</span>
+        <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Notifications List (Admin) -->
+  <div class="notifications-list" *ngIf="adminNotofication && adminView && !isAdminLoading">
+
+    <div class="empty-state" *ngIf="adminNotofication.length === 0">
+      <div class="icon-circle">
+        <mat-icon>notifications_off</mat-icon>
+      </div>
+      <h3>No admin notifications</h3>
+    </div>
+
+    <div *ngFor="let noti of adminNotofication" class="notification-card" [class.unread]="!noti.isRead"
+      [routerLink]="getNotificationLink(noti)">
+      <div class="card-indicator"></div>
+      <div class="card-icon">
+        <mat-icon>admin_panel_settings</mat-icon>
+      </div>
+      <div class="card-content">
+        <p class="message">{{ noti.message }}</p>
+        <span class="time">{{ noti.date | date: 'mediumDate' }} • {{ noti.date | date: 'shortTime' }}</span>
+      </div>
+    </div>
+
+    <div class="load-more-wrapper" *ngIf="hasMoreAdminNotifications">
+      <button class="btn-load-more" (click)="loadAdminNotifications()" [disabled]="isAdminLoading">
+        <span *ngIf="!isAdminLoading">Load Older Notifications</span>
+        <mat-spinner diameter="20" *ngIf="isAdminLoading"></mat-spinner>
+      </button>
+    </div>
+
+  </div>
+
 </div>

@@ -1,0 +1,13 @@
+<div >
+    <h2>Browse By Categories</h2>
+    <div   class="categories-container">
+      <div  class="categories">
+        <div  *ngFor="let cat of categories">
+          <div class="category" [routerLink]="['/buyer/item/', cat.customIdentifer]">
+              <img src="{{cat.image[0]}}" alt="Category 1">
+              <span style="font-size: small;">{{cat.itemType}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

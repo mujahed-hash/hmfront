@@ -1,0 +1,263 @@
+<div class="service-orders-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>Service Orders Management</h1>
+    <p>Manage all service orders from customers</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-progress-spinner diameter="50" mode="indeterminate" color="primary"></mat-progress-spinner>
+    <p>Loading service orders...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <h3>Error Loading Service Orders</h3>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadServiceOrders()">
+      <mat-icon>refresh</mat-icon>
+      Retry
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div *ngIf="!isLoading && !error" class="stats-container">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon total">
+          <mat-icon>receipt_long</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ stats.totalOrders || 0 }}</h3>
+          <p>Total Orders</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon pending">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ stats.pendingOrders || 0 }}</h3>
+          <p>Pending</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon in-progress">
+          <mat-icon>sync</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ stats.inProgressOrders || 0 }}</h3>
+          <p>In Progress</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon completed">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ stats.completedOrders || 0 }}</h3>
+          <p>Completed</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon revenue">
+          <mat-icon>currency_rupee</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>₹{{ stats.totalRevenue || 0 }}</h3>
+          <p>Total Revenue</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Filters -->
+  <div *ngIf="!isLoading && !error" class="filters-container">
+    <mat-card class="filters-card">
+      <mat-card-header>
+        <mat-card-title>Filters</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="filters-grid">
+          <!-- Search -->
+          <mat-form-field style="margin-top: 1.5rem;" appearance="outline" class="filter-field">
+            <mat-label>Search orders...</mat-label>
+            <input matInput
+                   #searchInput
+                   [(ngModel)]="searchTerm"
+                   (input)="onSearchInputChange()"
+                   (keydown.enter)="onEnterKey()"
+                   (focus)="onSearchInputFocus()"
+                   (blur)="onSearchInputBlur()"
+                   placeholder="Order ID, customer name, email, phone"
+                   autocomplete="off">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+               <!-- Status Filter -->
+               <app-custom-select
+               [options]="statuses"
+               [(ngModel)]="selectedStatus"
+               (selectionChange)="onFilterChange()"
+               label="Status"
+             ></app-custom-select>
+   
+             <!-- Date From -->
+             <app-custom-datepicker
+               label="Date From"
+               [(ngModel)]="dateFrom"
+               (dateChange)="onFilterChange()"
+             ></app-custom-datepicker>
+   
+             <!-- Date To -->
+             <app-custom-datepicker
+               label="Date To"
+               [(ngModel)]="dateTo"
+               (dateChange)="onFilterChange()"
+             ></app-custom-datepicker>
+   
+             <!-- Sort By -->
+             <app-custom-select
+               [options]="sortOptions"
+               [(ngModel)]="sortBy"
+               (selectionChange)="onFilterChange()"
+               label="Sort By"
+             ></app-custom-select>
+   
+             <!-- Sort Order -->
+             <app-custom-select
+               [options]="[{ value: 'desc', label: 'Descending' }, { value: 'asc', label: 'Ascending' }]"
+               [(ngModel)]="sortOrder"
+               (selectionChange)="onFilterChange()"
+               label="Sort Order"
+             ></app-custom-select>
+
+          <!-- Clear Filters -->
+          <button mat-stroked-button (click)="clearFilters()" class="clear-filters-btn">
+            <mat-icon>clear</mat-icon>
+            Clear Filters
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Results Info -->
+  <div *ngIf="!isLoading && !error && serviceOrders.length > 0" class="results-info">
+    <p>Showing {{ getDisplayRange().start }} - {{ getDisplayRange().end }} of {{ totalOrders }} service orders</p>
+  </div>
+
+  <!-- Orders List -->
+  <div *ngIf="!isLoading && !error" class="orders-container">
+    <div *ngIf="serviceOrders.length === 0" class="no-orders">
+      <mat-icon>search_off</mat-icon>
+      <h3>No service orders found</h3>
+      <p>Try adjusting your filters or search terms</p>
+      <button mat-raised-button color="primary" (click)="clearFilters()">
+        Clear Filters
+      </button>
+    </div>
+
+    <div *ngIf="serviceOrders.length > 0" class="orders-list">
+      <mat-card *ngFor="let order of serviceOrders" class="order-card">
+        <mat-card-header>
+          <div mat-card-avatar class="order-avatar">
+            <mat-icon>receipt</mat-icon>
+          </div>
+          <mat-card-title>{{ order.customIdentifier }}</mat-card-title>
+          <mat-card-subtitle>{{ formatDate(order.date) }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="order-details">
+            <div class="detail-row">
+              <span class="label">Customer:</span>
+              <span class="value">{{ order.user?.name || 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Service:</span>
+              <span class="value">{{ order.service?.serviceName || 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Supplier:</span>
+              <span class="value">{{ order.supplier?.name || 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Total Price:</span>
+              <span class="value price">₹{{ order.totalPrice }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Status:</span>
+              <mat-chip [class]="getStatusClass(order.status)">
+                {{ capitalizeFirst(order.status) }}
+              </mat-chip>
+            </div>
+            <div class="detail-row" *ngIf="order.cancellationReason">
+              <span class="label">Cancellation Reason:</span>
+              <span class="value">{{ order.cancellationReason }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-button color="primary" (click)="viewOrderDetails(order.customIdentifier)">
+            <mat-icon>visibility</mat-icon>
+            View Details
+          </button>
+          <app-custom-status-selector
+            [statuses]="statusOptions"
+            [currentStatus]="order.status"
+            (statusChange)="updateOrderStatus(order, $event)"
+            placeholder="Update Status"
+          ></app-custom-status-selector>
+          <button mat-button color="warn" (click)="deleteOrder(order)">
+            <mat-icon>delete</mat-icon>
+            Delete
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Load More Button (Manual Pagination) -->
+  <div *ngIf="hasMoreOrders && serviceOrders.length > 0" class="load-more-container">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="loadServiceOrders(false)"
+      [disabled]="isLoading"
+      class="load-more-btn">
+      <mat-icon *ngIf="!isLoading">expand_more</mat-icon>
+      <mat-icon *ngIf="isLoading">hourglass_empty</mat-icon>
+      {{ isLoading ? 'Loading Orders...' : 'Load More Orders' }}
+    </button>
+    <p class="load-more-info">
+      Showing {{ getDisplayRange().start }} - {{ getDisplayRange().end }} of {{ totalOrders }} orders
+    </p>
+  </div>
+
+  <!-- End of results message -->
+  <div *ngIf="!hasMoreOrders && serviceOrders.length > 0" class="end-message">
+    <p>No more orders to load</p>
+  </div>
+
+  <!-- Loading indicator for initial load -->
+  <div *ngIf="isLoading && serviceOrders.length === 0" class="loading-indicator">
+    <mat-progress-spinner diameter="50" mode="indeterminate"></mat-progress-spinner>
+    <p>Loading orders...</p>
+  </div>
+</div>

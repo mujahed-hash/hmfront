@@ -1,0 +1,176 @@
+<!-- Loading State -->
+<div *ngIf="isLoading" class="loading-container">
+  <mat-progress-spinner diameter="50" mode="indeterminate" color="primary"></mat-progress-spinner>
+  <p>Loading services...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error" class="error-container">
+  <mat-icon color="warn">error_outline</mat-icon>
+  <h3>Error Loading Services</h3>
+  <p>{{ errorMessage }}</p>
+  <button mat-raised-button color="primary" (click)="retryLoading()">
+    <mat-icon>refresh</mat-icon>
+    Retry
+  </button>
+</div>
+
+<!-- Services List View -->
+<div *ngIf="!isLoading" class="services-container">
+  <div class="header">
+    <h1>All Services</h1>
+    <p>Discover services from verified suppliers</p>
+  </div>
+
+  <!-- Filters Section -->
+  <mat-card class="filters-card">
+    <mat-card-header>
+      <mat-card-title>Filters</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="filters-grid">
+        <!-- Search -->
+        <div class="search-container">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search Services</mat-label>
+            <input matInput
+                   [(ngModel)]="searchTerm"
+                   (keyup.enter)="onSearch()"
+                   (ngModelChange)="onQueryChange()"
+                   placeholder="Service name, description, or supplier">
+            <button mat-icon-button matSuffix (click)="onSearch()" class="search-button">
+              <mat-icon>search</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="filter-field">
+          <app-custom-category-selector
+            [categories]="categories"
+            [formControl]="categoryControl"
+            placeholder="Select categories"
+            [showAllOption]="true"
+            allOptionText="All Categories"
+            [searchable]="true"
+            [showIcons]="true"
+            [multiple]="true"
+            [maxSelections]="3"
+            [maxHeight]="getMaxHeight()"
+            (selectionChange)="onCategoryChange($event)">
+          </app-custom-category-selector>
+        </div>
+
+        <!-- Region Filter -->
+        <div class="filter-field">
+          <app-custom-regions-selector
+            [regions]="regions"
+            [formControl]="regionControl"
+            placeholder="Select cities or choose All India"
+            [showAllOption]="true"
+            allOptionText="All India"
+            [searchable]="true"
+            [multiple]="true"
+            [maxSelections]="5"
+            [maxHeight]="getMaxHeight()"
+            (selectionChange)="onRegionChange($event)">
+          </app-custom-regions-selector>
+        </div>
+
+        <!-- Clear Filters -->
+        <button mat-icon-button (click)="clearFilters()" class="clear-filters-btn" matTooltip="Clear all filters">
+          <mat-icon>clear_all</mat-icon>
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Results Info -->
+  <div class="results-info">
+    <p *ngIf="!searchPerformed">Showing {{ services.length }} of {{ totalServices }} services</p>
+    <p *ngIf="searchPerformed && searchTerm">Search results for "{{ searchTerm }}" - {{ services.length }} of {{ totalServices }} services</p>
+    <p *ngIf="searchPerformed && !searchTerm">No search term entered</p>
+  </div>
+
+  <!-- Services Grid -->
+  <div class="services-grid" *ngIf="services.length > 0">
+    <div class="service-card" *ngFor="let service of services; let i = index" (click)="viewServiceDetail(service)" [style.animation-delay]="(i * 0.05) + 's'">
+      <div>
+
+      <div class="card-image-container">
+        <img *ngIf="service.images && service.images.length > 0" 
+             [src]="getImageUrl(service.images[0])" 
+             [alt]="service.serviceName"
+             class="service-image"
+             loading="lazy"
+             (error)="handleImageError($event)">
+        <div *ngIf="!service.images || service.images.length === 0" class="no-image">
+          <mat-icon>image</mat-icon>
+          <span>No Image</span>
+        </div>
+      </div>
+
+      <mat-card-header>
+        <mat-card-title>{{ service.serviceName }}</mat-card-title>
+        <mat-card-subtitle>{{ service.user?.name }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p class="service-description">{{ service.serviceDesc | slice:0:100 }}{{ service.serviceDesc.length > 100 ? '...' : '' }}</p>
+        
+        <div class="service-meta">
+          <div class="price">
+            <mat-icon>currency_rupee</mat-icon>
+            <span>{{ service.price }}</span>
+          </div>
+        </div>
+
+        <mat-chip-set class="service-chips">
+          <mat-chip *ngIf="service.category">{{ service.category.name }}</mat-chip>
+          <mat-chip *ngIf="service.availableRegions && service.availableRegions.length === 0">All India</mat-chip>
+          <mat-chip *ngIf="service.availableRegions && service.availableRegions.length > 0">
+            {{ service.availableRegions[0] }}{{ service.availableRegions.length > 1 ? ' +' + (service.availableRegions.length - 1) + ' more' : '' }}
+          </mat-chip>
+        </mat-chip-set>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="viewServiceDetail(service); $event.stopPropagation()">
+          <mat-icon>visibility</mat-icon>
+          View Details
+        </button>
+        <!-- <button mat-button (click)="contactSupplier(service); $event.stopPropagation()">
+          <mat-icon>contact_phone</mat-icon>
+          Contact
+        </button> -->
+      </mat-card-actions>
+    </div>
+  </div>
+  </div>
+  <!-- No Services Message -->
+  <div class="no-services" *ngIf="services.length === 0 && !isLoading">
+    <p>No services found.</p>
+  </div>
+
+  <!-- Load More Button -->
+  <div *ngIf="hasMoreServices" class="load-more-container">
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="loadMoreServices()"
+      [disabled]="isLoading"
+      class="load-more-btn">
+      <mat-icon *ngIf="!isLoading">expand_more</mat-icon>
+      <mat-icon *ngIf="isLoading">hourglass_empty</mat-icon>
+      {{ isLoading ? 'Loading Services...' : 'Load More Services' }}
+    </button>
+    <p class="load-more-info">
+      Showing {{ services.length }} of {{ totalServices }} services
+    </p>
+  </div>
+
+  <!-- End of Results Message -->
+  <div *ngIf="!hasMoreServices && services.length > 0" class="end-message">
+    <p>No more services to load</p>
+  </div>
+</div>

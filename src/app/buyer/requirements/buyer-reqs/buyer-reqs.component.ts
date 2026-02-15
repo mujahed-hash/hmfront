@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LocalStorageService } from 'src/app/auth/login/local-storage.service';
 import { AllService } from 'src/app/services/all.service';
-import { Subject, takeUntil } from 'rxjs';
-
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 
 @Component({

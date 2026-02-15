@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AdminService } from '../admin.service';
 import { MatDialog } from '@angular/material/dialog';
 import { PEcategoriesComponent } from '../pecategories/pecategories.component';
-import { Subject, takeUntil } from 'rxjs';
-
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-getcategories',
@@ -54,9 +54,9 @@ export class GetcategoriesComponent implements OnInit {
     });
   }
 
-  deleteCategory(id: string): void {
+  deleteCategory(id: any, token:any): void {
     if (this.token && confirm('Are you sure you want to delete this category?')) {
-      this.userService.deleteCategory({ id }).pipe(takeUntil(this.destroy$))
+      this.userService.deleteCategory(id, token ).pipe(takeUntil(this.destroy$))
 .subscribe(
         () => {
           alert('Category deleted successfully');

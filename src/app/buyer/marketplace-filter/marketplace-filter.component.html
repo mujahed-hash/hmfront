@@ -1,0 +1,268 @@
+<div class="marketplace-filter">
+  <!-- Filter Header -->
+  <div class="filter-header">
+    <div class="filter-title">
+      <mat-icon>filter_list</mat-icon>
+      <h3>Filters</h3>
+      <span class="filter-count" *ngIf="activeFilterCount > 0">({{activeFilterCount}})</span>
+    </div>
+    <div class="header-actions">
+      <button class="done-btn" (click)="closeFilterPanel()">
+        <mat-icon>check</mat-icon>
+        Done
+      </button>
+      <button class="clear-all-btn" (click)="clearAllFilters(); $event.stopPropagation()">
+        <mat-icon>clear_all</mat-icon>
+        {{ activeFilterCount > 0 ? 'Clear All' : 'Reset Filters' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Selected Filters as Chips -->
+  <div class="selected-filters" *ngIf="activeFilterCount > 0">
+    <!-- All India filter -->
+    <div class="filter-chip" *ngIf="isAllIndiaSelected">
+      <mat-icon>public</mat-icon>
+      All India
+      <mat-icon (click)="toggleAllIndia()">close</mat-icon>
+    </div>
+
+    <!-- City filters -->
+    <div class="filter-chip" *ngFor="let cityCode of selectedCities">
+      {{ getCityName(cityCode) }}
+      <mat-icon (click)="removeCity(cityCode)">close</mat-icon>
+    </div>
+
+    <!-- Category filters -->
+    <div class="filter-chip" *ngFor="let categoryId of selectedCategories">
+      {{ getCategoryName(categoryId) }}
+      <mat-icon (click)="removeCategory(categoryId)">close</mat-icon>
+    </div>
+
+    <!-- Condition filters -->
+    <div class="filter-chip" *ngFor="let condition of selectedConditions">
+      {{ condition }}
+      <mat-icon (click)="removeCondition(condition)">close</mat-icon>
+    </div>
+
+    <!-- Brand filters -->
+    <div class="filter-chip" *ngFor="let brand of selectedBrands">
+      {{ brand }}
+      <mat-icon (click)="removeBrand(brand)">close</mat-icon>
+    </div>
+
+    <!-- Business Type filters -->
+    <div class="filter-chip" *ngFor="let type of selectedBusinessTypes">
+      {{ type }}
+      <mat-icon (click)="removeBusinessType(type)">close</mat-icon>
+    </div>
+
+    <!-- Price range filter -->
+    <div class="filter-chip" *ngIf="minPrice !== null || maxPrice !== null">
+      <span *ngIf="minPrice !== null && maxPrice !== null">₹{{ minPrice }} - ₹{{ maxPrice }}</span>
+      <span *ngIf="minPrice !== null && maxPrice === null">₹{{ minPrice }}+</span>
+      <span *ngIf="minPrice === null && maxPrice !== null">Up to ₹{{ maxPrice }}</span>
+      <mat-icon (click)="clearPriceFilters()">close</mat-icon>
+    </div>
+
+    <!-- Search query filter -->
+    <div class="filter-chip" *ngIf="searchQuery.trim() !== ''">
+      Search: "{{ searchQuery }}"
+      <mat-icon (click)="clearSearchQuery()">close</mat-icon>
+    </div>
+  </div>
+
+  <!-- Location Filter -->
+  <div class="filter-section">
+    <div class="filter-section-header" (click)="showLocationFilter = !showLocationFilter">
+      <div class="section-title">
+        <mat-icon>location_on</mat-icon>
+        <span>Location</span>
+        <span class="selection-count" *ngIf="isAllIndiaSelected || selectedCities.size > 0">
+          ({{isAllIndiaSelected ? 1 : selectedCities.size}})
+        </span>
+      </div>
+      <mat-icon class="toggle-icon">{{ showLocationFilter ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+    
+    <div class="filter-section-content" *ngIf="showLocationFilter">
+      <!-- City Search -->
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input 
+          type="text" 
+          placeholder="Search cities..." 
+          [(ngModel)]="citySearchQuery"
+          (input)="searchCities()">
+      </div>
+
+      <!-- All India Option -->
+      <div class="option-item all-india-option">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            [checked]="isAllIndiaSelected"
+            (change)="toggleAllIndia()">
+          <span class="checkbox-custom"></span>
+          <span class="option-text">
+            <!-- <mat-icon>public</mat-icon> -->
+            All India
+          </span>
+        </label>
+      </div>
+
+      <!-- Cities List -->
+      <div class="options-list">
+        <div class="option-item" *ngFor="let city of filteredCities.slice(0, 20)">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              [checked]="selectedCities.has(city.code)"
+              (change)="toggleCity(city.code)">
+            <span class="checkbox-custom"></span>
+            <span class="option-text">{{city.name}}, {{city.stateName}}</span>
+          </label>
+        </div>
+        <p class="no-results" *ngIf="filteredCities.length === 0 && !isAllIndiaSelected">No cities found</p>
+        <p class="show-more-hint" *ngIf="filteredCities.length > 20">
+          Showing first 20 cities. Use search to find more.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Price Range Filter -->
+  <div class="filter-section">
+    <div class="filter-section-header" (click)="showPriceFilter = !showPriceFilter">
+      <div class="section-title">
+        <mat-icon>currency_rupee</mat-icon>
+        <span>Price Range</span>
+      </div>
+      <mat-icon class="toggle-icon">{{ showPriceFilter ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+    
+    <div class="filter-section-content" *ngIf="showPriceFilter">
+      <div class="price-inputs">
+        <div class="price-input-group">
+          <label>Min Price</label>
+          <input 
+            type="number" 
+            placeholder="₹ 0" 
+            [(ngModel)]="minPrice"
+            (input)="onPriceChange()"
+            min="0">
+        </div>
+        <span class="price-separator">-</span>
+        <div class="price-input-group">
+          <label>Max Price</label>
+          <input 
+            type="number" 
+            placeholder="₹ Any" 
+            [(ngModel)]="maxPrice"
+            (input)="onPriceChange()"
+            min="0">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Condition Filter -->
+  <div class="filter-section">
+    <div class="filter-section-header" (click)="showConditionFilter = !showConditionFilter">
+      <div class="section-title">
+        <mat-icon>verified</mat-icon>
+        <span>Condition</span>
+        <span class="selection-count" *ngIf="selectedConditions.size > 0">({{selectedConditions.size}})</span>
+      </div>
+      <mat-icon class="toggle-icon">{{ showConditionFilter ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+    
+    <div class="filter-section-content" *ngIf="showConditionFilter">
+      <div class="options-list">
+        <div class="option-item" *ngFor="let option of conditionOptions">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              [checked]="selectedConditions.has(option.value)"
+              (change)="toggleCondition(option.value)">
+            <span class="checkbox-custom"></span>
+            <span class="option-text">{{option.label}}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Business Type Filter -->
+  <div class="filter-section">
+    <div class="filter-section-header" (click)="showBusinessTypeFilter = !showBusinessTypeFilter">
+      <div class="section-title">
+        <mat-icon>business</mat-icon>
+        <span>Business Type</span>
+        <span class="selection-count" *ngIf="selectedBusinessTypes.size > 0">({{selectedBusinessTypes.size}})</span>
+      </div>
+      <mat-icon class="toggle-icon">{{ showBusinessTypeFilter ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+    
+    <div class="filter-section-content" *ngIf="showBusinessTypeFilter">
+      <div class="options-list">
+        <div class="option-item" *ngFor="let option of businessTypeOptions">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              [checked]="selectedBusinessTypes.has(option.value)"
+              (change)="toggleBusinessType(option.value)">
+            <span class="checkbox-custom"></span>
+            <span class="option-text">{{option.label}}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sort Options -->
+  <div class="filter-section">
+    <div class="filter-section-header" (click)="showSortOptions = !showSortOptions">
+      <div class="section-title">
+        <mat-icon>sort</mat-icon>
+        <span>Sort By</span>
+      </div>
+      <mat-icon class="toggle-icon">{{ showSortOptions ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+    
+    <div class="filter-section-content" *ngIf="showSortOptions">
+      <div class="sort-options">
+        <select [(ngModel)]="sortBy" (change)="onSortChange()" class="sort-select">
+          <option *ngFor="let option of sortOptions" [value]="option.value">
+            {{option.label}}
+          </option>
+        </select>
+        
+        <div class="sort-order-toggle">
+          <button 
+            class="sort-order-btn"
+            [class.active]="sortOrder === 'asc'"
+            (click)="sortOrder = 'asc'; onSortChange()">
+            <mat-icon>arrow_upward</mat-icon>
+            Ascending
+          </button>
+          <button 
+            class="sort-order-btn"
+            [class.active]="sortOrder === 'desc'"
+            (click)="sortOrder = 'desc'; onSortChange()">
+            <mat-icon>arrow_downward</mat-icon>
+            Descending
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Apply Filters Button (Mobile) -->
+  <div class="filter-actions">
+    <button class="apply-filters-btn" (click)="applyFilters()">
+      <mat-icon>check</mat-icon>
+      Apply Filters
+    </button>
+  </div>
+</div>

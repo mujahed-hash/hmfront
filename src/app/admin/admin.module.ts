@@ -14,6 +14,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { UsersrequestsComponent } from './usersrequests/usersrequests.component';
+import { ServerMonitorComponent } from './server-monitor/server-monitor.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { UsersrequestsComponent } from './usersrequests/usersrequests.component'
     AEUserComponent,
     GetcategoriesComponent,
     PEcategoriesComponent,
-    UsersrequestsComponent
+    UsersrequestsComponent,
+    ServerMonitorComponent
   ],
   imports: [
     CommonModule,

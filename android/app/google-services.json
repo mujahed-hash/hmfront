@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "917969837555",
+    "project_id": "pushnotifi-9e8a9",
+    "storage_bucket": "pushnotifi-9e8a9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:917969837555:android:5d9bd0587f96137bb00686",
+        "android_client_info": {
+          "package_name": "in.hotelmart.in"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA359pHLsC_OChg_2SQjYG-UmThFTOlrxU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

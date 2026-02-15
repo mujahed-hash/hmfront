@@ -1,0 +1,58 @@
+<h2 mat-dialog-title>Category Details</h2>
+
+<mat-dialog-content class="category-details">
+  <div class="category-header">
+    <div class="category-image">
+      <img [src]="data.category.image || 'assets/images/placeholder.png'" [alt]="data.category.name">
+    </div>
+    <div class="category-title">
+      <h3>{{ data.category.name }}</h3>
+      <div class="status-badge" [ngClass]="{'active': data.category.isActive, 'inactive': !data.category.isActive}">
+        {{ data.category.isActive ? 'Active' : 'Inactive' }}
+      </div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+  
+  <div class="details-section">
+    <div class="detail-item">
+      <div class="detail-label">Description:</div>
+      <div class="detail-value">{{ data.category.description || 'No description provided' }}</div>
+    </div>
+    
+    <div class="detail-item">
+      <div class="detail-label">Custom Identifier:</div>
+      <div class="detail-value">{{ data.category.customIdentifier }}</div>
+    </div>
+    
+    <div class="detail-item">
+      <div class="detail-label">Sort Order:</div>
+      <div class="detail-value">{{ data.category.sortOrder }}</div>
+    </div>
+    
+    <div class="detail-item">
+      <div class="detail-label">Services Count:</div>
+      <div class="detail-value">{{ data.category.serviceCount || 0 }}</div>
+    </div>
+    
+    <div class="detail-item" *ngIf="data.category.parentCategory">
+      <div class="detail-label">Parent Category:</div>
+      <div class="detail-value">{{ data.category.parentCategory.name }}</div>
+    </div>
+    
+    <div class="detail-item">
+      <div class="detail-label">Created At:</div>
+      <div class="detail-value">{{ formatDate(data.category.createdAt) }}</div>
+    </div>
+    
+    <div class="detail-item">
+      <div class="detail-label">Last Updated:</div>
+      <div class="detail-value">{{ formatDate(data.category.updatedAt) }}</div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="close()">Close</button>
+</mat-dialog-actions>

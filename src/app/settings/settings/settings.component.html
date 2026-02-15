@@ -1,0 +1,47 @@
+<div class="settings-container">
+  <div class="settings-header">
+    <button mat-icon-button (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Settings</h1>
+  </div>
+
+  <div class="settings-content">
+    <!-- Font Size / Display Resolution Section -->
+    <mat-card class="settings-section">
+      <mat-card-header>
+        <mat-icon mat-card-avatar class="section-icon">text_fields</mat-icon>
+        <mat-card-title>Display Resolution</mat-card-title>
+        <mat-card-subtitle>Adjust text size for better readability</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="font-size-options">
+          <div 
+            *ngFor="let size of fontSizes" 
+            class="font-size-option"
+            [class.selected]="currentFontSize === size"
+            (click)="onFontSizeChange(size)"
+          >
+            <div class="option-header">
+              <mat-icon class="check-icon" *ngIf="currentFontSize === size">check_circle</mat-icon>
+              <mat-icon class="uncheck-icon" *ngIf="currentFontSize !== size">radio_button_unchecked</mat-icon>
+              <h3>{{ getFontSizeLabel(size) }}</h3>
+            </div>
+            <p class="option-description">{{ getFontSizeDescription(size) }}</p>
+            
+      
+          </div>
+        </div>
+
+        <div class="info-message">
+          <mat-icon>info</mat-icon>
+          <span>Changes will be applied immediately across the app</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Additional Settings Sections (Future Use) -->
+    <!-- You can add more settings sections here -->
+  </div>
+</div>

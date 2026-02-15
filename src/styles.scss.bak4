@@ -1,0 +1,232 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$hmfront-primary: mat.define-palette(mat.$indigo-palette);
+$hmfront-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$hmfront-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$hmfront-theme: mat.define-light-theme((
+  color: (
+    primary: $hmfront-primary,
+    accent: $hmfront-accent,
+    warn: $hmfront-warn,
+  ),
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($hmfront-theme);
+// @import "primeng/resources/themes/lara-light-blue/theme.css";
+// @import "primeng/resources/primeng.css";
+@import '~primeicons/primeicons.css';
+@import '~primeng/resources/themes/lara-light-indigo/theme.css';
+@import '~primeng/resources/primeng.min.css';
+@import '~primeflex/primeflex.css';
+/* You can add global styles to this file, and also import other style files */
+body,html{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+a{
+    font-style: none;
+    text-decoration: none;
+    color: inherit;
+}
+html, body { height: 100% }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; padding: 0; width: 100%;overflow-x: hidden; 
+}
+
+
+// Badge customization
+
+/* Disable ripple effect globally */
+:root {
+  --ripple-color: transparent;
+}
+
+/* For Ionic apps specifically */
+ion-item, ion-button, ion-list, ion-content {
+  --ripple-color: transparent;
+}
+/* Ensure no unintended ripple effect on entire screen */
+ion-content {
+  --ripple-color: transparent;
+}
+/* Disable ripple effect globally */
+ion-ripple-effect {
+  display: none !important;
+}
+/* Disable tap highlight globally */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+/* Prevent full-page selector on Android */
+* {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+input:focus {
+  zoom: 1;
+  outline: none;
+}
+
+router-outlet{
+  height: 100%;
+  margin-top: 1rem;
+  margin-bottom: 5rem;
+}
+.notification {
+  padding: 15px;
+  margin: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #fff;
+  opacity: 0.9;
+  transition: opacity 0.5s ease-out;
+  margin-left: -0.3rem;
+}
+.success {
+  background-color: #4caf50;
+}
+
+.error {
+  background-color: #f44336;
+}
+
+.info {
+  background-color: #2196f3;
+}
+@media screen and (orientation:portrait){
+  *{
+    overflow-x: hidden;
+  }
+}
+:root {
+  --ion-font-size-base: 14px; /* Base font size */
+  --ion-icon-size-large: 32px; /* Customize icon sizes */
+}
+h1,h2,h3{
+  font-family: "Bebas Neue", serif;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 1px;
+}
+body,span,p{
+  font-family: "Rubik", serif;
+  font-optical-sizing: auto;
+
+  // font-weight: <weight>;
+  // font-style: normal;
+}
+.itm-btn{
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  margin: 0;
+  position: relative;
+  left:-5.8%;
+  margin-bottom: 2.4rem;
+  margin-top: 0.8rem;
+}
+.itm-btn button{
+  width:max-content;
+  background-color: #2196f3;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 7px;
+  padding: 6px 9px;
+  margin: 0;
+  text-align: center;
+  box-shadow: 6px 6px 12px #c5c5c5,
+             -6px -6px 12px #ffffff;
+}
+@media screen and (orientation:portrait) {
+
+    .itm-btn{
+      width: 100%;
+      display: grid;
+      justify-items: center;
+    }
+  }
+
+
+// Font size settings - change text size ONLY, no page scaling
+
+body.font-size-small p,
+body.font-size-small span,
+body.font-size-small div,
+body.font-size-small a,
+body.font-size-small button,
+body.font-size-small label {
+  font-size: 0.85em;
+}
+
+
+
+body.font-size-large p,
+body.font-size-large span,
+body.font-size-large div,
+body.font-size-large a,
+body.font-size-large button,
+body.font-size-large label {
+  font-size: 1.15em;
+}
+
+
+body.font-size-medium * {
+  font-size: 15px !important;
+}
+
+body.font-size-large * {
+  font-size: 17px !important;
+}
+
+// Preserve icon sizes
+body.font-size-small .material-icons,
+body.font-size-small .mat-icon,
+body.font-size-medium .material-icons,
+body.font-size-medium .mat-icon,
+body.font-size-large .material-icons,
+body.font-size-large .mat-icon {
+  font-size: 24px !important;
+}
+
+
+body.font-size-medium * {
+  font-size: 17px !important;
+}
+
+body.font-size-large * {
+  font-size: 19px !important;
+}
+
+// Preserve icon sizes regardless of setting
+body.font-size-small .material-icons,
+body.font-size-small .mat-icon,
+body.font-size-medium .material-icons,
+body.font-size-medium .mat-icon,
+body.font-size-large .material-icons,
+body.font-size-large .mat-icon {
+  font-size: 24px !important;
+}

@@ -1,0 +1,134 @@
+<div class="service-order-detail-container">
+  <div *ngIf="isLoading" class="loading-state">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading service order details...</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="error-state">
+    <mat-card>
+      <mat-card-content>
+        <mat-icon color="warn">error_outline</mat-icon>
+        <p>{{ errorMessage }}</p>
+        <button mat-raised-button color="primary" (click)="loadOrderDetails()">Retry</button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!isLoading && !error && order" class="order-content">
+    <mat-card style="padding: 20px;" class="order-summary-card">
+      <mat-card-header>
+        <mat-card-title>Order #{{ order.customIdentifier }}</mat-card-title>
+        <mat-card-subtitle>Placed on: {{ order.date | date:'medium' }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="service-item-details" style="padding: 20px;">
+          <img [src]="getUserImageUrl(order.service.images ? order.service.images[0] : undefined)" alt="Service Image" class="service-thumbnail">
+          <div class="details-text">
+            <h3>{{ order.service.serviceName }}</h3>
+            <div class="pricing-info">
+              <p>Price: <span>₹{{ order.service.price | number:'1.2-2' }}</span></p>
+              <p class="total-price">Total: <span>₹{{ order.totalPrice | number:'1.2-2' }}</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="order-status-chip" [ngClass]="getStatusClass(order.status)">
+          Status: {{ getDisplayStatus(order.status) }}
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="customer-supplier-section">
+      <mat-card class="customer-details-card" style="padding: 20px; background-color: white;">
+        <mat-card-header>
+          <mat-icon>person</mat-icon>
+          <mat-card-title>Customer Details</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p><span>Name:</span> {{ order.user.name }}</p>
+          <p><span>Email:</span> {{ order.user.email }}</p>
+          <p><span>Phone:</span> {{ order.customerInfo.phone }}</p>
+          <p><span>Address:</span> {{ order.customerInfo.address }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="supplier-details-card" style="padding: 20px; background-color: white;">
+        <mat-card-header>
+          <mat-icon>business</mat-icon>
+          <mat-card-title>Supplier Details</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p><span>Name:</span> {{ order.supplier.name }}</p>
+          <p><span>Email:</span> {{ order.supplier.email }}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card *ngIf="order.notes" class="notes-card" style="padding: 20px; background-color: white;">
+      <mat-card-header>
+        <mat-icon>notes</mat-icon>
+        <mat-card-title>Initial Notes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="initial-notes-text">{{ order.notes }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="conversation-card">
+      <mat-card-header style="padding: 20px; background-color: white; display: flex; align-items: center; justify-content: center;">
+        <mat-icon>chat</mat-icon>
+        <mat-card-title>Conversation History</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="message-list" #messageContainer>
+          <div *ngIf="order.conversation.length === 0" class="no-messages">
+            <mat-icon>info_outline</mat-icon>
+            <p>No messages in this conversation yet. Start by sending a note!</p>
+          </div>
+          <div *ngFor="let message of order.conversation"
+               class="message-bubble"
+               [ngClass]="{'my-message': isCurrentUser(message.sender._id), 'other-message': !isCurrentUser(message.sender._id)}">
+            <!-- <div class="message-avatar" *ngIf="message.sender?.image; else defaultAvatar">
+              <img [src]="getUserImageUrl(message.sender.image)" alt="{{ message.sender.name }}">
+            </div> -->
+         
+            <div class="message-content" style="padding:5px 20px; background-color: rgb(255, 255, 255); margin-top: 0.5rem;border-radius: 20px;">
+              <div class="message-header">
+                <div class="message-info" style="display: flex; align-items: center; gap: 10px;">
+                  <!-- <span>
+                    <ng-template #defaultAvatar>
+                      <div class="message-avatar-default">
+                          <mat-icon>person</mat-icon>
+                      </div>
+                  </ng-template>
+                  </span> -->
+                  <span style="font-weight: 600; width: 60%" class="sender-name">{{ message.sender.name || 'Unknown User'}}</span>
+                  <span class="message-role" *ngIf="message.role">({{ message.role | titlecase }})</span>
+                </div>
+                <span class="message-time">{{ message.timestamp | date:'short' }}</span>
+              </div>
+              <p style="padding:8px 20px; background-color: rgb(246, 246, 255); width: max-content; border-radius: 20px;" class="message-text">{{ message.message }}</p>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions class="message-input-area">
+        <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+          <mat-form-field appearance="outline" class="full-width-field">
+            <mat-label>Type your message...</mat-label>
+            <textarea matInput formControlName="message" rows="3" maxlength="500"></textarea>
+            <mat-hint align="end">{{ messageForm.get('message')?.value?.length || 0 }}/500</mat-hint>
+            <mat-error *ngIf="messageForm.get('message')?.hasError('required')">Message is required</mat-error>
+          </mat-form-field>
+          <div class="message-actions">
+      
+            <button style="height: 100%; overflow: hidden; padding: 10px;" mat-raised-button color="primary" type="submit" [disabled]="messageForm.invalid || isSendingMessage">
+              <mat-icon *ngIf="!isSendingMessage">send</mat-icon>
+              <mat-spinner *ngIf="isSendingMessage" diameter="20" color="accent"></mat-spinner>
+              <span style="overflow: hidden;">{{ isSendingMessage ? 'Sending...' : 'Send Message' }}</span>
+            </button>
+          </div>
+        </form>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

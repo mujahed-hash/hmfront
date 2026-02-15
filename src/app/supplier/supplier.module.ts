@@ -6,6 +6,8 @@ import { SupplierComponent } from './supplier/supplier.component';
 import { SupplierOrdersComponentComponent } from './more/supplier-orders-component/supplier-orders-component.component';
 import { NavigationService } from '../navigation.service';
 import { FormsModule } from '@angular/forms';
+import { SharedModule } from '../shared/shared.module';
+import { SupplierServiceOrdersModule } from './service-orders/supplier-service-orders.module';
 
 
 @NgModule({
@@ -16,7 +18,9 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     SupplierRoutingModule,
-    FormsModule
+    FormsModule,
+    SharedModule,
+    SupplierServiceOrdersModule
   ],
   providers: [NavigationService],
 

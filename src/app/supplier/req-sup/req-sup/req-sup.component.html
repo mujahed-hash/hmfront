@@ -1,17 +1,62 @@
-<div class="requests">
-    <!-- admin.component.html -->
-    <!-- <div *ngIf="requirements.length == 0" style="background-color: white; padding: 4px 8px; border: #c8c9d4 1.5px solid; color:#0D1282; width:max-content; border-radius: 9px; position: relative; margin-top: 1rem;">
-         No Pending Requirements
-    </div> -->
-    <div class="request" *ngFor="let req of requirements">
-        <div class="r-s-t">
-            <p>{{ truncateText(req.reqDetails, 15) }}..</p>
-       
-        </div>
-        <div class="r-s-btn">
-            <button class="v-b" *ngIf="req.reqDetails.length > 1" [routerLink]="['/supplier/sup-requested/', req.customIdentifier]">View..</button>
-            <!-- <button class="f-s" *ngIf="req.status === 'Pending'">Forward to Suppliers</button>
-            <button class="f-d" *ngIf="req.status === 'Forwarded'">Forwarded</button> -->
-        </div>
+<div class="requirements-container">
+  <div class="requirements-header">
+    <div class="header-content">
+      <h2>Requirements Dashboard</h2>
+      <p class="subtitle">Review and respond to buyer requests forwarded to you</p>
     </div>
+  </div>
+  
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner-wrapper">
+      <div class="spinner"></div>
+    </div>
+    <p>Loading your requirements...</p>
+  </div>
+  
+  <!-- Error state -->
+  <div *ngIf="error" class="error-container">
+    <div class="error-icon">
+      <i class="pi pi-exclamation-triangle"></i>
+    </div>
+    <div class="error-content">
+      <h3>Something went wrong</h3>
+      <p>{{ error }}</p>
+      <button (click)="loadForwardedRequirements()" class="retry-button">
+        <i class="pi pi-refresh"></i>
+        <span>Try Again</span>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Empty state -->
+  <div *ngIf="!isLoading && !error && (!requirements || requirements.length === 0)" class="empty-container">
+    <div class="empty-illustration">
+      <i class="pi pi-file-o empty-icon"></i>
+    </div>
+    <h3>No requirements yet</h3>
+    <p>When buyers forward requirements to you, they will appear here</p>
+  </div>
+  
+  <!-- Requirements grid -->
+  <div *ngIf="!isLoading && !error && requirements && requirements.length > 0" class="requirements-grid">
+    <div *ngFor="let req of requirements" class="requirement-card" [ngClass]="{'highlighted': req.priority === 'High'}">
+      <div class="card-header">
+        <span class="status-badge" [ngClass]="'status-' + req.status?.toLowerCase()">{{ req.status || 'New' }}</span>
+        <span class="date">{{ req.createdAt | date:'mediumDate' }}</span>
+      </div>
+      
+      <div class="card-body">
+        <h4 class="requirement-title">Requirement Details</h4>
+        <p class="requirement-details">{{ truncateText(req.reqDetails, 150) }}</p>
+      </div>
+      
+      <div class="card-footer">
+        <button [routerLink]="['/supplier/req-sup/sup-requested/', req.customIdentifier]" class="view-button">
+          <span>View Details</span>
+          <i class="pi pi-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

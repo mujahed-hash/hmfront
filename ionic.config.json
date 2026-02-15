@@ -1,7 +1,5 @@
 {
-  "name": "HotelMart",
-  "integrations": {
-    "capacitor": {}
-  },
+  "name": "hmfront",
+  "integrations": {},
   "type": "angular"
 }

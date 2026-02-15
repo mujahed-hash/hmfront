@@ -1,0 +1,220 @@
+.service-detail-container {
+  padding: 20px;
+  margin: 0 ; /* Center the container horizontally */
+  width: 80%;
+left:0;
+  min-height: calc(100vh - 64px); /* Ensure content takes up at least viewport height minus header */
+  padding: 20px 0; /* Add vertical padding */
+  .category-display {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    
+    strong {
+      margin-right: 10px;
+    }
+    
+    mat-chip-set {
+      display: inline-block;
+    }
+    
+    .mat-mdc-chip {
+      margin-left: 5px;
+    }
+  }
+  
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+  }
+  
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #333;
+    }
+    
+    .status-icons {
+      display: flex;
+      gap: 10px;
+      
+      .approved {
+        color: #4CAF50;
+      }
+      
+      .pending {
+        color: #FFC107;
+      }
+      
+      .active {
+        color: #2196F3;
+      }
+      
+      .inactive {
+        color: #F44336;
+      }
+    }
+  }
+  
+  .images-section {
+    margin-bottom: 20px;
+    
+    .image-gallery {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      
+      img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+    }
+  }
+  
+  .details-card {
+    margin-bottom: 20px;
+    
+    h2 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    p {
+      margin: 8px 0;
+    }
+  }
+  
+  .actions-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .edit-form-card {
+    margin-top: 30px;
+
+    .full-width {
+      width: 100%;
+    }
+
+    .category-selector-container,
+    .regions-selector-container {
+      margin-bottom: 15px;
+
+      .field-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.87);
+        margin-bottom: 8px;
+      }
+
+      mat-hint {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+        margin-top: 8px;
+      }
+    }
+
+    mat-form-field {
+      margin-right: 10px;
+      margin-bottom: 15px;
+      min-width: 200px;
+    }
+    
+    .image-upload-section {
+      margin-top: 20px;
+      
+      .existing-images {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 15px;
+        
+        .image-preview {
+          position: relative;
+          
+          img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+          }
+          
+          button {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          }
+        }
+      }
+      
+      .file-input {
+        margin-top: 10px;
+        
+        input[type="file"] {
+          margin: 10px 0;
+        }
+        
+        .hint {
+          font-size: 12px;
+          color: rgba(0,0,0,0.6);
+          margin-top: 5px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .service-detail-container {
+    width: 95%; /* Apply 95% width for phone screens */
+    margin: 0 auto; /* Center the container */
+    padding: 15px;
+  }
+
+  .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+
+    h1 {
+      font-size: 24px;
+    }
+
+    .status-icons {
+      order: -1; /* Move status icons above title on small screens */
+    }
+  }
+
+  .images-section .image-gallery {
+    flex-direction: column;
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .actions-section {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+}

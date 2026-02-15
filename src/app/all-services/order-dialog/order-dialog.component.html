@@ -1,0 +1,117 @@
+<h2 mat-dialog-title>Order Service: {{ data.service.serviceName }}</h2>
+
+<mat-dialog-content>
+  <section class="service-summary">
+    <div class="service-info">
+      <h3>Service Details</h3>
+      <p><strong>Service:</strong> {{ data.service.serviceName }}</p>
+      <p><span><strong>Price:</strong></span> ₹{{ data.service.price }}</p>
+      <p *ngIf="data.service.category"><span><strong>Category:</strong></span> {{ data.service.category.name }}</p>
+      <p *ngIf="data.service.user"><span><strong>Supplier:</strong></span> {{ data.service.user.name }}</p>
+    </div>
+    
+    <figure class="service-image" *ngIf="data.service.images && data.service.images.length > 0">
+      <img [src]="data.service.images[0]" [alt]="data.service.serviceName">
+    </figure>
+  </section>
+
+  <form class="order-placer" [formGroup]="orderForm" (ngSubmit)="onSubmit()">
+    <section class="form-section">
+      <h3>Your Information</h3>
+      
+      <div class="custom-form-field full-width">
+        <label for="name">Full Name</label>
+        <div class="input-wrapper">
+          <i class="input-icon material-icons">person</i>
+          <input id="name" type="text" formControlName="name" placeholder="Enter your full name" autocomplete="name">
+        </div>
+        <p class="error-message" *ngIf="orderForm.get('name')?.hasError('required') && orderForm.get('name')?.touched">
+          Name is required
+        </p>
+      </div>
+      
+      <div class="form-row">
+        <div class="custom-form-field half-width">
+          <label for="email">Email</label>
+          <div class="input-wrapper">
+            <i class="input-icon material-icons">email</i>
+            <input id="email" type="email" formControlName="email" placeholder="Enter your email" autocomplete="email">
+          </div>
+          <p class="error-message" *ngIf="orderForm.get('email')?.hasError('required') && orderForm.get('email')?.touched">
+            Email is required
+          </p>
+          <p class="error-message" *ngIf="orderForm.get('email')?.hasError('email') && orderForm.get('email')?.touched">
+            Please enter a valid email
+          </p>
+        </div>
+        
+        <div class="custom-form-field half-width">
+          <label for="phone">Phone</label>
+          <div class="input-wrapper">
+            <i class="input-icon material-icons">phone</i>
+            <input id="phone" type="tel" formControlName="phone" placeholder="Enter your phone number" autocomplete="tel">
+          </div>
+          <p class="error-message" *ngIf="orderForm.get('phone')?.hasError('required') && orderForm.get('phone')?.touched">
+            Phone number is required
+          </p>
+          <p class="error-message" *ngIf="orderForm.get('phone')?.hasError('pattern') && orderForm.get('phone')?.touched">
+            Please enter a valid phone number
+          </p>
+        </div>
+      </div>
+      
+      <div class="custom-form-field full-width">
+        <label for="address">Address</label>
+        <div class="input-wrapper">
+          <i class="input-icon material-icons">location_on</i>
+          <textarea id="address" formControlName="address" placeholder="Enter your delivery address" rows="2" autocomplete="street-address"></textarea>
+        </div>
+        <p class="error-message" *ngIf="orderForm.get('address')?.hasError('required') && orderForm.get('address')?.touched">
+          Address is required
+        </p>
+      </div>
+    </section>
+    
+    <section class="form-section">
+      <h3>Order Details</h3>
+
+      <div class="price-calculation">
+        <p><span>Service Price:</span> <strong>₹{{ data.service.price }}</strong></p>
+        <p class="total-price-row"><span>Total Price:</span> <strong>₹{{ getTotalPrice() }}</strong></p>
+      </div>
+
+      <div class="custom-form-field full-width">
+        <label for="notes">Special Instructions or Notes</label>
+        <div class="input-wrapper">
+          <i class="input-icon material-icons">note</i>
+          <textarea id="notes" formControlName="notes" placeholder="Any special requirements or notes for the supplier" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="terms-checkbox">
+        <mat-checkbox formControlName="agreeToTerms" color="primary">
+          I agree to the terms and conditions
+        </mat-checkbox>
+        <p class="error-message" *ngIf="orderForm.get('agreeToTerms')?.touched && orderForm.get('agreeToTerms')?.hasError('required')">
+          You must agree to the terms and conditions
+        </p>
+      </div>
+    </section>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+    Cancel
+  </button>
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="onSubmit()" 
+    [disabled]="orderForm.invalid || isSubmitting">
+    <mat-icon>shopping_cart</mat-icon>
+    Place Order
+    <mat-spinner *ngIf="isSubmitting" diameter="20" class="spinner-button"></mat-spinner>
+  </button>
+</mat-dialog-actions>

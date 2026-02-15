@@ -10,6 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BuyerReqsComponent } from './buyer-reqs/buyer-reqs.component';
 import {MatDialogModule} from '@angular/material/dialog'; 
 import {MatFormFieldModule} from '@angular/material/form-field'; 
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner'; 
 @NgModule({
   declarations: [
     RequirementsComponent,
@@ -23,7 +24,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatProgressSpinnerModule
   ]
 })
 export class RequirementsModule { }

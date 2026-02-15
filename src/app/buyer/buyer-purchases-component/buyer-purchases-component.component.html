@@ -6,7 +6,7 @@
     </div>
 </div>
 <div class="order-container"  *ngIf="order.length >0 "   style="  overflow-x: hidden;">
- 
+
     <div class="order" *ngFor="let or of order">
 
       <div class="order-item" [routerLink]="['/s/view-order', or.customIdentifer]" *ngFor="let oitem of or.orderItems; let i = index">
@@ -26,13 +26,13 @@
                 </div>
                 <div class="approval-status">
                  <span style="color: #153448;"> Approval Status:</span>
-                 <span class="status" *ngIf="or.status == 'Pending' " style="color:#86469C; background-color: #EEF7FF; padding: 4px 7px; border-radius: 4px; position: relative; left:0.4rem; text-align: center;">       
+                 <span class="status" *ngIf="or.status == 'Pending' " style="color:#86469C; background-color: #EEF7FF; padding: 4px 7px; border-radius: 4px; position: relative; left:0.4rem; text-align: center;">
                          {{ or?.status! }}
                 </span>
-                <span class="status" *ngIf="or.status == 'Approved' " style="color:#387F39; background-color: #EEF7FF; padding: 4px 7px; border-radius: 4px; position: relative; left:0.4rem; text-align: center;">       
+                <span class="status" *ngIf="or.status == 'Approved' " style="color:#387F39; background-color: #EEF7FF; padding: 4px 7px; border-radius: 4px; position: relative; left:0.4rem; text-align: center;">
                   {{ or?.status! }}
                 </span>
-                <span class="status delivered" [routerLink]="['/view-order', or.customIdentifer]" *ngIf="or?.status! == 'Delivered' " style="">       
+                <span class="status delivered" [routerLink]="['/view-order', or.customIdentifer]" *ngIf="or?.status! == 'Delivered' " style="">
                  <mat-icon class="mt-ic" style="">receipt_long</mat-icon> {{ or?.status! }}
                 </span>
                 </div>
@@ -40,6 +40,20 @@
           </div>
           </div>
 
+    </div>
+  </div>
+
+  <div class="load-more-container">
+
+    <div style="width: 80%;">
+      <button *ngIf="hasMoreOrders && !isLoading" (click)="loadPurchases()" [disabled]="isLoading" class="load-more-btn">
+        Load More Orders
+      </button>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-indicator">
+      <mat-spinner diameter="30"></mat-spinner>
+      <span>Loading more orders...</span>
     </div>
   </div>
   

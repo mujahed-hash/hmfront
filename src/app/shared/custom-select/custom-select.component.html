@@ -1,0 +1,23 @@
+<div class="custom-select" [class.open]="isOpen">
+  <label *ngIf="label" class="custom-select-label">{{ label }}</label>
+  <div class="selector-display" (click)="toggleDropdown()">
+    <span class="selected-text" [class.placeholder]="!selectedLabel">
+      {{ selectedLabel || placeholder }}
+    </span>
+    <mat-icon class="dropdown-arrow" [class.rotated]="isOpen">arrow_drop_down</mat-icon>
+  </div>
+
+  <div class="dropdown-options" *ngIf="isOpen">
+    <ul class="options-list">
+      <li *ngFor="let option of options" class="option-item"
+          [class.selected]="option.value === selectedValue"
+          (click)="selectOption(option)">
+        <span class="option-text">{{ option.label }}</span>
+        <mat-icon *ngIf="option.value === selectedValue">check</mat-icon>
+      </li>
+      <li *ngIf="options.length === 0" class="no-results">
+        <span>No options available</span>
+      </li>
+    </ul>
+  </div>
+</div>

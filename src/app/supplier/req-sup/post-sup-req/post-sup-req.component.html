@@ -1,21 +1,80 @@
-<!-- requirement-detail.component.html -->
-<div *ngIf="requirement" class="container my-4">
-  <div class="row">
-    <div class="col-12">
-      <h2 class="text-center">Requirement Details</h2>
-      <p>Details: </p>
-      <p style="max-width: 85%;">{{ requirement.reqDetails }}</p>
+<!-- Template for both Requirement and Delivery Detail Views -->
+<div class="container my-4">
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p>Loading data...</p>
+  </div>
+  
+  <!-- Error state -->
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+    <button (click)="isDeliveryDetail ? loadDeliveryDetail() : loadRequirement()" class="retry-button">Try Again</button>
+  </div>
+  
+  <!-- Delivery Detail View -->
+  <div *ngIf="!loading && !error && isDeliveryDetail && requirement" class="delivery-detail-container">
+    <div class="back-link" routerLink="/supplier/sup-deliveries">
+      <i class="back-arrow">←</i>
+      <span>Back to deliveries</span>
+    </div>
+    
+    <div class="detail-header">
+      <h2>Delivery Details</h2>
+    </div>
+    
+    <div class="detail-card">
+      <div class="detail-section">
+        <h3>Requirement Information</h3>
+        <p class="requirement-text">{{ requirement.reqDetails }}</p>
+        
+        <div class="status-section">
+          <p class="status-label">Status:</p>
+          <div class="status-badge" [ngClass]="{
+            'status-completed': requirement.status === 'Completed',
+            'status-delivered': requirement.status === 'Delivered'
+          }">
+            <span>{{ requirement.status }}</span>
+          </div>
+        </div>
+        
+        <div class="date-section">
+          <p><strong>Created:</strong> {{ requirement.createdAt | date:'medium' }}</p>
+          <p *ngIf="requirement.updatedAt"><strong>Last Updated:</strong> {{ requirement.updatedAt | date:'medium' }}</p>
+        </div>
+      </div>
+      
+      <div *ngIf="deliveryProduct" class="product-section">
+        <h3>Product Information</h3>
+        
+        <div class="product-image">
+          <img [src]="deliveryProduct.image" alt="{{ deliveryProduct.name }}" onerror="this.src='assets/images/placeholder.jpg'">
+        </div>
+        
+        <div class="product-details">
+          <h4>{{ deliveryProduct.name }}</h4>
+          <p class="product-price">{{ deliveryProduct.price | currency: 'INR' }}</p>
+        </div>
+      </div>
     </div>
   </div>
+  
+  <!-- Requirement View (Original functionality) -->
+  <div style="margin: 0;left: 0;" *ngIf="!loading && !error && !isDeliveryDetail && requirement" class="requirement-container">
+    <div class="requirement-header">
+      <h2>Requirement Details</h2>
+      <div class="requirement-content">
+        <p class="label">Details:</p>
+        <p class="details-text">{{ requirement.reqDetails }}</p>
+      </div>
+    </div>
 
-  <div *ngIf="requirement.hasPosted != true" class="row">
-    <div class="col-12 col-md-8 offset-md-2">
-      <h3 class="text-center mt-4">Post Product Information</h3>
-      <form (ngSubmit)="postProductInfo()">
+    <div *ngIf="requirement.hasPosted != true" class="product-form-container">
+      <h3>Post Product Information</h3>
+      <form (ngSubmit)="postProductInfo()" class="product-form">
         <div class="form-group">
           <label for="name">Product Details:</label>
-          <textarea id="name" class="form-control" [(ngModel)]="name" name="name" required>
-            </textarea>
+          <textarea id="name" class="form-control" [(ngModel)]="name" name="name" required></textarea>
         </div>
 
         <div class="form-group">
@@ -23,32 +82,43 @@
           <input id="price" type="number" class="form-control" [(ngModel)]="price" name="price" required>
         </div>
 
-        <div *ngIf="imagePreview" class="my-3 text-center">
+        <div *ngIf="imagePreview" class="image-preview-container">
           <h4>Image Preview:</h4>
-          <img [src]="imagePreview" alt="Image Preview" class="img-fluid" style="max-width: 100px; height: auto;"/>
+          <img [src]="imagePreview" alt="Image Preview" class="preview-image"/>
         </div>
 
         <div class="form-group">
           <label for="image">Product Image:</label>
-          <input id="image" type="file" class="form-control"   accept=".png, .jpg, .jpeg"  (change)="onFileChange($event)" required>
+          <input id="image" type="file" class="form-control" accept=".png, .jpg, .jpeg" (change)="onFileChange($event)" required>
         </div>
 
-        <div class="text-center mt-4">
-          <button [disabled]="!isFormValid()"type="submit" class="btn btn-primary">Submit Product Info</button>
+        <div class="form-actions">
+          <button [disabled]="!isFormValid() || loading" type="submit" class="submit-button">
+            {{ loading ? 'Submitting...' : 'Submit Product Info' }}
+          </button>
         </div>
       </form>
     </div>
-  </div>
 
-  <div *ngIf="requirement.hasPosted" class="row mt-4">
-    <div class="col-12 col-md-8 offset-md-2">
-      <h3 class="text-center">Posted Product Information</h3>
-      <p><strong>Name:</strong> {{ SubmittedProd.name }}</p>
-      <p><strong>Price:</strong> {{ SubmittedProd.price }}</p>
-      <p><strong>Status:</strong> {{ SubmittedProd.status }}</p>
+    <div *ngIf="requirement.hasPosted" class="posted-product">
+      <h3>Posted Product Information</h3>
+      <div class="product-info">
+        <div class="info-item">
+          <span class="label">Name:</span>
+          <span class="value">{{ SubmittedProd.name }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Price:</span>
+          <span class="value">{{ SubmittedProd.price }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Status:</span>
+          <span class="value">{{ SubmittedProd.status }}</span>
+        </div>
 
-      <div class="text-center my-3">
-        <img [src]="SubmittedProd.image" alt="Product Image" class="img-fluid" style="max-width: 100px; height: auto;">
+        <div class="product-image">
+          <img [src]="SubmittedProd.image" alt="Product Image">
+        </div>
       </div>
     </div>
   </div>

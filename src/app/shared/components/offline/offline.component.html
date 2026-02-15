@@ -1,0 +1,13 @@
+<div class="offline-container" [ngClass]="{'hidden': isOnline}">
+  <div class="offline-content">
+    <ion-icon name="cloud-offline-outline" class="offline-icon"></ion-icon>
+    <h2>No Internet Connection</h2>
+    <p *ngIf="isNative">Please check your device's internet connection and try again, you might try to turn on and off Mobile data</p>
+    <p *ngIf="!isNative">Please check your internet connection and refresh the page</p>
+    <ion-button (click)="retryConnection()" class="retry-button">
+      <ion-icon name="refresh-outline" slot="start"></ion-icon>
+      {{ isNative ? 'Retry' : 'Check Connection' }}
+    </ion-button>
+    <p *ngIf="!isNative" class="refresh-hint">You can also press F5 or refresh the page manually</p>
+  </div>
+</div> 

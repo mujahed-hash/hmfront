@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { SupplierService } from '../../supplier.service';
 import { LocalStorageService } from 'src/app/auth/login/local-storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
-
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-item',
   templateUrl: './item.component.html',
@@ -13,6 +13,8 @@ export class ItemComponent {
   product:any;
   NewCDI:any;
   token:any;
+  selectedImageIndex: number = 0;
+  error: string = '';
     private destroy$ = new Subject<void>();
   
   constructor(
@@ -31,16 +33,23 @@ export class ItemComponent {
   }
   getItem(){
     this.route.params.subscribe((params) => {
-      this.productsService.getProductByCustomIdentifier(params['customIdentifier']).pipe(takeUntil(this.destroy$)).subscribe((data: any) => {
-        this.product = data;
-        this.NewCDI = data.customIdentifer
+      this.productsService.getProductByCustomIdentifier(params['customIdentifier']).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (data: any) => {
+          this.product = data;
+          this.NewCDI = data.customIdentifier;
+        },
+        error: (error: any) => {
+          console.error('Error loading product:', error);
+          this.error = 'Failed to load product. Please try again.';
+          this.product = null;
+        }
       });
         })
       }
 
       toggleEdit(): void {
         // this.isEditing = !this.isEditing;
-        this.router.navigate(['/supplier/product/edit/', this.NewCDI ]);
+        this.router.navigate(['/supplier/more/product/edit/', this.NewCDI ]);
     
       }    
       deleteItem(id: any) {
@@ -52,7 +61,7 @@ export class ItemComponent {
           this.productService.deleteProduct(id, this.token).pipe(takeUntil(this.destroy$)).subscribe(
             (response: any) => {
               console.log(response);
-              this.router.navigate(['/supplier/allitems']);
+              this.router.navigate(['/supplier/more/allitems']);
             },
             (error) => {
               console.error('Error deleting product:', error);

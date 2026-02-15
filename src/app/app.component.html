@@ -1,9 +1,7 @@
-<!-- app.component.html -->
-
-<div class="nav">
-  <div class="sidebar">
-    <app-sidebar></app-sidebar>
-   </div>
-</div>
-
 <router-outlet></router-outlet>
+<app-alert></app-alert>
+
+<!-- Global Floating Back Button -->
+<div *ngIf="showBackButton" class="floating-back-btn" (click)="goBack()" role="button" aria-label="Go Back">
+    <mat-icon>chevron_left</mat-icon>
+</div>

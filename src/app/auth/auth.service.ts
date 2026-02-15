@@ -1,23 +1,59 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { baseUrl } from '../services/allurls';
+import { Injectable, OnDestroy } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, Subscription, Subject } from 'rxjs';
+import { tap, takeUntil } from 'rxjs/operators';
 import { environment } from 'environments/environment.prod';
+import { NotificationService } from '../notification.service';
+import { StateService } from '../services/state.service';
+
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements OnDestroy {
 
   baseUrl = environment.baseUrl;
-  private cartCountSubject = new BehaviorSubject<number>(0); // Holds the current cart count
-  cartCount$ = this.cartCountSubject.asObservable(); // Expose it as an observable
-  constructor(private http: HttpClient) {}
+
+  // Expose StateService Observable
+  cartCount$ = this.stateService.cartCount$;
+
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private http: HttpClient,
+    private notificationService: NotificationService,
+    private stateService: StateService
+  ) {
+    // Initial sync check
+    if (this.isLoggedIn()) {
+      this.fetchCartCount();
+      // Ensure socket is connected if logged in
+      this.notificationService.connect();
+    }
+  }
+
+  // Delegate update to StateService
+  updateCartCount(count: number) {
+    this.stateService.updateCartCount(count);
+  }
+
+  /** Optimistically adjust cart count by a delta (e.g. +1 on add, -1 on remove) */
+  adjustCartCount(delta: number) {
+    this.stateService.adjustCartCount(delta);
+  }
+
+  ngOnDestroy(): void {
+    this.notificationService.disconnect();
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   login(email: string, password: string): Observable<any> {
     const credentials = { email, password };
-    return this.http.post(`${this.baseUrl}/user/login`, credentials).pipe(
+    return this.http.post(`${this.baseUrl}/users/login`, credentials).pipe(
       tap((response: any) => {
         localStorage.setItem('token', response.token);
+        this.notificationService.connect();
+        this.fetchCartCount(response.token);
       })
     );
   }
@@ -33,44 +69,78 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
 
-  getCart(token:any){
-    const headers = {
-      Authorization: `Bearer ${token}`
-    };
-  
-    // Create an HTTP request with headers
-    const options = { headers: new HttpHeaders(headers) };
-    return this.http.get<any>(`${this.baseUrl}/cart/items`, options);
-  }
-  fetchCartCount(token:any){
-    const headers = {
-      Authorization: `Bearer ${token}`
-    };
-  
-    // Create an HTTP request with headers
-    const options = { headers: new HttpHeaders(headers) };
-    this.http.get<{ itemCount: number }>(`${this.baseUrl}/cart/count`, options).subscribe(
-      (response) => {
-        this.cartCountSubject.next(response.itemCount); // Update the BehaviorSubject
-      },
-      (error) => {
-        console.error('Failed to fetch cart count', error);
-      }
-    );
+  getToken(): string | null {
+    return localStorage.getItem('token');
   }
 
-  getUserRole(): string {
+  getCart(token: any) {
+    if (!this.isLoggedIn()) {
+      return new Observable(observer => {
+        observer.next({ success: true, items: [] });
+        observer.complete();
+      });
+    }
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    const options = { headers: headers };
+    return this.http.get<any>(`${this.baseUrl}/cart/items`, options);
+  }
+
+  // Fetch from API -> Update StateService
+  fetchCartCount(token?: any) {
+    const authToken = token || localStorage.getItem('token');
+
+    if (!this.isLoggedIn() || !authToken) {
+      this.updateCartCount(0);
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${authToken}`
+    });
+    const options = { headers: headers };
+
+    this.http.get<{ itemCount: number }>(`${this.baseUrl}/cart/count`, options)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (response) => {
+          console.log('[AuthService] Cart count fetched:', response.itemCount);
+          this.updateCartCount(response.itemCount);
+        },
+        (error) => {
+          console.error('[AuthService] Failed to fetch cart count', error);
+          // Don't overwrite state on error, let it persist
+        }
+      );
+  }
+
+  getCurrentCartCount(): number {
+    // Helper to get current value from StateService (requires exposing value or subject)
+    // For now, assume components subscribe to cartCount$
+    return 0; // Deprecated synchronous access
+  }
+
+  getUserRole(): 'user' | 'admin' | 'supplier' | 'superadmin' | 'buyer' | null {
     const token = localStorage.getItem('token');
     if (token) {
-      const tokenDecode = JSON.parse(atob(token.split('.')[1]));
-      if (tokenDecode) {
-        if (tokenDecode.isAdmin) return 'admin';
-        if (tokenDecode.isSupplier) return 'supplier';
-        if (tokenDecode.isBuyer) return 'buyer';
-        if(tokenDecode.userId) return tokenDecode.userId;
-      }
+      try {
+        const tokenDecode = JSON.parse(atob(token.split('.')[1]));
+        if (tokenDecode) {
+          if (tokenDecode.isSuperAdmin) return 'superadmin';
+          if (tokenDecode.isAdmin) return 'admin';
+          if (tokenDecode.isSupplier) return 'supplier';
+          if (tokenDecode.isBuyer) return 'buyer';
+          if (tokenDecode.userId) return 'user';
+        }
+      } catch (e) { console.error('Token decode error', e); }
     }
-    return '';
+    return null;
+  }
+
+  isSuperAdmin(): boolean {
+    const role = this.getUserRole();
+    return role === 'superadmin';
   }
 
   getUserId(): string {
@@ -83,7 +153,7 @@ export class AuthService {
     }
     return '';
   }
-  
+
   private decodeToken(token: string): any {
     try {
       return JSON.parse(atob(token.split('.')[1]));
@@ -91,7 +161,7 @@ export class AuthService {
       console.error('Error decoding token:', e);
       return null;
     }
-  }  
+  }
   isAdmin(): boolean {
     return this.getUserRole() === 'admin';
   }
@@ -106,5 +176,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+    this.notificationService.disconnect();
+    this.stateService.resetCart(); // Reset state
   }
 }

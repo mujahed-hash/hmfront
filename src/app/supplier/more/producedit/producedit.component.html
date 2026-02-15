@@ -1,81 +1,248 @@
-<div style="overflow: hidden;" class="main-prod">
-  <div *ngIf="isLoading" class="loader">Submitting...</div>
-  <div style="width: 80%;position: fixed; z-index: 5;">
-    <div style="position: relative; " *ngFor="let notification of notifications" class="notification" [ngClass]="notification.type">
-      {{ notification.message }}
+<div class="form-page-container">
+  <!-- Notifications Overlay -->
+  <div class="notifications-wrapper" *ngIf="notifications.length > 0">
+    <div *ngFor="let notification of notifications" class="notification-banner" [ngClass]="notification.type">
+      <mat-icon>{{ notification.type === 'success' ? 'check_circle' : 'error' }}</mat-icon>
+      <span>{{ notification.message }}</span>
     </div>
-    
   </div>
 
-<div style="overflow: hidden;" class="product">
-  <div style="margin-bottom: 1rem;" *ngIf="this.product" >
-    <!-- Edit Button -->
-    <div style="position: relative; float: right; width: 100%; margin-bottom: 3remm;">
- 
-      <button class="cancel" (click)="goto()" >Cancel</button>
+  <div class="form-card">
+    <div class="form-header">
+      <div class="header-content">
+        <h1>{{editmode ? 'Edit Product' : 'Add New Product'}}</h1>
+        <p>Fill in the details below to list your product on HotelMart</p>
+      </div>
+      <button class="btn-cancel" (click)="onCancel()" type="button">
+        <mat-icon>close</mat-icon>
+        <span>Cancel</span>
+      </button>
     </div>
-    <div>
 
+    <!-- Submission Loader -->
+    <div *ngIf="isUploaded || isSubmitted" class="form-loader-overlay">
+      <div class="spinner"></div>
+      <p>Submitting your product...</p>
     </div>
 
-  </div>
-   <!-- Edit Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="premium-form">
+      <!-- Basic Details Section -->
+      <div class="form-section basic-info">
+        <div class="form-group">
+          <label for="prodName">Product Name <span class="required">*</span></label>
+          <input id="prodName" formControlName="prodName" class="form-control"
+            placeholder="Enter a descriptive product name" [class.error-input]="hasError('prodName')" />
+          <span class="error-text" *ngIf="hasError('prodName')">{{ getErrorMessage('prodName') }}</span>
+        </div>
 
-<form  [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="form-group">
-    <label for="prodName">Product Name:</label>
-    <input id="prodName" formControlName="prodName" class="form-control" />
-  </div>
-  <div class="form-group">
-    <label for="prodDesc">Description:</label>
-    <textarea id="prodDesc" formControlName="prodDesc" class="form-control"></textarea>
-  </div>
-  
+        <div class="form-group">
+          <label for="prodDesc">Description</label>
+          <textarea id="prodDesc" formControlName="prodDesc" class="form-control" rows="4"
+            placeholder="Tell buyers more about your product..."></textarea>
+        </div>
 
-  <div class="form-group">
-    <div class="form-group">
-      <label for="category">Category:</label>
-      <mat-form-field style="border: none; padding: 0; margin: 0;">
-      <mat-label>{{ selectedCategory ? 'You Selected' : this.product?.category?.itemType || 'Select Category' }}</mat-label>
-
-        <mat-select  formControlName="category" (selectionChange)="onCategorySelect($event)" [value]="">
-          <div *ngFor="let category of categories">
-            <mat-option  [value]="category.id">
-              {{ category.itemType }}
-            </mat-option>
-            
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prodPrice">Price (₹) <span class="required">*</span></label>
+            <input id="prodPrice" type="number" formControlName="prodPrice" class="form-control" placeholder="0.00"
+              [class.error-input]="hasError('prodPrice')" />
+            <span class="error-text" *ngIf="hasError('prodPrice')">{{ getErrorMessage('prodPrice') }}</span>
           </div>
-        </mat-select>
-        {{selectedCategory?.itemType}}
 
-      </mat-form-field>
-    </div>
-    
+          <div class="form-group">
+            <label for="countInStock">Stock Quantity <span class="required">*</span></label>
+            <input id="countInStock" type="number" formControlName="countInStock" class="form-control"
+              placeholder="Available units" [class.error-input]="hasError('countInStock')" />
+            <span class="error-text" *ngIf="hasError('countInStock')">{{ getErrorMessage('countInStock') }}</span>
+          </div>
+        </div>
 
-  </div>
+        <div class="form-group">
+          <label for="prodSize">Unit/Size <span class="required">*</span></label>
+          <select id="prodSize" formControlName="prodSize" class="form-control"
+            [class.error-input]="hasError('prodSize')">
+            <option value="" disabled>Select a unit</option>
+            <option *ngFor="let unit of unitOptions" [value]="unit.value">
+              {{unit.label}}
+            </option>
+          </select>
+          <span class="error-text" *ngIf="hasError('prodSize')">{{ getErrorMessage('prodSize') }}</span>
+        </div>
 
-  
-  
-  <div class="form-group">
-    <label for="prodPrice">Price:</label>
-    <input id="prodPrice" type="number" formControlName="prodPrice" class="form-control" />
-  </div>
-  <div class="form-group">
-    <label for="countInStock">Stock Count:</label>
-    <input id="countInStock" type="number" formControlName="countInStock" class="form-control" />
-  </div>
-  <div class="form-group">
-    <label for="prodSize">Size:</label>
-    <input id="prodSize" formControlName="prodSize" class="form-control" />
-  </div>
-  <div class="form-group">
-    <label for="files">Images:</label>
-    <img class="img-preview" src="{{imagesDisplay[0]}}" alt="">
-    <input id="images" type="file" (change)="onFileChange($event)"   accept=".png, .jpg, .jpeg"  class="form-control-file" />
-  </div>
-  <p *ngIf="form.invalid">Please fill all the fields</p>
+        <div class="form-group category-selector-group">
+          <label>Category <span class="required">*</span></label>
+          <app-custom-category-selector [categories]="categories" formControlName="category"
+            placeholder="Select a category" [showAllOption]="false" [searchable]="true" [showIcons]="true"
+            [multiple]="false" (selectionChange)="onCategorySelect($event)">
+          </app-custom-category-selector>
+        </div>
+      </div>
 
-  <button  [ngClass]="{'form-invalid': form.invalid, 'form-valid': form.valid}" type="submit" [disabled]="form.invalid" >{{editmode ? (form.invalid ? 'Please fill all the fields' : 'Update') : 'Add'}}</button>  </form>
-</div>
+      <!-- Location Section -->
+      <div class="form-section expandable" [class.expanded]="showLocationSection">
+        <div class="section-header" (click)="showLocationSection = !showLocationSection">
+          <div class="title-with-icon">
+            <mat-icon>location_on</mat-icon>
+            <h3>Delivery Locations <span class="required">*</span></h3>
+            <span class="badge" *ngIf="isAllIndia">All India</span>
+            <span class="badge" *ngIf="!isAllIndia && selectedLocations.size > 0">{{selectedLocations.size}}
+              Selected</span>
+          </div>
+          <mat-icon class="toggle-icon">{{ showLocationSection ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </div>
 
+        <div class="section-content" *ngIf="showLocationSection">
+          <p class="section-help">Where can you deliver this product?</p>
+
+          <label class="all-india-toggle">
+            <input type="checkbox" [checked]="isAllIndia" (change)="toggleAllIndia()">
+            <span class="toggle-box"></span>
+            <span class="label-text"><strong>All India</strong> - Available for nationwide delivery</span>
+          </label>
+
+          <!-- Selected Units Display -->
+          <div class="chips-container" *ngIf="selectedLocations.size > 0 && !isAllIndia">
+            <div class="chip" *ngFor="let cityCode of selectedLocations">
+              <span>{{ getCityName(cityCode) }}</span>
+              <mat-icon (click)="removeLocation(cityCode)">close</mat-icon>
+            </div>
+          </div>
+
+          <div class="location-search-wrapper">
+            <div class="search-input-group">
+              <mat-icon>search</mat-icon>
+              <input type="text" placeholder="Search for cities..." [(ngModel)]="citySearchQuery"
+                [ngModelOptions]="{standalone: true}" (input)="searchCities()">
+            </div>
+
+            <div class="results-viewport">
+              <div class="location-item" *ngFor="let city of filteredCities.slice(0, 20)">
+                <label class="custom-checkbox">
+                  <input type="checkbox" [checked]="selectedLocations.has(city.code)"
+                    (change)="toggleLocation(city.code)">
+                  <span class="checkbox-box"></span>
+                  <span class="name">{{city.name}}</span>
+                  <span class="state">{{city.stateName}}</span>
+                </label>
+              </div>
+              <p class="search-hint" *ngIf="filteredCities.length > 20">Showing top 20 results. Keep typing to refine.
+              </p>
+              <p class="empty-state" *ngIf="filteredCities.length === 0">No matches found.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced Details Section -->
+      <div class="form-section expandable" [class.expanded]="showEnhancedDetailsSection">
+        <div class="section-header" (click)="showEnhancedDetailsSection = !showEnhancedDetailsSection">
+          <div class="title-with-icon">
+            <mat-icon>settings</mat-icon>
+            <h3>Advanced Specifications</h3>
+          </div>
+          <mat-icon class="toggle-icon">{{ showEnhancedDetailsSection ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </div>
+
+        <div class="section-content" *ngIf="showEnhancedDetailsSection">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="brand">Brand</label>
+              <input id="brand" formControlName="brand" class="form-control" placeholder="e.g., Samsung, Nike" />
+            </div>
+            <div class="form-group">
+              <label for="condition">Condition <span class="required">*</span></label>
+              <select id="condition" formControlName="condition" class="form-control">
+                <option *ngFor="let option of conditionOptions" [value]="option.value">{{option.label}}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="minOrderQuantity">Min Order Qty</label>
+              <input id="minOrderQuantity" type="number" formControlName="minOrderQuantity" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label for="maxOrderQuantity">Max Order Qty</label>
+              <input id="maxOrderQuantity" type="number" formControlName="maxOrderQuantity" class="form-control"
+                placeholder="No limit" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="businessType">Business Type <span class="required">*</span></label>
+            <select id="businessType" formControlName="businessType" class="form-control">
+              <option *ngFor="let option of businessTypeOptions" [value]="option.value">{{option.label}}</option>
+            </select>
+          </div>
+
+          <div class="delivery-options-block">
+            <label class="custom-checkbox">
+              <input type="checkbox" formControlName="deliveryAvailable" />
+              <span class="checkbox-box"></span>
+              <span class="label-text">Delivery Service Available</span>
+            </label>
+
+            <div class="delivery-details" *ngIf="form.get('deliveryAvailable')?.value">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="estimatedDeliveryDays">Est. Delivery (Days)</label>
+                  <input id="estimatedDeliveryDays" type="number" formControlName="estimatedDeliveryDays"
+                    class="form-control" />
+                </div>
+                <div class="form-group">
+                  <label for="freeDeliveryAbove">Free Delivery Threshold (₹)</label>
+                  <input id="freeDeliveryAbove" type="number" formControlName="freeDeliveryAbove" class="form-control"
+                    placeholder="e.g., 500" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="tags">Keywords / Tags</label>
+            <input id="tags" formControlName="tags" class="form-control" placeholder="eco-friendly, bulk, premium..." />
+            <p class="input-hint">Separate with commas to help buyers find your product.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Media Section -->
+      <div class="form-section media-upload">
+        <label class="section-label">Product Image <span class="required">*</span></label>
+        <div class="upload-wrapper">
+          <div class="preview-area" *ngIf="imagesDisplay[0]">
+            <img [src]="imagesDisplay[0]" alt="Product Preview">
+            <div class="img-overlay">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+          </div>
+
+          <div class="upload-control" [class.has-preview]="imagesDisplay[0]">
+            <input id="images" type="file" (change)="onFileChange($event)" accept=".png, .jpg, .jpeg"
+              class="hidden-file-input" #fileInput />
+            <button type="button" class="btn-upload" (click)="fileInput.click()">
+              <mat-icon>{{ imagesDisplay[0] ? 'cached' : 'add_a_photo' }}</mat-icon>
+              <span>{{ imagesDisplay[0] ? 'Change Image' : 'Select Product Image' }}</span>
+            </button>
+            <p class="upload-hint">Upload high-quality JPEG or PNG (Max 5MB)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Footer -->
+      <div class="form-footer">
+        <div class="error-summary" *ngIf="form.invalid || (selectedLocations.size === 0 && !isAllIndia)">
+          <mat-icon>warning</mat-icon>
+          <span>Please complete all required fields and select at least one delivery location.</span>
+        </div>
+
+        <button type="submit" class="btn-submit"
+          [disabled]="form.invalid || (selectedLocations.size === 0 && !isAllIndia)" [class.btn-loading]="isSubmitted">
+          <mat-icon *ngIf="!isSubmitted">check</mat-icon>
+          <span>{{editmode ? 'Update Listing' : 'Publish Product'}}</span>
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

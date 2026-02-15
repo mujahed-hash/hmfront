@@ -72,3 +72,13 @@
         </div>
     </div>
 </div>
+
+<div class="load-more-container">
+    <button *ngIf="hasMoreRequirements && !isLoading" (click)="loadRequirements()" [disabled]="isLoading" class="load-more-btn">
+        Load More Requirements
+    </button>
+    <div *ngIf="isLoading" class="loading-indicator">
+        <mat-spinner diameter="30"></mat-spinner>
+        <span>Loading more requirements...</span>
+    </div>
+</div>

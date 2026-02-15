@@ -1,0 +1,120 @@
+<div class="custom-category-selector" 
+     [class.disabled]="disabled"
+     [class.open]="isOpen"
+     (click)="toggleDropdown()">
+  
+  <!-- Selected Value Display -->
+  <div class="selector-display" [class.has-selection]="selectedCategories.length > 0">
+    <div class="selected-content">
+      <div class="selected-icon" *ngIf="selectedCategories.length > 0 && showIcons">
+        <img *ngIf="selectedCategories.length === 1 && getCategoryImage(selectedCategories[0])" 
+             [src]="getCategoryImage(selectedCategories[0])" 
+             [alt]="selectedCategories[0].itemType || selectedCategories[0].name"
+             class="category-image">
+        <mat-icon *ngIf="selectedCategories.length === 1 && !getCategoryImage(selectedCategories[0])">
+          {{ getCategoryIcon(selectedCategories[0]) }}
+        </mat-icon>
+        <mat-icon *ngIf="selectedCategories.length > 1">category</mat-icon>
+      </div>
+      <div class="selected-text-container">
+        <span class="selected-text" [class.placeholder]="selectedCategories.length === 0">{{ getDisplayText() }}</span>
+        <span class="selected-description" *ngIf="selectedCategories.length === 1 && selectedCategories[0].description">
+          {{ selectedCategories[0].description }}
+        </span>
+      </div>
+    </div>
+    <div class="dropdown-arrow" [class.rotated]="isOpen">
+      <mat-icon>keyboard_arrow_down</mat-icon>
+    </div>
+  </div>
+
+  <!-- Dropdown Options -->
+  <div class="dropdown-options" 
+       *ngIf="isOpen" 
+       [style.max-height]="maxHeight">
+    
+    <!-- Search Input -->
+    <div class="search-container" *ngIf="searchable">
+      <div class="search-input-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" 
+               class="search-input"
+               placeholder="Search categories..."
+               [value]="searchTerm"
+               (input)="onSearchChange($event)"
+               (click)="$event.stopPropagation()">
+        <!-- <button class="clear-search-btn" 
+                *ngIf="searchTerm" 
+                (click)="clearSearch(); $event.stopPropagation()"
+                type="button">
+          <mat-icon>close</mat-icon>
+        </button> -->
+      </div>
+    </div>
+
+    <!-- All Option -->
+    <div class="option-item all-option" 
+         *ngIf="showAllOption"
+         (click)="selectCategory(null); $event.stopPropagation()"
+         [class.selected]="selectedCategories.length === 0">
+      <div class="option-icon">
+        <mat-icon>apps</mat-icon>
+      </div>
+      <span class="option-text">{{ allOptionText }}</span>
+      <div class="option-check" *ngIf="selectedCategories.length === 0">
+        <mat-icon>check</mat-icon>
+      </div>
+    </div>
+
+    <!-- Category Options -->
+    <div class="options-list">
+      <div class="option-item" 
+           *ngFor="let category of filteredCategories; trackBy: trackByCategory"
+           (click)="selectCategory(category); $event.stopPropagation()"
+           [class.selected]="isCategorySelected(category)"
+           [class.multiple-mode]="multiple">
+        
+        <div class="option-icon" *ngIf="showIcons">
+        <img *ngIf="getCategoryImage(category)" 
+             [src]="getCategoryImage(category)" 
+             [alt]="category.itemType || category.name"
+             class="category-image">
+        <mat-icon *ngIf="!getCategoryImage(category)">
+          {{ getCategoryIcon(category) }}
+        </mat-icon>
+      </div>
+      
+      <div class="option-content">
+        <span class="option-text">{{ category.itemType || category.name }}</span>
+        <span class="option-description" *ngIf="category.description">
+          {{ category.description }}
+        </span>
+      </div>
+        
+        <!-- Checkbox for multiple selection -->
+        <div class="option-check" 
+             *ngIf="multiple && isCategorySelected(category)">
+          <mat-icon>check_box</mat-icon>
+        </div>
+        
+        <!-- Empty checkbox for unselected items in multiple mode -->
+        <div class="option-check-empty" 
+             *ngIf="multiple && !isCategorySelected(category)">
+          <mat-icon>check_box_outline_blank</mat-icon>
+        </div>
+        
+        <!-- Single selection check -->
+        <div class="option-check" 
+             *ngIf="!multiple && isCategorySelected(category)">
+          <mat-icon>check</mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div class="no-results" *ngIf="filteredCategories.length === 0 && searchTerm">
+      <mat-icon>search_off</mat-icon>
+      <span>No categories found</span>
+    </div>
+  </div>
+</div>

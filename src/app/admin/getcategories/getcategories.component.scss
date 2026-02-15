@@ -3,28 +3,32 @@
     height: 100%s;
 }
 .cat{
-    display: inline-block;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
     margin-top: 1rem;
-    width: 100%;
+    width: 90%;
     
 }
 .cat-sub{
-    display: flex;
+    /* Remove float and margins for flex item behavior */
+    /* flex-basis: content; or similar to let content define width */
+    flex-shrink: 0;
+    flex-grow: 0;
     width: auto;
-    padding-right: 1rem;
     text-align: center;
     // gap:20px
 }
 .cat-sub2{
     display: flex;
     align-items: center;
-    text-align: center;
+    justify-content: center;
     width: auto;
     gap: 5px;
     padding: 8px 15px;
-    margin: 0.5rem 1rem;
     border-radius: 20px;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+    margin: 0 auto;
 }
 .cat-sub span{
     display: inline-block;
@@ -44,6 +48,12 @@
     display: flex;
     align-items: center;
 }
+.cat-sub2 img{
+    width: 8rem;
+    height: 3rem;
+    border-radius: 100%;
+    object-fit: cover;
+}
 @media screen and (orientation:portrait) {
     .cat-sub2{
         display: flex;
@@ -51,7 +61,7 @@
         text-align: center;
         width: 60%;
         padding: 8px 5px;
-        margin: 0.5rem 1rem;
+        margin: 0.5rem 0.3rem;
         border-radius: 20px;
         box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
     }

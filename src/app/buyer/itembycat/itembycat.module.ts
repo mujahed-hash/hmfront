@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ItembycatRoutingModule } from './itembycat-routing.module';
@@ -8,10 +8,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/compiler';
-import { BuyerModule } from '../buyer.module';
-import { BuyerSearchComponent } from '../buyer-search/buyer-search.component';
 import { ComModule } from '../com/com.module';
+import { BuyeritemsModule } from '../buyeritems/buyeritems.module';
+import { BrowseCategoriesModule } from '../browse-categories/browse-categories.module';
 
 
 @NgModule({
@@ -26,8 +25,11 @@ import { ComModule } from '../com/com.module';
     ToastModule,
      ButtonModule,
      InputNumberModule,
-     ComModule
+     ComModule,
+     BuyeritemsModule,
+     BrowseCategoriesModule
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 
 })
 export class ItembycatModule { }

@@ -1,0 +1,61 @@
+.categories-container {
+    width: 90%;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch; /* Enable momentum scrolling on iOS */
+  }
+  
+  .categories {
+    display: flex;
+    // gap: 1rem;
+    // padding: 1rem;
+    width: min-content;
+    // margin-left: -0.3rem;
+    overflow: scroll;
+    padding-right: 7rem;
+  }
+  
+  .category {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 7rem;
+    height: 7rem;
+    border-radius: 20px;
+    text-align: center;
+    overflow: hidden;
+    background-color: white;
+    box-shadow: rgba(19, 10, 145, 0.306) 0px 3px 8px;
+    margin-bottom: 1rem;
+    margin-left: 0.3rem;
+    margin-right: 0.3rem;
+  }
+  
+  .category img{
+      width:100%;
+      height: 4.5rem;
+      border-radius: 8px;
+      object-fit: cover;
+      // margin-top: 1rem;
+  }
+  .category span{
+      margin:0.5rem 0 1rem 0;
+  }
+  
+  /* Hide the scrollbar for all browsers */
+  .categories-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .categories-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+
+  @media screen and (orientation:portrait) {
+
+    .categories-container {
+      width: 100%;
+    }
+}

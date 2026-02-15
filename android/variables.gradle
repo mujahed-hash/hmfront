@@ -1,6 +1,6 @@
 ext {
     minSdkVersion = 23
-    compileSdkVersion = 35
+    compileSdkVersion = 35 // Reverted to 35 as requested, warning will be suppressed
     targetSdkVersion = 35
     androidxActivityVersion = '1.9.2'
     androidxAppCompatVersion = '1.7.0'

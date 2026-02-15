@@ -1,0 +1,38 @@
+<div class="custom-status-selector" [class.open]="isOpen">
+  <div class="selector-display" (click)="toggleDropdown()">
+    <div class="selected-content">
+      <div class="selected-icon" *ngIf="selectedStatusIcon">
+        <mat-icon>{{ selectedStatusIcon }}</mat-icon>
+      </div>
+      <span class="selected-text" [class.placeholder]="!currentStatus">
+        {{ selectedStatusLabel }}
+      </span>
+    </div>
+    <div class="dropdown-arrow" [class.rotated]="isOpen">
+      <mat-icon>expand_more</mat-icon>
+    </div>
+  </div>
+
+  <div style="overflow-x:hidden;" class="dropdown-options" *ngIf="isOpen">
+    <div class="options-list">
+      <div
+        *ngFor="let status of statuses"
+        class="option-item"
+        [class.selected]="status.value === currentStatus"
+        (click)="selectStatus(status)"
+      >
+        <div class="option-icon" *ngIf="status.icon">
+          <mat-icon>{{ status.icon }}</mat-icon>
+        </div>
+        <span class="option-text">{{ status.label }}</span>
+        <div class="option-check" *ngIf="status.value === currentStatus">
+          <mat-icon>check</mat-icon>
+        </div>
+      </div>
+      <div *ngIf="statuses.length === 0" class="no-results">
+        <mat-icon>sentiment_dissatisfied</mat-icon>
+        <span>No statuses available</span>
+      </div>
+    </div>
+  </div>
+</div>

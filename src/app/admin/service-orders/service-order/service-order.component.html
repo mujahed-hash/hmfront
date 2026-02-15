@@ -1,0 +1,236 @@
+<div class="service-order-detail-container">
+  <!-- Header -->
+  <div class="header">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Service Order Details</h1>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-progress-spinner diameter="50" mode="indeterminate" color="primary"></mat-progress-spinner>
+    <p>Loading order details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <h3>Error Loading Order</h3>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Go Back
+    </button>
+  </div>
+
+  <!-- Order Details -->
+  <div *ngIf="!isLoading && !error && order" class="order-details-container">
+    <!-- Order Header -->
+    <mat-card class="order-header-card">
+      <mat-card-header>
+        <div mat-card-avatar class="order-avatar">
+          <mat-icon>receipt</mat-icon>
+        </div>
+        <mat-card-title>{{ order.customIdentifier }}</mat-card-title>
+        <mat-card-subtitle>Created on {{ formatDate(order.date) }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="order-status-section">
+          <div class="status-info">
+            <span class="status-label">Status:</span>
+            <mat-chip [class]="getStatusClass(order.status)">
+              {{ capitalizeFirst(order.status) }}
+            </mat-chip>
+          </div>
+          <div class="status-actions" *ngIf="order.status !== 'cancelled' && order.status !== 'completed'">
+            <app-custom-status-selector
+              [statuses]="statusOptions"
+              [currentStatus]="order.status"
+              (statusChange)="updateOrderStatus($event)"
+              placeholder="Update Status"
+            ></app-custom-status-selector>
+            <button mat-stroked-button color="warn" (click)="cancelOrder('Cancelled by admin')">
+              <mat-icon>cancel</mat-icon>
+              Cancel Order
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button color="warn" (click)="deleteOrder()">
+          <mat-icon>delete</mat-icon>
+          Delete Order
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Order Information Grid -->
+    <div class="order-info-grid">
+      <!-- Customer Information -->
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-card-title>Customer Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-item">
+            <span class="label">Name:</span>
+            <span class="value">{{ order.customerInfo?.name || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Email:</span>
+            <span class="value">{{ order.customerInfo?.email || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Phone:</span>
+            <span class="value">{{ order.customerInfo?.phone || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Address:</span>
+            <span class="value">{{ order.customerInfo?.address || 'N/A' }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Service Information -->
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-card-title>Service Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-item">
+            <span class="label">Service:</span>
+            <span class="value">{{ order.service?.serviceName || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Supplier:</span>
+            <span class="value">{{ order.supplier?.name || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Unit Price:</span>
+            <span class="value">₹{{ order.price }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Total Price:</span>
+            <span class="value price">₹{{ order.totalPrice }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Order Status History -->
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-card-title>Order Status</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-item">
+            <span class="label">Current Status:</span>
+            <mat-chip [class]="getStatusClass(order.status)">
+              {{ capitalizeFirst(order.status) }}
+            </mat-chip>
+          </div>
+          <div class="info-item" *ngIf="order.cancellationReason">
+            <span class="label">Cancellation Reason:</span>
+            <span class="value">{{ order.cancellationReason }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Payment Status:</span>
+            <span class="value">{{ capitalizeFirst(order.paymentStatus) }}</span>
+          </div>
+          <div class="info-item" *ngIf="order.notes">
+            <span class="label">Notes:</span>
+            <span class="value">{{ order.notes }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- User Information -->
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-card-title>User Details</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-item">
+            <span class="label">User ID:</span>
+            <span class="value">{{ order.user?.customIdentifier || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">User Name:</span>
+            <span class="value">{{ order.user?.name || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">User Email:</span>
+            <span class="value">{{ order.user?.email || 'N/A' }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Conversation Section -->
+    <mat-card class="conversation-card">
+      <mat-card-header>
+        <mat-card-title>Order Conversation</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="conversation-list" *ngIf="order.conversation && order.conversation.length > 0">
+          <div *ngFor="let message of order.conversation" class="message-item">
+            <div class="message-header">
+              <span class="message-sender">{{ message.sender?.name || 'Unknown' }}</span>
+              <span class="message-role">({{ message.role }})</span>
+              <span class="message-time">{{ formatDate(message.timestamp) }}</span>
+            </div>
+            <div class="message-content">
+              {{ message.message }}
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!order.conversation || order.conversation.length === 0" class="no-messages">
+          <mat-icon>chat_bubble_outline</mat-icon>
+          <p>No conversation yet. Start the conversation by sending a message.</p>
+        </div>
+      </mat-card-content>
+
+      <!-- Message Input Section -->
+      <mat-card-actions>
+        <div class="message-input-container">
+          <mat-form-field appearance="outline" class="message-input">
+            <mat-label>Reply to conversation...</mat-label>
+            <textarea matInput
+                      [(ngModel)]="newMessage"
+                      placeholder="Type your message here..."
+                      rows="3"
+                      maxlength="500"></textarea>
+            <mat-hint align="end">{{ newMessage.length }}/500</mat-hint>
+          </mat-form-field>
+
+          <div class="message-actions">
+            <!-- <mat-form-field appearance="outline" class="status-select">
+              <mat-label>Update Status (Optional)</mat-label>
+              <mat-select [(ngModel)]="selectedStatus">
+                <mat-option value="">No status change</mat-option>
+                <mat-option value="pending">Pending</mat-option>
+                <mat-option value="confirmed">Confirmed</mat-option>
+                <mat-option value="in_progress">In Progress</mat-option>
+                <mat-option value="completed">Completed</mat-option>
+                <mat-option value="cancelled">Cancelled</mat-option>
+                <mat-option value="awaiting_user_response">Awaiting User Response</mat-option>
+                <mat-option value="awaiting_admin_action">Awaiting Admin Action</mat-option>
+              </mat-select>
+            </mat-form-field> -->
+
+            <button mat-raised-button
+                    color="primary"
+                    (click)="addMessage()"
+                    [disabled]="!newMessage.trim()"
+                    class="send-button">
+              <mat-icon>send</mat-icon>
+              Send Message
+            </button>
+          </div>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

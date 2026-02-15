@@ -16,7 +16,7 @@ export class CheckoutModalComponent {
 
   onCancel(): void {
     this.confirmCheckout.emit({ confirmed: false, notes: this.notes });
-    console.log('i m clicked')
+    // Emit checkout confirmation
   }
-  
+
 }

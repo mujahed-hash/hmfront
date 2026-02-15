@@ -1,0 +1,114 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  
+  .image-upload-section {
+    width: 100%;
+    max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .image-preview {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .remove-image {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(255, 255, 255, 0.7);
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.9);
+        }
+      }
+    }
+    
+    .image-upload {
+      margin: 20px 0;
+    }
+    
+    .image-info {
+      text-align: center;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+  
+  .form-fields {
+    flex: 1;
+    
+    .full-width {
+      width: 100%;
+    }
+    
+    .form-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      
+      .half-width {
+        width: 50%;
+      }
+      
+      .status-toggle {
+        margin-top: 10px;
+      }
+    }
+  }
+}
+
+mat-dialog-content {
+  min-height: 300px;
+  min-width: 400px;
+  max-height: 80vh;
+}
+
+mat-dialog-actions {
+  button {
+    min-width: 90px;
+  }
+}
+
+// For mat-spinner inside button
+button mat-spinner {
+  display: inline-block;
+  margin-right: 0;
+}
+
+// Dark theme support
+:host-context(.dark-theme) {
+  .image-upload-section {
+    .image-preview {
+      .remove-image {
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        
+        &:hover {
+          background: rgba(0, 0, 0, 0.7);
+        }
+      }
+    }
+    
+    .image-info {
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
+}

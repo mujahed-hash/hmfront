@@ -19,11 +19,15 @@ import {DropdownModule} from 'primeng/dropdown';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatButtonModule} from '@angular/material/button';
+import {MatBadgeModule} from '@angular/material/badge';
 import { SupplierapproveComponent } from '../supplierapprove/supplierapprove.component';
 import { OrderdekiveredComponent } from './orderdekivered/orderdekivered.component';
 import { OrdercancelledComponent } from './ordercancelled/ordercancelled.component';
 import { MatIconModule } from '@angular/material/icon';
 import { SupplysearchComponent } from '../supplysearch/supplysearch.component';
+import { SharedModule } from '../../shared/shared.module';
 @NgModule({
   declarations: [
     OrderdeliveredComponent,
@@ -49,8 +53,11 @@ import { SupplysearchComponent } from '../supplysearch/supplysearch.component';
     MatInputModule,
     MatSelectModule,
     MatFormFieldModule,
-    MatIconModule
-
+    MatProgressSpinnerModule,
+    MatButtonModule,
+    MatBadgeModule,
+    MatIconModule,
+    SharedModule
   ],
   providers: [NavigationService],
 

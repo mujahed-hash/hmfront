@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background color - uses the same color as the launcher icon background -->
+    <item android:drawable="@color/ic_launcher_background"/>
+
+    <!-- Your square/rectangular logo -->
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/hotelmart_splash_logo" /> <!-- IMPORTANT: This requires 'hotelmart_splash_logo.png' to be in the drawable folder -->
+    </item>
+</layer-list>

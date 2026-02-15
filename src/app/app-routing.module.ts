@@ -1,33 +1,153 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { LoginComponent } from './auth/login/login.component';
-import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { SignupComponent } from './auth/signup/signup.component';
-import { AEUserComponent } from './admin/aeuser/aeuser.component';
 import { ProfileComponent } from './profile/profile.component';
+import { NetworkGuard } from './shared/guards/network.guard';
+import { OfflineComponent } from './shared/components/offline/offline.component';
+import { UserServiceOrdersComponent } from './profile/user-service-orders/user-service-orders.component'; // Import new components
+import { ServiceOrderConversationComponent } from './profile/service-order-conversation/service-order-conversation.component'; // Import new components
+import { ServiceListComponent } from './services/service-list/service-list.component'; // Import for admin services route
+import { SidebarComponent } from './sidebar/sidebar.component';
+
 const routes: Routes = [
-  { path: 'login', component: LoginComponent},
-    { path: 'supplier', loadChildren: () => import('./supplier/supplier.module').then(m => m.SupplierModule), canActivate: [AuthGuard, RoleGuard], data: { role: 'supplier' } },
-  { path: 'buyer', loadChildren: () => import('./buyer/buyer.module').then(m => m.BuyerModule), canActivate: [AuthGuard, RoleGuard], data: { role: 'buyer' } },
-  { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule), canActivate: [AuthGuard, RoleGuard], data: { role: 'admin' } },
-  {path:'s', loadChildren:()=>import('./shared/shared.module').then(m=>m.SharedModule)},
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
-  {path:'profile', component:ProfileComponent },
-  { path: 'make', loadChildren: () => import('./makereq/makereq.module').then(m => m.MakereqModule)},
 
-  {path:'',redirectTo:'home', pathMatch:'full'},
+  // Offline route - no guards needed
+  {
+    path: 'offline',
+    component: OfflineComponent,
+    data: { animation: 'fadingPage' }
+  },
+  // Auth routes - no guards needed
+  {
+    path: 'login',
+    component: LoginComponent,
+    data: { animation: 'fadingPage' }
+  },
+  {
+    path: 'signup',
+    component: SignupComponent,
+    data: { animation: 'fadingPage' }
+  },
+  // Protected routes - need network and auth, wrapped in Sidebar layout
+  {
+    path: '',
+    component: SidebarComponent,
+    canActivate: [NetworkGuard, AuthGuard],
+    children: [
+      {
+        path: 'supplier',
+        loadChildren: () => import('./supplier/supplier.module').then(m => m.SupplierModule),
+        canActivate: [RoleGuard],
+        data: { role: 'supplier', animation: 'fadingPage' }
+      },
+      {
+        path: 'buyer',
+        loadChildren: () => import('./buyer/buyer.module').then(m => m.BuyerModule),
+        canActivate: [RoleGuard],
+        data: { role: 'buyer', animation: 'fadingPage' }
+      },
+      {
+        path: 'admin',
+        loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
+        canActivate: [RoleGuard],
+        data: { role: 'admin', animation: 'fadingPage' }
+      },
+      {
+        path: 'superadmin',
+        loadChildren: () => import('./superadmin/superadmin.module').then(m => m.SuperadminModule),
+        canActivate: [RoleGuard],
+        data: { role: 'superadmin', animation: 'fadingPage' }
+      },
+      {
+        path: 'services',
+        loadChildren: () => import('./services/services.module').then(m => m.ServicesModule),
+        data: { animation: 'fadingPage' }
+      },
+      {
+        path: 'home',
+        component: HomeComponent,
+        data: { animation: 'fadingPage' }
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent,
+        data: { animation: 'fadingPage' }
+      },
+      {
+        path: 'my-service-orders',
+        component: UserServiceOrdersComponent,
+        data: { animation: 'fadingPage' }
+      },
+      {
+        path: 'my-service-orders/:customIdentifier',
+        component: ServiceOrderConversationComponent,
+        data: { animation: 'fadingPage' }
+      },
+      {
+        path: 'make',
+        loadChildren: () => import('./makereq/makereq.module').then(m => m.MakereqModule),
+        data: { animation: 'fadingPage' }
+      },
+      {
+        path: 'admin/services',
+        component: ServiceListComponent,
+        canActivate: [RoleGuard],
+        data: { role: ['isAdmin', 'isSuperAdmin'], animation: 'fadingPage', isAdminView: true }
+      },
+      {
+        path: 'app-developer',
+        loadChildren: () => import('./developer/developer.module').then(m => m.DeveloperModule),
+        data: { animation: 'fadingPage' }
+      },
+      {
+        path: 'settings',
+        loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule),
+        data: { animation: 'fadingPage' }
+      },
+      {
+        path: 'see',
+        loadChildren: () => import('./shared/shared.module').then(m => m.SharedModule),
+        data: { animation: 'fadingPage' }
+      },
+      {
+        path: 's',
+        loadChildren: () => import('./confirmedshared/testing.module').then(m => m.TestingModule),
+        data: { animation: 'fadingPage' }
+      },
+      {
+        path: 'all-services',
+        loadChildren: () => import('./all-services/all-services.module').then(m => m.AllServicesModule),
+        data: { animation: 'fadingPage' }
+      },
+      {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full'
+      }
+    ]
+  },
+  // Default routes
+  {
+    path: 'See',
+    redirectTo: 'see',
+    pathMatch: 'full'
+  },
 
-  { path: '**', redirectTo: 'home' }, // Fallback for unknown paths
-
-   // Default route for logged-in users
-  // { path: '**', redirectTo: 'home' , canActivate: [AuthGuard]} // Redirect to home for any unknown routes
+  // Catch-all route - must be last
+  { path: '**', redirectTo: 'home' },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes,{ scrollPositionRestoration: 'enabled' , useHash:true})],
+  imports: [
+    RouterModule.forRoot(routes, {
+      scrollPositionRestoration: 'enabled',
+      preloadingStrategy: PreloadAllModules
+    })
+  ],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

@@ -1,0 +1,301 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, NgZone } from '@angular/core';
+import { environment } from 'environments/environment.prod';
+import { BehaviorSubject, Observable } from 'rxjs';
+import io from 'socket.io-client';
+import { Capacitor } from '@capacitor/core';
+import { PushNotifications } from '@capacitor/push-notifications';
+import { SharedService } from './shared/shared.service';
+import { StateService } from './services/state.service';
+
+export interface Notification {
+  message: string;
+  type: 'success' | 'error' | 'info';
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class NotificationService {
+  private socket: any = null;
+  private notificationsSubject = new BehaviorSubject<Notification[]>([]);
+
+  notifications$ = this.notificationsSubject.asObservable();
+  baseUrl = environment.baseUrl;
+  private unreadCountSubject = new BehaviorSubject<number>(0);
+  unreadCount$ = this.unreadCountSubject.asObservable();
+
+  constructor(
+    private http: HttpClient,
+    private sharedService: SharedService,
+    private stateService: StateService,
+    private ngZone: NgZone
+  ) {
+    // Initialize Push Notifications
+    this.initPushNotifications();
+  }
+
+  // Connect to Socket.IO Server
+  connect() {
+    const authToken = localStorage.getItem('token');
+
+    if (!authToken) {
+      console.warn('[NotificationService] Cannot connect: No token found.');
+      return;
+    }
+
+    // specific check: if socket exists and is connected, check if token changed or just return
+    if (this.socket && this.socket.connected) {
+      console.log('[NotificationService] Socket already connected.');
+      return;
+    }
+
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+    }
+
+    const socketUrl = environment.baseUrl.replace('/api', ''); // Get base URL without /api
+    console.log('[NotificationService] Connecting to:', socketUrl);
+
+    this.socket = io(socketUrl, {
+      auth: { token: authToken }, // Use auth object for cleaner handshake
+      query: { token: authToken }, // Fallback for some backends
+      transports: ['websocket', 'polling'], // Prefer websocket
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000
+    });
+
+    this.setupSocketListeners();
+    this.socket.connect();
+  }
+
+  private setupSocketListeners() {
+    // 1. Unread Notification Count Update
+    this.socket.on('unreadCountUpdate', (unreadCount: number) => {
+      this.ngZone.run(() => {
+        this.unreadCountSubject.next(unreadCount);
+      });
+    });
+
+    // 2. New Notification Received
+    this.socket.on('notification', (notification: any) => {
+      this.ngZone.run(() => {
+        console.log('Received Notification:', notification);
+        this.addNotification(notification.message, notification.type || 'info');
+        // Refresh count on new notification
+        const token = localStorage.getItem('token');
+        if (token) this.refreshUnreadCount(token);
+      });
+    });
+
+    // 3. Cart Count Update
+    this.socket.on('cartCountUpdate', (count: number) => {
+      this.ngZone.run(() => {
+        console.log('[NotificationService] SOCKET EVENT: cartCountUpdate received. Count:', count);
+        this.stateService.updateCartCount(count);
+      });
+    });
+
+    this.socket.on('connect', () => {
+      this.ngZone.run(() => {
+        console.log('[NotificationService] Socket connected. ID:', this.socket.id);
+        const userId = this.getUserIdFromToken();
+        if (userId) {
+          this.socket.emit('register', userId);
+          // Register via HTTP for backend tracking if needed
+          const token = localStorage.getItem('token');
+          if (token) {
+            const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+            this.http.post(`${environment.baseUrl}/notifications/register-socket`, { socketId: this.socket.id }, { headers })
+              .subscribe({ error: (err) => console.debug('[NotificationService] HTTP Register failed', err) });
+          }
+        }
+      });
+    });
+
+    this.socket.on('disconnect', (reason: any) => {
+      console.log('[NotificationService] Socket disconnected:', reason);
+    });
+
+    this.socket.on('connect_error', (error: any) => {
+      console.error('[NotificationService] Socket connection error:', error);
+    });
+  }
+
+  // Disconnect from WebSocket server
+  disconnect() {
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+      console.log('Disconnected from WebSocket server');
+    }
+  }
+
+  // Register user with socket server
+  registerUser(userId: string) {
+    if (this.socket) {
+      this.socket.emit('register', userId);
+    } else {
+      console.warn('Socket not connected. Cannot register user.');
+    }
+  }
+
+  private async initPushNotifications() {
+    if (!Capacitor.isNativePlatform()) {
+      return; // Skip push notifications on web
+    }
+
+    try {
+      const result = await PushNotifications.requestPermissions();
+
+      if (result.receive === 'granted') {
+        await PushNotifications.register();
+      } else {
+        console.warn('Push notification permission denied');
+        return;
+      }
+
+      PushNotifications.addListener('registration', (token) => {
+        this.saveFcmTokenToBackend(token.value);
+      });
+
+      PushNotifications.addListener('registrationError', (error: any) => {
+        console.error('Push notification registration error:', error?.message || error);
+      });
+
+      PushNotifications.addListener('pushNotificationReceived', (notification: any) => {
+        this.addNotification(notification.title || 'New Notification', 'info');
+      });
+
+      PushNotifications.addListener('pushNotificationActionPerformed', (notification: any) => {
+        // TODO: Handle navigation based on notification data
+      });
+    } catch (error) {
+      console.error('Failed to initialize push notifications:', error);
+    }
+  }
+
+  private saveFcmTokenToBackend(fcmToken: string) {
+    console.log('[FRONTEND] saveFcmTokenToBackend called with fcmToken:', fcmToken);
+    const userId = this.getUserIdFromToken();
+    const authToken = localStorage.getItem('token');
+    if (userId && authToken) {
+      const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`
+      });
+      this.http.post(`${this.baseUrl}/users/save-fcm-token`, { userId, fcmToken }, { headers }).subscribe({
+        next: (res) => console.log('FCM token saved to backend', res),
+        error: (err) => console.error('Error saving FCM token to backend', err)
+      });
+    } else {
+      console.warn('Cannot save FCM token: User not logged in or token missing.');
+    }
+  }
+
+  addNotification(message: string, type: 'success' | 'error' | 'info') {
+    const currentNotifications = this.notificationsSubject.value;
+    this.notificationsSubject.next([...currentNotifications, { message, type }]);
+
+    setTimeout(() => {
+      this.removeNotification();
+    }, 3000);
+  }
+
+  private removeNotification() {
+    const currentNotifications = this.notificationsSubject.value;
+    currentNotifications.shift();
+    this.notificationsSubject.next([...currentNotifications]);
+  }
+
+  getNotifications(token: any, start: number = 0, limit: number = 20) {
+    const headers = { Authorization: `Bearer ${token}` };
+    const options = { headers: new HttpHeaders(headers) };
+    return this.http.get(`${this.baseUrl}/notifications?start=${start}&limit=${limit}`, options)
+  }
+
+  // Fetch unread count
+  getUnreadCount(token: any): Observable<number> {
+    const headers = { Authorization: `Bearer ${token}` };
+    if (localStorage.getItem('token')) {
+      const options = { headers: new HttpHeaders(headers) };
+      return this.http.get<number>(`${this.baseUrl}/count/unread-count`, options);
+    } else {
+      return new Observable<number>(observer => {
+        observer.next(0);
+        observer.complete();
+      });
+    }
+  }
+
+  refreshUnreadCount(token: string): void {
+    this.getUnreadCount(token).subscribe({
+      next: (count) => this.unreadCountSubject.next(count),
+      error: (error) => console.error('Error fetching unread count:', error)
+    });
+  }
+
+  startPollingNotifications(token: string): void {
+    this.refreshUnreadCount(token);
+  }
+
+  // Mark all notifications as read
+  markAllAsRead(token: any): Observable<any> {
+    const headers = { Authorization: `Bearer ${token}` };
+    const options = { headers: new HttpHeaders(headers) };
+    return this.http.put(`${this.baseUrl}/mark-all-read`, null, options);
+  }
+
+  getAdminNotifications(token: any, start: number = 0, limit: number = 20) {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    const options = { headers };
+    return this.http.get(`${this.baseUrl}/admin/notifications?start=${start}&limit=${limit}`, options);
+  }
+
+  getAdminunread(token: any) {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    const options = { headers };
+    return this.http.get<any>(`${this.baseUrl}/admin/count/unread-count`, options)
+  }
+
+  markAdminAllAsRead(token: any): Observable<any> {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    const options = { headers };
+    return this.http.put(`${this.baseUrl}/admin/mark-all-read`, null, options);
+  }
+
+  // Listen for specific events
+  on(event: string, callback: any) {
+    if (this.socket) {
+      this.socket.on(event, callback);
+    } else {
+      console.warn('Socket not connected. Cannot listen for event:', event);
+    }
+  }
+
+  // Emit events to the server
+  emit(event: string, data: any) {
+    if (this.socket) {
+      this.socket.emit(event, data);
+    } else {
+      console.warn('Socket not connected. Cannot emit event:', event);
+    }
+  }
+
+  // Utility method
+  private getUserIdFromToken(): string | null {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.userId || payload.id || payload._id || null;
+      } catch (e) {
+        console.error('Error decoding token:', e);
+        return null;
+      }
+    }
+    return null;
+  }
+}

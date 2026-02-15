@@ -1,52 +1,136 @@
-<div class="search-main">
-    <div class="search-container">
-        <input
-          type="text"
-          [(ngModel)]="query"
-          placeholder="Search products..."
-          (keyup.enter)="onSearch()"
-          class="search-input"
-        /><button (click)="onSearch()" class="search-button">Search</button>
+<div class="buyer-search-main">
+  <div class="search-bar-container">
+    <input type="text" [(ngModel)]="query" placeholder="Search products..." (keyup.enter)="onSearch()"
+      (ngModelChange)="onQueryChange($event)" (input)="onInputEvent($event)" (focus)="onFocus()" (blur)="onBlur()"
+      class="search-input" aria-label="Search products" />
+    <button (click)="onSearch()" class="search-button">
+      <mat-icon>search</mat-icon>
+    </button>
+  </div>
+
+  <!-- Display search results -->
+  <div *ngIf="searchPerformed" class="search-results-wrapper">
+
+    <!-- View Style Controls -->
+    <div class="view-controls"
+      style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0;">
+      <div class="view-style-toggle">
+        <span style="font-weight: 600; color: #1e293b; margin-right: 15px;">View:</span>
+        <button *ngFor="let style of viewStyles" mat-icon-button [class.active]="viewStyle === style.value"
+          (click)="setViewStyle(style.value)" [attr.title]="style.label" class="view-style-toggle-btn">
+          <mat-icon>{{ style.icon }}</mat-icon>
+        </button>
       </div>
-      
-      <!-- Display search results -->
-      <div *ngIf="products.length > 0; else noResults">
-        <ul class="product-list">
-          <li *ngFor="let product of products" class="product-item">
-            <h3>{{ product.prodName }}</h3>
-            <div class="img">
-                <img [routerLink]="['/buyer/item/view', product.customIdentifer]"  [src]="product.images[0]" alt="{{ product.prodName }}" />
-  
+
+      <div class="results-info" *ngIf="products.length > 0" style="color: #64748b; font-size: 0.9rem;">
+        {{ totalProducts }} {{ totalProducts === 1 ? 'product' : 'products' }} found
+      </div>
+    </div>
+
+    <div class="items-container">
+      <div class="product-grid" [ngClass]="getViewStyleClass()">
+        <div class="product-card" *ngFor="let product of products" [ngClass]="getViewStyleClass()">
+          <div class="product-image-container" *ngIf="product.stock >= 1">
+            <img [src]="product.prodImages[0] || 'assets/placeholder-product.png'" [alt]="product.prodName"
+              class="product-image" [routerLink]="['/buyer/item/view', product.customIdentifier]" />
+
+            <!-- Stock Status -->
+            <div style="width:max-content;" class="stock-badge" [class.in-stock]="product.stock > 0"
+              [class.out-of-stock]="product.stock === 0">
+              <span>{{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}</span>
+            </div>
+          </div>
+
+          <div class="product-info">
+            <h3 class="product-title">{{ product.prodName }}</h3>
+            <p class="product-price">{{ product.prodPrice | currency: 'INR' }} <span *ngIf="product.prodSize">/ {{
+                product.prodSize }}</span></p>
+
+            <!-- Location Pills -->
+            <div class="location-pills" *ngIf="product.locations">
+              <span class="location-pill all-india" *ngIf="product.locations.length === 0">
+                <mat-icon>public</mat-icon>
+                All India
+              </span>
+              <ng-container *ngIf="product.locations.length > 0">
+                <span class="location-pill" *ngFor="let location of product.locations.slice(0, 2)">
+                  {{ location.city }}, {{ location.state }}
+                </span>
+                <span class="location-pill more-locations" *ngIf="product.locations.length > 2">
+                  +{{ product.locations.length - 2 }} more
+                </span>
+              </ng-container>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="product-actions">
+              <!-- Quantity Selector -->
+              <div class="premium-quantity-selector" *ngIf="product.stock > 0">
+                <label>Qty:</label>
+                <p-inputNumber [(ngModel)]="quantities[product._id]" name="quantity" inputId="minmax" mode="decimal"
+                  [showButtons]="true" [min]="1" [max]="product.stock" [style]="{'width': '80px'}">
+                </p-inputNumber>
               </div>
-            <!-- <p>{{ product.prodDesc }}</p> -->
-            <p>Price: {{ product.prodPrice | currency: 'INR' }}</p>
-            <p>{{product.prodPrice | currency:'INR'}}/{{product.prodSize}}</p>
-            <!-- <div class="count" style="">
-              <p-inputNumber [(ngModel)]="quantities[product._id]" name="quantity" inputId="minmax" mode="decimal" [showButtons]="true" [min]="1" [max]="product.countInStock"></p-inputNumber>
-          </div> -->
-            <p *ngIf="product.inCart" class="in-cart">In Cart</p>
-            <p *ngIf="!product.inCart" class="not-in-cart">Not in Cart</p>
-            <button  [routerLink]="['/buyer/item/view', product.customIdentifer]" style="width: max-content;display: flex; justify-content: center; vertical-align: middle; align-items: center;  border: none; border-radius: 5px; background-color: #37B7C3; color: white; padding: 2px 8px;">   
-                <mat-icon style="color:white; font-size: 15px; position: relative; top:0.35rem">visibility</mat-icon>
-               View</button>
-          </li>
-        </ul>
-      
-        <!-- Pagination Controls -->
-        <div class="pagination">
-          <button (click)="prevPage()" [disabled]="start === 0">Previous</button>
-          <button
-            (click)="nextPage()"
-            [disabled]="start + limit >= totalProducts"
-          >
-            Next
-          </button>
+
+              <!-- Add to Cart / Go to Cart -->
+              <button *ngIf="!product.inCart && product.stock > 0" class="add-to-cart-btn"
+                (click)="addProductToCart(product._id, quantities[product._id])">
+                <mat-icon>add_shopping_cart</mat-icon>
+                Add to Cart
+              </button>
+
+              <button *ngIf="product.inCart" class="go-to-cart-btn" routerLink="/buyer/cart">
+                <mat-icon>shopping_cart</mat-icon>
+                Go to Cart
+              </button>
+
+              <button class="view-details-btn" [routerLink]="['/buyer/item/view', product.customIdentifier]">
+                <mat-icon>visibility</mat-icon>
+                View Details
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-      
-      <!-- Template if no results are found -->
-      <ng-template #noResults>
-        <p *ngIf="searchPerformed">No products found.</p>
-     </ng-template>
-      
+
+      <!-- Load More Button -->
+      <div class="load-more-container" *ngIf="hasMoreProducts && !isLoading">
+        <button class="load-more-btn" (click)="loadProducts()">
+          <mat-icon>expand_more</mat-icon>
+          Load More Products
+        </button>
+      </div>
+
+      <!-- No More Products Message -->
+      <div class="no-more-container" *ngIf="!hasMoreProducts && products.length > 0 && !isLoading">
+        <div class="no-more-message">
+          <mat-icon>check_circle</mat-icon>
+          <p>All products loaded! You've seen everything we have to offer.</p>
+        </div>
+      </div>
+
+      <!-- No Products Found -->
+      <div class="no-products-container" *ngIf="products.length === 0 && !isLoading && searchPerformed && !authError">
+        <div class="no-products-message">
+          <mat-icon>search_off</mat-icon>
+          <h3>No products found</h3>
+          <p>Try adjusting your filters or search criteria to find what you're looking for.</p>
+        </div>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div class="loading-container" *ngIf="isLoading">
+        <div class="loading-spinner"></div>
+        <p>Loading products...</p>
+      </div>
+
+      <!-- Authentication error message -->
+      <div *ngIf="!isLoading && searchPerformed && authError" class="auth-error-message">
+        <mat-icon>lock</mat-icon>
+        <h3>Authentication Required</h3>
+        <p>Please log in to search for products.</p>
+        <button mat-raised-button color="primary" [routerLink]="['/login']">Login</button>
+      </div>
+    </div>
+  </div>
 </div>

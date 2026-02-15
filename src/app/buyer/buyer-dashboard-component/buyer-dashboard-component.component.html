@@ -1,13 +1,14 @@
 <div class="buy-head" style="width: 100%; display: grid; justify-items: center;">
-    <h1 style="color: #071952; width: 100%;">
-        Welcome To <span class="span">Hotel Mart!</span> </h1>
+    <h1 style="color: #071952; width: 100%; display: flex; align-items: center;">
+        Welcome To <h2 class="span">Hotelmart</h2>
+    </h1>
 </div>
 <div class="buyer-data">
     <div class="b-d-i" routerLink="/buyer/marketplace">
         <mat-icon class="n1" style="">shopping_cart</mat-icon>
         <span>Market</span>
     </div>
-  
+
     <div class="b-d-i" routerLink="/buyer/purchases">
         <mat-icon style="">receipt_long</mat-icon>
         <span>Orders</span>
@@ -20,32 +21,19 @@
 
 
 <div>
-    <div>
+    <!-- <div >
       <h2>Browse By Categories</h2>
-      <div class="categories-container">
-        <div class="categories">
+      <div   class="categories-container">
+        <div  class="categories">
           <div  *ngFor="let cat of categories">
             <div class="category" [routerLink]="['/buyer/item/', cat.customIdentifer]">
                 <img src="{{cat.image[0]}}" alt="Category 1">
                 <span style="font-size: small;">{{cat.itemType}}</span>
             </div>
           </div>
-          <!-- <div class="category">
-            <img src="https://via.placeholder.com/100" alt="Category 2">
-            <span>Category 2</span>
-          </div>
-          <div class="category">
-            <img src="https://via.placeholder.com/100" alt="Category 3">
-            <span>Category 3</span>
-          </div>
-          <div class="category">
-            <img src="https://via.placeholder.com/100" alt="Category 4">
-            <span>Category 4</span>
-          </div> -->
         </div>
       </div>
-    </div>
-  
+    </div> -->
     <div>
         <app-buyeritems></app-buyeritems>
 

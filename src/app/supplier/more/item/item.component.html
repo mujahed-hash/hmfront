@@ -1,50 +1,178 @@
 <div class="product">
-    <div style="display: flex; position: relative; float: right; width: max-content; gap: 5px;">
-        <button 
-          style="width:100%; padding: 5px; font-size: large; background-color: black; color: white; border: none; border-radius: 5px;"
-          (click)="toggleEdit()"
-        >
-        <mat-icon>edit</mat-icon>
+  <!-- Action Buttons -->
+  <div class="product-actions" style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px;">
+    <button
+      class="edit-btn"
+      mat-raised-button
+      color="primary"
+      (click)="toggleEdit()"
+    >
+      <mat-icon>edit</mat-icon>
+      Edit Product
+    </button>
+    <button
+      class="delete-btn"
+      mat-raised-button
+      color="warn"
+      (click)="deleteItem(this.product._id)"
+    >
+      <mat-icon>delete</mat-icon>
+      Delete Product
+    </button>
+  </div>
 
-        </button>
-        <button class="del-btn"
-        style="padding: 5px; font-size: large;  background-color: black; color: red; border: none; border-radius: 5px; background-color: rgb(194, 220, 255);"
-        (click)="deleteItem(this.product._id)"
-      >
-        <mat-icon>delete</mat-icon>
-      </button>
+  <div *ngIf="product" class="product-details">
+    <!-- Product Images Gallery -->
+    <div class="product-images" style="margin-bottom: 30px;">
+      <div class="main-image">
+        <img
+          [src]="product.images && product.images.length > 0 ? product.images[0] : 'assets/placeholder-product.png'"
+          alt="Product Image"
+          style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px;"
+        />
       </div>
-    <div *ngIf="this.product" >
-      <!-- Edit Button -->
-   
-    
-      <div>
-        <div>
-          <img class="prd-img"
-            [src]="this.product.images[0]" 
-            alt="Product Image"
-            accept=".jpg, .png, .jpeg"
-          />
+      <div class="image-thumbnails" *ngIf="product.images && product.images.length > 1" style="display: flex; gap: 10px; margin-top: 10px; overflow-x: auto;">
+        <img
+          *ngFor="let image of product.images; let i = index"
+          [src]="image"
+          alt="Product Image {{i+1}}"
+          (click)="selectedImageIndex = i"
+          [class.active]="selectedImageIndex === i"
+          style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid transparent;"
+        />
+      </div>
+    </div>
+
+    <!-- Product Basic Information -->
+    <div class="product-info-section">
+      <h1 class="product-title">{{ product.prodName }}</h1>
+
+      <div class="product-meta" style="display: flex; gap: 20px; margin-bottom: 20px; color: #666;">
+        <div class="meta-item">
+          <strong>Category:</strong> {{ product.category?.itemType || 'Not specified' }}
         </div>
-        <h2>{{ this.product.prodName }}</h2>
-        <small>
-          Price: {{ product.prodPrice | currency:'INR':'symbol':'1.2-2' }} per 
-          {{ this.product.prodSize ? this.product.prodSize : 'Unknown' }}
-        </small>
-        <p>
-          <strong>In Stock:</strong> {{ this.product.countInStock }} | 
-          <strong>Quantity Type/Size:</strong> {{ this.product.prodSize ? this.product.prodSize : 'Unknown' }}
-        </p>
-        <div>
-          <small>
-            <strong>Category:</strong> {{ this.product.category.itemType }} 
-          </small>
+        <div class="meta-item">
+          <strong>Posted:</strong> {{ product.date | date:'mediumDate' }}
         </div>
-         <div>
-          <p>
-           Descriptipn: {{this.product.prodDesc}} 
-          </p>
-         </div>
+        <div class="meta-item" *ngIf="product.views">
+          <strong>Views:</strong> {{ product.views }}
+        </div>
       </div>
+
+      <div class="product-pricing" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <div class="price-info">
+          <h2 class="price">{{ product.prodPrice | currency:'INR':'symbol':'1.2-2' }}</h2>
+          <div class="size-info">
+            <span *ngIf="product.prodSize">per {{ product.prodSize }}</span>
+          </div>
+        </div>
+        <div class="stock-info">
+          <div class="stock-count">
+            <mat-icon style="color: #28a745;">inventory</mat-icon>
+            <span><strong>{{ product.countInStock }}</strong> in stock</span>
+          </div>
+        </div>
       </div>
-     </div> 
+    </div>
+
+    <!-- Enhanced Product Details -->
+    <div class="product-details-grid">
+      <!-- Basic Details -->
+      <div class="detail-section">
+        <h3>Product Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item" *ngIf="product.brand">
+            <label>Brand:</label>
+            <span>{{ product.brand }}</span>
+          </div>
+          <div class="detail-item" *ngIf="product.condition">
+            <label>Condition:</label>
+            <span class="condition-badge" [ngClass]="'condition-' + product.condition">{{ product.condition | titlecase }}</span>
+          </div>
+          <div class="detail-item" *ngIf="product.businessType">
+            <label>Business Type:</label>
+            <span>{{ product.businessType | titlecase }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Details -->
+      <div class="detail-section">
+        <h3>Order Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item" *ngIf="product.minOrderQuantity && product.minOrderQuantity > 1">
+            <label>Minimum Order:</label>
+            <span>{{ product.minOrderQuantity }} units</span>
+          </div>
+          <div class="detail-item" *ngIf="product.maxOrderQuantity">
+            <label>Maximum Order:</label>
+            <span>{{ product.maxOrderQuantity }} units</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery Information -->
+      <div class="detail-section">
+        <h3>Delivery Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Delivery Available:</label>
+            <span class="delivery-badge" [class.available]="product.deliveryAvailable !== false">
+              {{ product.deliveryAvailable !== false ? 'Yes' : 'No' }}
+            </span>
+          </div>
+          <div class="detail-item" *ngIf="product.deliveryAvailable !== false && product.estimatedDeliveryDays">
+            <label>Estimated Delivery:</label>
+            <span>{{ product.estimatedDeliveryDays }} days</span>
+          </div>
+          <div class="detail-item" *ngIf="product.deliveryAvailable !== false && product.freeDeliveryAbove">
+            <label>Free Delivery Above:</label>
+            <span>{{ product.freeDeliveryAbove | currency:'INR':'symbol':'1.0-0' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Locations -->
+      <div class="detail-section" *ngIf="product.locations && product.locations.length > 0">
+        <h3>Available Locations</h3>
+        <div class="locations-grid">
+          <div class="location-item" *ngFor="let location of product.locations">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ location.city }}, {{ location.state }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Tags -->
+      <div class="detail-section" *ngIf="product.tags && product.tags.length > 0">
+        <h3>Tags</h3>
+        <div class="tags-container">
+          <span class="tag" *ngFor="let tag of product.tags">{{ tag }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Description -->
+    <div class="product-description" style="margin-top: 30px;">
+      <h3>Description</h3>
+      <div class="description-content">
+        {{ product.prodDesc }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error && !product" class="error-container">
+  <mat-icon style="color: #f44336; font-size: 48px;">error</mat-icon>
+  <p style="color: #f44336; margin-top: 16px;">{{ error }}</p>
+  <button mat-raised-button color="primary" (click)="getItem()" style="margin-top: 16px;">
+    Retry
+  </button>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="!product && !error" class="loading-container">
+  <mat-spinner></mat-spinner>
+  <p>Loading product details...</p>
+</div> 

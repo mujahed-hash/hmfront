@@ -3,12 +3,23 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'in.hotelmart.in',
   appName: 'hmfront',
-  webDir: 'public',  // Corrected the path to just 'public'
+  webDir: 'public',
+  // Uncomment below for production builds pointing to live server:
   server: {
-    url: 'http://13.201.119.25:3000/api',
+    url: 'https://hotelmart.in/',
     cleartext: true
+  },
+  plugins: {
+    SplashScreen: {
+      launchShowDuration: 0,
+      launchAutoHide: false,
+      backgroundColor: "#ffffff",
+      showSpinner: false,
+      androidScaleType: "CENTER_CROP",
+      splashFullScreen: true,
+      splashImmersive: true
+    }
   }
 };
 
 export default config;
-

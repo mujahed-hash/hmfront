@@ -1,0 +1,359 @@
+.settings-container {
+  width: 80%;
+  margin: 0;
+  padding: 1rem;
+  min-height: calc(100vh - 64px);
+  left:0
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #071952 0%, #163172 100%); /* App theme gradient */
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  .back-button {
+    color: white;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+}
+
+// Dark mode for header
+.dark-theme .settings-header {
+  background: linear-gradient(135deg, #1f2a41 0%, #2f3d58 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.settings-section {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  ::ng-deep .mat-card-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #071952 0%, #163172 100%); /* App theme gradient */
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.1));
+    }
+
+    .section-icon {
+      background-color: #F2AE66; /* Accent color for avatar background */
+      color: #071952;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  ::ng-deep .mat-card-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  ::ng-deep .mat-card-subtitle {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+// Dark mode for settings section cards
+.dark-theme .settings-section {
+  background-color: #2f3d58; /* Darker background for cards */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  }
+
+  ::ng-deep .mat-card-header {
+    background: linear-gradient(135deg, #1f2a41 0%, #2f3d58 100%);
+    
+    .section-icon {
+      background-color: #fca311; /* Dark mode accent */
+      color: #1f2a41;
+    }
+  }
+
+  ::ng-deep .mat-card-title {
+    color: #e0e0e0; /* Light text for dark background */
+  }
+
+  ::ng-deep .mat-card-subtitle {
+    color: #a0a0a0; /* Lighter subtitle */
+  }
+}
+
+.font-size-options {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.font-size-option {
+  padding: 1.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafafa;
+
+  &:hover {
+    border-color: #007bff; /* Primary blue */
+    background: #e6f7ff; /* Light blue hover */
+    transform: scale(1.02);
+  }
+
+  &.selected {
+    border-color: #007bff;
+    background: linear-gradient(135deg, rgba(0, 123, 255, 0.1) 0%, rgba(0, 86, 179, 0.1) 100%);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+
+    .option-header h3 {
+      color: #007bff;
+      font-weight: 600;
+    }
+
+    .check-icon {
+      color: #007bff;
+    }
+  }
+
+  .option-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    .check-icon {
+      color: #007bff;
+    }
+
+    .uncheck-icon {
+      color: #a0a0a0;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+      color: #333;
+      transition: color 0.3s ease;
+    }
+  }
+
+  .option-description {
+    margin: 0 0 1rem 2.75rem;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  .preview-text {
+    margin-left: 2.75rem;
+    padding: 0.75rem 1rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    font-weight: 500;
+    color: #333;
+
+    &.preview-small {
+      font-size: 13px;
+    }
+
+    &.preview-medium {
+      font-size: 16px;
+    }
+
+    &.preview-large {
+      font-size: 19px;
+    }
+  }
+}
+
+// Dark mode for font size options
+.dark-theme .font-size-option {
+  border-color: #4a4a4a;
+  background: #3c4a63; /* Darker background */
+  
+  &:hover {
+    border-color: #2196f3; /* Brighter primary blue for hover */
+    background: #4a5d7c;
+  }
+
+  &.selected {
+    border-color: #2196f3;
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(33, 150, 243, 0.2) 100%);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+
+    .option-header h3 {
+      color: #2196f3;
+    }
+
+    .check-icon {
+      color: #2196f3;
+    }
+  }
+
+  .uncheck-icon {
+    color: #666;
+  }
+
+  h3 {
+    color: #e0e0e0; /* Light text */
+  }
+
+  .option-description {
+    color: #a0a0a0;
+  }
+
+  .preview-text {
+    background: #2f3d58;
+    border-color: #4a4a4a;
+    color: #e0e0e0;
+  }
+}
+
+.info-message {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(0, 123, 255, 0.1) 0%, rgba(0, 86, 179, 0.1) 100%);
+  border-radius: 8px;
+  border-left: 4px solid #007bff;
+
+  mat-icon {
+    color: #007bff;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  span {
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+  }
+}
+
+// Dark mode for info message
+.dark-theme .info-message {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(33, 150, 243, 0.2) 100%);
+  border-left-color: #2196f3;
+
+  mat-icon {
+    color: #2196f3;
+  }
+
+  span {
+    color: #a0a0a0;
+  }
+}
+
+// Responsive design
+@media screen and (max-width: 768px) {
+  .settings-container {
+    padding: 0.5rem;
+    width: 100%;
+  }
+
+  .settings-header {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+
+    h1 {
+      font-size: 22px;
+    }
+  }
+
+  .font-size-option {
+    padding: 1rem;
+
+    .option-header h3 {
+      font-size: 16px;
+    }
+
+    .option-description {
+      font-size: 13px;
+      margin-left: 2.5rem;
+    }
+
+    .preview-text {
+      margin-left: 2.5rem;
+    }
+  }
+
+  ::ng-deep .mat-card-title {
+    font-size: 18px !important;
+  }
+
+  ::ng-deep .mat-card-subtitle {
+    font-size: 13px !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .settings-header h1 {
+    font-size: 20px;
+  }
+
+  .font-size-option {
+    .option-header h3 {
+      font-size: 15px;
+    }
+
+    .option-description {
+      font-size: 12px;
+    }
+  }
+}
+

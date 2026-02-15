@@ -1,21 +1,41 @@
-<div class="user-main">
-<div class="user-sub">
-    <div>
-        <p><strong>Name: </strong> {{user?.name}}</p>
-        <p><strong>Email: </strong> {{user?.email}}</p>
-    </div>
-    <div>
-        <h3>Address</h3>
-        <div>
-            <p><strong>Street: </strong> {{user?.street}}</p>
-            <p><strong>Apartment: </strong> {{user?.apartment}}</p>
-            <p><strong>City: </strong> {{user?.city}}</p>
-            <p><strong>Zip: </strong> {{user?.zip}}</p>
-            <p><strong>Country: </strong> {{user?.country}}</p>
+<div class="profile-container">
+  <div class="go-back-container">
+    <button mat-flat-button color="primary" (click)="goBack()" class="go-back-button">
+      <mat-icon>arrow_back</mat-icon> Go Back
+    </button>
+  </div>
 
-        </div> 
-      
-    </div>
-</div>
-</div>
+  <mat-card class="profile-card animate__animated animate__fadeIn">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="profile-icon">person</mat-icon>
+      <mat-card-title>Your Profile</mat-card-title>
+      <mat-card-subtitle>Manage your personal information</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="user-info-section">
+        <p><mat-icon>account_circle</mat-icon> <strong>Name:</strong> {{ user?.name }}</p>
+        <p><mat-icon>email</mat-icon> <strong>Email:</strong> {{ user?.email }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
+  <mat-card class="address-card animate__animated animate__fadeInUp">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="address-icon">location_on</mat-icon>
+      <mat-card-title>Address Details</mat-card-title>
+      <mat-card-subtitle>Your registered address</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content *ngIf="user?.street">
+      <div class="address-details-section">
+        <p><mat-icon>house</mat-icon> <strong>Street:</strong> {{ user?.street }}</p>
+        <p><mat-icon>store</mat-icon> <strong>Shop/Unit No:</strong> {{ user?.apartment }}</p>
+        <p><mat-icon>location_city</mat-icon> <strong>City:</strong> {{ user?.city }}</p>
+        <p><mat-icon>fiber_pin</mat-icon> <strong>Zip Code:</strong> {{ user?.zip }}</p>
+        <p><mat-icon>public</mat-icon> <strong>Country:</strong> {{ user?.country }}</p>
+      </div>
+    </mat-card-content>
+    <mat-card-content *ngIf="!user?.street">
+      <p class="no-address">No address details available.</p>
+    </mat-card-content>
+  </mat-card>
+</div>

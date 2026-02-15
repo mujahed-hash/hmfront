@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AdminService } from '../admin.service';
 
-import { Subject, takeUntil } from 'rxjs';
-
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',

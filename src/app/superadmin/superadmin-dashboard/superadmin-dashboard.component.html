@@ -1,0 +1,33 @@
+<div class="superadmin-dashboard">
+  <div class="dashboard-header">
+    <h1>Super Admin Dashboard</h1>
+    <p>Welcome to the centralized management portal</p>
+  </div>
+
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-value">{{userStats.totalUsers}}</div>
+      <div class="stat-label">Total Users</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{userStats.admins}}</div>
+      <div class="stat-label">Admins</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{userStats.suppliers}}</div>
+      <div class="stat-label">Suppliers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{userStats.buyers}}</div>
+      <div class="stat-label">Buyers</div>
+    </div>
+  </div>
+
+  <div class="actions-container">
+    <mat-card class="action-card" (click)="navigateToPasswordManager()">
+      <mat-icon>vpn_key</mat-icon>
+      <h3>Password Manager</h3>
+      <p>View and manage decentralized passwords for all users</p>
+    </mat-card>
+  </div>
+</div>

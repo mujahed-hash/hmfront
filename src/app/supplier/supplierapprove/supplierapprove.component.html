@@ -1,52 +1,59 @@
+<div *ngIf="isUpadated" style="width: 100%; text-align: center; position: fixed;top:30%; display: flex; justify-content: center; margin: 0;left: 0;">
+  <h3 style=" margin: 0;left: 0; width: max-content; background-color: white; border-radius: 20px; color: #2657C1; border: #2657C1 2px solid; padding: 20px;">Updating Status... </h3>
+</div>
 <div *ngIf="!orders">
   <p>Approved Orders Appear Here</p>
 </div>
 <div class="order-container" *ngIf="orders">
     <div *ngFor="let order of orders" class="order-card">
       <div>
-        <div class="order-head" [routerLink]="['/s/view-order', order.customIdentifer]">   
+        <div class="order-head" [routerLink]="['/s/view-order', order.customIdentifier]">   
              <p>Orderd by <strong>{{order?.user?.name}}</strong></p>
           <p style="margin-bottom: 0.5rem;"> Status:
             <span style="background-color: #ECFFE6; padding: 3px 7px; border-radius: 5px; color: #399918;">{{order.status}} </span> </p>
   </div>
         <div style="position: relative; width: 100%; margin: 0;padding: 0;">
           <p style="position: relative; width:max-content; float: right; margin: 0;padding: 0;">
-            {{order?.totalPrice | currency : 'INR'}} for {{order?.orderItems.length}} item
+            {{order?.totalPrice | currency : 'INR'}} for {{order?.orderItems?.length}} item
           </p>
         </div>
-      <div *ngFor="let or of order.orderItems" class="order-item">
+      <div *ngFor="let or of order?.orderItems" class="order-item">
       <div >
         <!-- <div style="position: relative; width: 100%;" >            
             <p  style="position: relative; width:max-content; float: right;">{{order?.totalPrice | currency : 'INR'}} for       
                    {{or?.quantity}} item</p>
          </div> -->
         <div class="item">
-            <p class="product-name">Order for: <strong>{{or.product.prodName}}</strong> 
+            <p class="product-name">Order for: <strong>{{or?.product?.prodName}}</strong> 
             </p> 
-            <p class="order-details product-info product-price">Order Size type: <strong>{{or.prodSize}}</strong></p>
-            <p class="order-details product-info product-price">Item quantity : <strong>{{or.quantity}}</strong></p>
+            <p class="order-details product-info product-price">Order Size type: <strong>{{or?.prodSize}}</strong></p>
+            <p class="order-details product-info product-price">Item quantity : <strong>{{or?.quantity}}</strong></p>
 
         </div>
       </div>
    
       </div>
       <div class="order-status">
-        <select [(ngModel)]="newStatus[order._id]" class="status-select form-select">
+        <select [(ngModel)]="newStatus[order._id]" class="status-select form-select" [disabled]="isLoading">
           <option value="Pending">Pending</option>
           <option value="Approved">Approved</option>
           <option value="Delivered">Delivered</option>
           <option value="Cancelled">Cancelled</option>
-
         </select>
-        <button (click)="updateStatus(order._id, order.user._id)" class="update-button">Update Status</button>
+        <button (click)="updateStatus(order._id, order?.user?._id)" class="update-button" [disabled]="isLoading">
+          {{ isLoading ? 'Updating...' : 'Update Status' }}
+        </button>
       </div>
     </div>
     </div>
     <div *ngIf="orders.length != 0" class="itm-btn">
-      <button #loadingIndicator style="" *ngIf="hasMoreOrders && !isLoading" (click)="getApproveOrders()" [disabled]="isLoading">
-      {{orders? 'Load More': 'No items' }}
+      <button #loadingIndicator *ngIf="hasMoreOrders && !isLoading" (click)="getApproveOrders()" [disabled]="isLoading">
+        {{orders? 'Load More': 'No items' }}
       </button>
-   </div>
+      <div *ngIf="isLoading" class="loading-indicator">
+        Loading...
+      </div>
+    </div>
   </div>
   
 

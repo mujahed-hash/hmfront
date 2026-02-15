@@ -1,5 +1,6 @@
-import { NgModule,CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { BuyerRoutingModule } from './buyer-routing.module';
 import { BuyerComponent } from './buyer/buyer.component';
@@ -10,19 +11,20 @@ import { CartComponent } from './cart/cart.component';
 import { CheckoutModalComponent } from './checkout-modal/checkout-modal.component';
 import { ViewitemComponent } from './viewitem/viewitem.component';
 import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CheckoutDialogComponent } from './checkout-dialog/checkout-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-
-import { MessageService } from 'primeng/api';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { BuyeritemsModule } from './buyeritems/buyeritems.module';
-import { BrowserModule } from '@angular/platform-browser';
-import { BuyeritemsRoutingModule } from './buyeritems/buyeritems-routing.module';
-import { BuyerSearchComponent } from './buyer-search/buyer-search.component';
-import { ComModule } from './com/com.module';
+import { MessageService } from 'primeng/api';
+import { BrowseCategoriesModule } from './browse-categories/browse-categories.module';
+
 @NgModule({
   declarations: [
     BuyerComponent,
@@ -31,24 +33,27 @@ import { ComModule } from './com/com.module';
     CartComponent,
     CheckoutModalComponent,
     ViewitemComponent,
-    CheckoutDialogComponent,
-
+    CheckoutDialogComponent
   ],
   imports: [
     CommonModule,
+    FormsModule,
     BuyerRoutingModule,
     InputNumberModule,
     MatIconModule,
-    FormsModule,
-    MatFormFieldModule,
+    MatButtonModule,
+    MatBadgeModule,
+    MatTooltipModule,
     MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
     ToastModule,
-     ButtonModule,
-     BuyeritemsModule,
-     ComModule
+    ButtonModule,
+    BuyeritemsModule,
+    BrowseCategoriesModule
   ],
   providers: [MessageService],
-  
-
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class BuyerModule { }

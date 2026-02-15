@@ -1,102 +1,320 @@
+// Variables
+$primary-color: #071952;
+$primary-hover: #0a257a;
+$bg-color: #f8fafc;
+$card-bg: #ffffff;
+$text-main: #0f172a;
+$text-muted: #64748b;
+$border-color: #e2e8f0;
+$input-bg: #ffffff;
+$error-color: #ef4444;
 
+.login-page-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $bg-color;
+  background-image:
+    radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%); // Subtle premium gradient
+  padding: 1rem;
+}
 
-.login {
- 
-    width: 100%;
-    display: flex;
-    justify-items: center;
-    height: 100%;
-    align-items: center;
-    vertical-align: middle;
-  }
-  .login-sub{
-    width: 70%; display:grid; justify-content: center
-  }
-  .login form {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+// Common Card Styles
+.login-card,
+.session-card {
+  background: $card-bg;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 440px;
+  padding: 2.5rem;
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px); // Glassy effect if supported
+}
+
+// Session Active View
+.session-card {
+  .card-content.centered {
     display: flex;
     flex-direction: column;
-    width:100%;
+    align-items: center;
+    text-align: center;
 
-  }
-  .login label {
-    margin-bottom: 15px;
-    font-size: 14px;
-    color: #333333;
-  }
-  .login input {
-    padding: 10px;
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    font-size: 14px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  .login button {
-    padding: 10px;
-    background-color: #007bff;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  .login button:disabled {
-    background-color: #cccccc;
-  }
-  .login button:hover:not(:disabled) {
-    background-color: #0056b3;
-  }
-  .alert {
-    &.alert-danger {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-      border-radius: 4px;
-      padding: 10px 15px;
-      font-size: 14px;
-  
-      &.mt-3 {
-        margin-top: 1rem;
+    .icon-circle {
+      width: 64px;
+      height: 64px;
+      background: rgba($primary-color, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+
+      mat-icon {
+        color: $primary-color;
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
       }
-  
-      // Additional styling for better UX
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $text-main;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: $text-muted;
+      margin-bottom: 1.5rem;
     }
   }
-  
-  // Add a fade-in animation for the alert
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @media screen and (max-width:1000px) {
-    .login{
-      display: flex;
-      justify-content: center;
-    }
-   
-  }
-  @media screen and (orientation:portrait) {
-    .login{
-      display: flex;
-      justify-content: center;
-    }
-    .login-sub{
-      width:100%;
-      margin-top: -7rem;
-      margin-bottom: 1rem;
+}
+
+// Login Card Header
+.card-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  .logo-container {
+    margin-bottom: 1.5rem;
+
+    .app-logo {
+      height: 60px;
+      width: auto;
+      object-fit: contain;
+      border-radius: 8px; // Slight roundness if square logo
     }
   }
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $text-main;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.025em;
+  }
+
+  .subtitle {
+    color: $text-muted;
+    font-size: 0.95rem;
+  }
+}
+
+// Error Alert
+.error-alert {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  animation: shake 0.4s ease-in-out;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// Form Elements
+.login-form {
+  .form-group {
+    margin-bottom: 1.25rem;
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: $text-main;
+      margin-bottom: 0.5rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+
+      .input-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        pointer-events: none;
+        transition: color 0.2s;
+      }
+
+      input {
+        width: 100%;
+        height: 44px;
+        padding-left: 40px; // Space for icon
+        padding-right: 12px;
+        border: 1px solid $border-color;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: $input-bg;
+        transition: all 0.2s;
+        color: $text-main;
+
+        &::placeholder {
+          color: #cbd5e1;
+        }
+
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+
+          +.input-icon {
+            // Not directly possible with CSS sibling selector if icon is before, handled structure to support if needed or simple
+          }
+        }
+
+        &:focus~.input-icon {
+          // If we change order in HTML for this selector, or just keep it simple
+          color: $primary-color;
+        }
+
+        &.error {
+          border-color: $error-color;
+
+          &:focus {
+            box-shadow: 0 0 0 3px rgba($error-color, 0.1);
+          }
+        }
+      }
+    }
+
+    .error-msg {
+      display: block;
+      color: $error-color;
+      font-size: 0.8rem;
+      margin-top: 0.4rem;
+    }
+  }
+}
+
+// Buttons
+.btn-primary {
+  width: 100%;
+  height: 48px;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: $primary-hover;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.25);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background-color: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+// Footer
+.card-footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+
+  .link-muted {
+    color: $text-muted;
+    text-decoration: none;
+    transition: color 0.2s;
+    cursor: pointer;
+
+    &:hover {
+      color: $primary-color;
+      text-decoration: underline;
+    }
+  }
+
+  .divider {
+    color: $border-color;
+  }
+}
+
+// Animations
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .login-page-container {
+    padding: 0;
+    background: white; // Clean white on mobile for app-like feel
+  }
+
+  .login-card,
+  .session-card {
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    padding: 2rem 1.5rem;
+    max-width: 100%;
+    height: 100vh; // Full height
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}

@@ -7,7 +7,8 @@ import { SupReqDelComponent } from './sup-req-del/sup-req-del.component';
 const routes: Routes = [
   {path:'sup-requirements', component:ReqSupComponent},
   {path:'sup-requested/:customIdentifier', component:PostSupReqComponent},
-  {path:'sup-deliveries', component:SupReqDelComponent}
+  {path:'sup-deliveries', component:SupReqDelComponent},
+  {path:'sup-delivery-detail/:id', component:PostSupReqComponent}
 ];
 
 @NgModule({

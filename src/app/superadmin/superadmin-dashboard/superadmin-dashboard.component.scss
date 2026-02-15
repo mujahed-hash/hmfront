@@ -1,0 +1,168 @@
+.superadmin-dashboard {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-left: -1rem;
+  width: 80%;
+  .dashboard-header {
+    margin-bottom: 30px;
+    text-align: center;
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    p {
+      font-size: 16px;
+      color: #666;
+    }
+  }
+
+  .stats-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+
+    .stat-card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+      flex: 1;
+      margin: 0 10px 20px;
+      min-width: 150px;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+      }
+
+      .stat-value {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .stat-label {
+        font-size: 14px;
+        color: #7f8c8d;
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  .actions-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    .action-card {
+      width: 300px;
+      margin: 15px;
+      padding: 25px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      mat-icon {
+        font-size: 48px;
+        height: 48px;
+        width: 48px;
+        margin-bottom: 15px;
+        color: #3498db;
+      }
+
+      h3 {
+        margin-bottom: 10px;
+        font-size: 20px;
+        color: #2c3e50;
+      }
+
+      p {
+        color: #7f8c8d;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .superadmin-dashboard {
+    .stats-container {
+      .stat-card {
+        min-width: calc(50% - 20px);
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .superadmin-dashboard {
+    .stats-container {
+      .stat-card {
+        min-width: 100%;
+        margin: 0 0 20px;
+      }
+    }
+  }
+}
+
+// Dark mode styles
+@media (prefers-color-scheme: dark) {
+  .superadmin-dashboard {
+    background-color: #1a1a1a;
+
+    .dashboard-header {
+      h1 {
+        color: #e0e0e0;
+      }
+
+      p {
+        color: #b0b0b0;
+      }
+    }
+
+    .stats-container {
+      .stat-card {
+        background-color: #2a2a2a;
+
+        .stat-value {
+          color: #e0e0e0;
+        }
+
+        .stat-label {
+          color: #b0b0b0;
+        }
+      }
+    }
+
+    .actions-container {
+      .action-card {
+        background-color: #2a2a2a;
+
+        mat-icon {
+          color: #3498db;
+        }
+
+        h3 {
+          color: #e0e0e0;
+        }
+
+        p {
+          color: #b0b0b0;
+        }
+      }
+    }
+  }
+}

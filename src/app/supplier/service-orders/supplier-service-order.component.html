@@ -1,0 +1,174 @@
+<div class="service-order-container">
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner">
+      <i class="pi pi-spin pi-spinner"></i>
+      <p>Loading order details...</p>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-message">
+      <i class="pi pi-exclamation-triangle"></i>
+      <p>{{ error }}</p>
+      <button (click)="goBack()" class="btn btn-secondary">Go Back</button>
+    </div>
+  </div>
+
+  <!-- Order details -->
+  <div *ngIf="order && !isLoading && !error" class="order-details">
+    <!-- Header with back button -->
+    <div class="order-header">
+      <button (click)="goBack()" class="btn btn-outline">
+        <i class="pi pi-arrow-left"></i>
+        Back to Orders
+      </button>
+      <div class="order-title">
+        <h1>Service Order Details</h1>
+        <span class="order-id">Order ID: {{ order.customIdentifier }}</span>
+      </div>
+    </div>
+
+    <!-- Order status and basic info -->
+    <div class="order-summary">
+      <div class="status-section">
+        <div class="status-badge" [ngClass]="'status-' + order.status?.toLowerCase()">
+          {{ getStatusDisplay(order.status) }}
+        </div>
+        <div class="order-date">
+          <i class="pi pi-calendar"></i>
+          <span>{{ order.date | date: 'medium' }}</span>
+        </div>
+      </div>
+
+      <div class="amount-section">
+        <div class="total-amount">
+          <span class="amount-label">Total Amount:</span>
+          <span class="amount-value">{{ order.totalPrice | currency : 'INR' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer information -->
+    <div class="customer-info-section">
+      <h3>Customer Information</h3>
+      <div class="customer-details">
+        <div class="customer-item">
+          <i class="pi pi-user"></i>
+          <div>
+            <strong>{{ order.user?.name }}</strong>
+            <p>{{ order.customerInfo?.email }}</p>
+          </div>
+        </div>
+        <div class="customer-item">
+          <i class="pi pi-phone"></i>
+          <div>
+            <strong>{{ order.customerInfo?.phone }}</strong>
+            <p>Contact</p>
+          </div>
+        </div>
+        <div class="customer-item">
+          <i class="pi pi-map-marker"></i>
+          <div>
+            <strong>{{ order.customerInfo?.address }}</strong>
+            <p>Address</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Service information -->
+    <div class="service-info-section">
+      <h3>Service Information</h3>
+      <div class="service-details">
+        <div class="service-item">
+          <div class="service-name">
+            <i class="pi pi-briefcase"></i>
+            <div>
+              <strong>{{ order.service?.serviceName }}</strong>
+              <p>Service</p>
+            </div>
+          </div>
+        </div>
+        <div class="service-item">
+          <div class="service-price">
+            <i class="pi pi-money-bill"></i>
+            <div>
+              <strong>{{ order.price | currency : 'INR' }}</strong>
+              <p>Service Price</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service notes -->
+      <div *ngIf="order.notes" class="notes-section">
+        <h4>Additional Notes</h4>
+        <p>{{ order.notes }}</p>
+      </div>
+    </div>
+
+    <!-- Status management (only for own orders) -->
+    <div *ngIf="isOwnOrder" class="status-management">
+      <h3>Update Order Status</h3>
+      <div class="status-update-form">
+        <div class="status-selector">
+          <label for="status">Current Status:</label>
+          <select id="status" [(ngModel)]="selectedStatus" class="form-control" (change)="updateOrderStatus(selectedStatus)">
+            <option *ngFor="let option of statusOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conversation section -->
+    <div class="conversation-section">
+      <h3>Conversation</h3>
+
+      <!-- Existing messages -->
+      <div class="conversation-messages" *ngIf="order.conversation && order.conversation.length > 0">
+        <div *ngFor="let message of order.conversation" class="message">
+          <div class="message-header">
+            <span class="message-sender">{{ message.sender?.name || 'Unknown' }}</span>
+            <span class="message-role">({{ message.role }})</span>
+            <span class="message-time">{{ formatDate(message.timestamp) }}</span>
+          </div>
+          <div class="message-content">{{ message.message }}</div>
+        </div>
+      </div>
+
+      <!-- No messages state -->
+      <div *ngIf="!order.conversation || order.conversation.length === 0" class="no-messages">
+        <i class="pi pi-chat-bubble-outline"></i>
+        <p>No conversation yet. Start the conversation by sending a message.</p>
+      </div>
+
+      <!-- Message input (only for own orders) -->
+      <div *ngIf="isOwnOrder" class="message-input-container">
+        <div class="message-input-wrapper">
+          <textarea
+            [(ngModel)]="newMessage"
+            class="message-input"
+            rows="3"
+            maxlength="500"
+            placeholder="Type your message here..."
+            (keyup.enter)="addMessage()"
+          ></textarea>
+          <div class="message-actions">
+            <button
+              (click)="addMessage()"
+              class="btn btn-primary send-button"
+              [disabled]="!newMessage.trim()">
+              <i class="pi pi-send"></i>
+              Send Message
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

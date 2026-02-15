@@ -1,0 +1,27 @@
+// Font size multipliers for accessibility settings
+body.font-size-small {
+    --zoom: 0.85;
+}
+
+body.font-size-medium {
+    --zoom: 1;
+}
+
+body.font-size-large {
+    --zoom: 1.2;
+}
+
+// Global responsiveness is now handled by clamp() in :root
+// We keep some specific overrides only if absolutely necessary
+@media screen and (max-width: 480px) {
+    :root {
+        --zoom: 0.95;
+        /* Subtle reduction for very small screens, but fluid base helps */
+    }
+}
+
+// Simple zoom implementation with background fix
+body {
+    zoom: var(--zoom, 1);
+    background-color: #f5f5f5; // Match app background so white footer blends
+}

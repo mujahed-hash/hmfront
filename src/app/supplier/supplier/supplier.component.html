@@ -1,35 +1,67 @@
-<div class="s-dashboard">
-    <div class="s-d-i s-r">
-      <div *ngIf="order">
-        <h2>Order Received</h2>
-        <div class="stat-value">
-          <h1>{{order.totalOrders}}</h1>
-        </div>
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Supplier Dashboard</h1>
+    <p>Overview of your business performance</p>
+  </div>
+
+  <!-- Statistics Grid -->
+  <div class="stats-grid">
+    <div class="stat-card orders-received" *ngIf="order" routerLink="/supplier/more/orders-recieved"
+      style="cursor: pointer;">
+      <div class="stat-icon"><mat-icon>shopping_cart</mat-icon></div>
+      <div class="stat-content">
+        <h3>Orders Received</h3>
+        <p class="stat-value">{{order.totalOrders}}</p>
       </div>
     </div>
-    <div *ngIf="order" class="s-d-i s-d">
-      <div>
-        <h2>Order Delivered</h2>
-        <div class="stat-value">
-          <h1>{{order.deliveredOrders}}</h1>
-        </div>
+
+    <div class="stat-card orders-delivered" *ngIf="order" routerLink="/supplier/more/orders-delivered"
+      style="cursor: pointer;">
+      <div class="stat-icon"><mat-icon>check_circle</mat-icon></div>
+      <div class="stat-content">
+        <h3>Delivered</h3>
+        <p class="stat-value">{{order.deliveredOrders}}</p>
       </div>
     </div>
-    <div *ngIf="order" class="s-d-i s-s">
-      <div>
-        <h2>Total Sales</h2>
-        <div class="stat-value">
-          <h1>{{order.deliveredOrders}}</h1>
-        </div>
+
+    <div class="stat-card total-sales" *ngIf="order" routerLink="/supplier/more/orders-delivered"
+      style="cursor: pointer;">
+      <div class="stat-icon"><mat-icon>monetization_on</mat-icon></div>
+      <div class="stat-content">
+        <h3>Total Sales</h3>
+        <p class="stat-value">{{order.deliveredOrders}}</p>
       </div>
     </div>
-    <div class="s-d-i s-i">
-      <div *ngIf="products">
-        <h2>Total Items</h2>
-        <div class="stat-value">
-          <h1>{{products.count}}</h1>
-        </div>
+
+    <div class="stat-card total-items" *ngIf="products" routerLink="/supplier/more/allitems" style="cursor: pointer;">
+      <div class="stat-icon"><mat-icon>inventory_2</mat-icon></div>
+      <div class="stat-content">
+        <h3>Total Items</h3>
+        <p class="stat-value">{{products.count}}</p>
       </div>
     </div>
   </div>
-  
+
+  <!-- Quick Actions -->
+  <div class="actions-section">
+    <h2>Quick Actions</h2>
+    <div class="actions-grid">
+      <div class="action-card sell" routerLink="/supplier/more/product/add">
+        <mat-icon>add_box</mat-icon>
+        <span>Sell New Product</span>
+      </div>
+      <div class="action-card inventory" routerLink="/supplier/more/allitems">
+        <mat-icon>list_alt</mat-icon>
+        <span>Manage Inventory</span>
+      </div>
+      <div class="action-card orders" routerLink="/supplier/more/orders-recieved">
+        <mat-icon>receipt_long</mat-icon>
+        <span>Recent Orders</span>
+      </div>
+      <div class="action-card analytics" routerLink="/supplier/more/orders-delivered">
+        <mat-icon>insights</mat-icon>
+        <span>Sales History</span>
+      </div>
+    </div>
+  </div>
+</div>

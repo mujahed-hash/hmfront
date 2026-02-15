@@ -12,7 +12,7 @@
   </div>
   
   <div class="results-container" *ngIf="products.length > 0; else noResults">
-   <div class="product-card" *ngFor="let product of products"  [routerLink]="['/supplier/product/view', product.customIdentifer]">
+   <div class="product-card" *ngFor="let product of products"  [routerLink]="['/supplier/more/product/view', product.customIdentifier]">
       <h3>Name: {{ product.prodName }}</h3>
       <p>Description: {{ product.prodDesc }}</p>
       <span class="price">Price: ₹{{ product.prodPrice }}</span>

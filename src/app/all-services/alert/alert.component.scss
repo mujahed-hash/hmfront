@@ -1,0 +1,149 @@
+// Alert Component - Theme-aware Styling
+.alert {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  max-width: 420px;
+  min-width: 300px;
+  border-radius: 10px;
+  border: 1px solid;
+  border-left: 4px solid;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  z-index: 10000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  animation: slideIn 0.3s ease-out;
+
+  // Default / Info variant
+  &.alert-default {
+    background-color: var(--notif-info-bg);
+    border-color: var(--notif-info-border);
+    border-left-color: var(--notif-info-border);
+    color: var(--notif-info-text);
+
+    .alert-icon {
+      color: var(--notif-info-border);
+    }
+  }
+
+  // Error / Destructive variant
+  &.alert-destructive {
+    background-color: var(--notif-error-bg);
+    border-color: var(--notif-error-border);
+    border-left-color: var(--notif-error-border);
+    color: var(--notif-error-text);
+
+    .alert-icon {
+      color: var(--notif-error-border);
+    }
+  }
+
+  // Success variant
+  &.alert-success {
+    background-color: var(--notif-success-bg);
+    border-color: var(--notif-success-border);
+    border-left-color: var(--notif-success-border);
+    color: var(--notif-success-text);
+
+    .alert-icon {
+      color: var(--notif-success-border);
+    }
+  }
+
+  // Alert Icon
+  .alert-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+
+    i {
+      font-size: 1.25rem;
+    }
+  }
+
+  // Alert Content
+  .alert-content {
+    flex-grow: 1;
+    min-width: 0;
+
+    .alert-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .alert-description {
+      font-size: 0.85rem;
+      opacity: 0.85;
+      line-height: 1.5;
+    }
+  }
+
+  // Close Button
+  .alert-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: inherit;
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+
+    &:hover {
+      opacity: 1;
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    i {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// Dark theme close button hover
+body.dark-theme .alert .alert-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+// Dark theme extra shadow for better visibility
+body.dark-theme .alert {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+// Slide-in animation
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Responsive Adjustments
+@media (max-width: 768px) {
+  .alert {
+    left: 1rem;
+    right: 1rem;
+    max-width: none;
+    min-width: 0;
+    top: 0.5rem;
+
+    .alert-icon {
+      margin-top: 0;
+    }
+  }
+}

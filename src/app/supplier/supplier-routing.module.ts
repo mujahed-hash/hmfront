@@ -8,8 +8,9 @@ const routes: Routes = [
   {path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: SupplierComponent },
   { path: 'orders', component: SupplierOrdersComponentComponent },
-  { path: '', loadChildren: () => import('./more/more.module').then(m => m.MoreModule), canActivate: [AuthGuard, RoleGuard], data: { role: 'supplier' } },
-  { path: '', loadChildren: () => import('./req-sup/req-sup.module').then(m => m.ReqSupModule), canActivate: [AuthGuard, RoleGuard], data: { role: 'supplier' } },
+  { path: 'service-orders', loadChildren: () => import('./service-orders/supplier-service-orders.module').then(m => m.SupplierServiceOrdersModule), canActivate: [AuthGuard, RoleGuard], data: { role: 'supplier' } },
+  { path: 'more', loadChildren: () => import('./more/more.module').then(m => m.MoreModule), canActivate: [AuthGuard, RoleGuard], data: { role: 'supplier' } },
+  { path: 'req-sup', loadChildren: () => import('./req-sup/req-sup.module').then(m => m.ReqSupModule), canActivate: [AuthGuard, RoleGuard], data: { role: 'supplier' } },
 
 ];
 

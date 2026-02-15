@@ -1,0 +1,12 @@
+<div *ngIf="alert" class="alert" [ngClass]="getAlertClass(alert.type)">
+  <div class="alert-icon">
+    <i class="material-icons">{{ getIconClass(alert.type) }}</i>
+  </div>
+  <div class="alert-content">
+    <div class="alert-title">{{ alert.title }}</div>
+    <div class="alert-description">{{ alert.message }}</div>
+  </div>
+  <button class="alert-close" (click)="dismissAlert()">
+    <i class="material-icons">close</i>
+  </button>
+</div>

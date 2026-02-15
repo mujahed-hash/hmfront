@@ -1,33 +1,81 @@
 <!-- login.component.html -->
-<div *ngIf="this.loggedIn">
-     Want to logout session?
-</div>
-<div *ngIf="!this.loggedIn" class="login">
-  <div class="login-sub" style="">
-    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
-      {{ errorMessage }}
+<div class="login-page-container">
+
+  <!-- Logout / Session Active View -->
+  <div *ngIf="loggedIn" class="session-card">
+    <div class="card-content centered">
+      <div class="icon-circle">
+        <mat-icon>lock_open</mat-icon>
+      </div>
+      <h3>You are logged in</h3>
+      <p>Do you want to end your current session?</p>
+      <button class="btn-primary" (click)="authService.logout()">Logout</button>
     </div>
-    <h3 style=" text-align: center; color: #041562;">Login to Hotel Mart</h3>
-    <form [formGroup]="loginForm" (ngSubmit)="login()">
-      <label>
-        Email:
-        <input formControlName="email" name="email" type="email" required>
-        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-danger">
-          A valid email is required.
-        </div>
-      </label>
-      <label>
-        Password:
-        <input formControlName="password" name="password" type="password" required>
-        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger">
-          Password is required.
-        </div>
-  
-      </label>
-      <button type="submit" [disabled]="loginForm.invalid">Login</button>
-    </form>
   </div>
-      <!-- Error message display -->
-     
-  
+
+  <!-- Login Form View -->
+  <div *ngIf="!loggedIn" class="login-card-wrapper">
+    <div class="login-card">
+
+      <!-- Brand Header -->
+      <div class="card-header">
+        <div class="logo-container">
+          <img src="assets/hmlogo.jpg" alt="HotelMart Logo" class="app-logo">
+        </div>
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Enter your credentials to access your account</p>
+      </div>
+
+      <!-- Error Alert -->
+      <div *ngIf="errorMessage" class="error-alert">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form">
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-wrapper">
+            <mat-icon class="input-icon">email</mat-icon>
+            <input id="email" formControlName="email" type="email" placeholder="name@example.com"
+              [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          </div>
+          <span class="error-msg" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+            Please enter a valid email.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <mat-icon class="input-icon">lock</mat-icon>
+            <input id="password" formControlName="password" type="password" placeholder="••••••••"
+              [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          </div>
+          <span class="error-msg" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            Password is required.
+          </span>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="loginForm.invalid">
+          Sign In
+        </button>
+
+      </form>
+
+      <!-- Footer / Links -->
+      <div class="card-footer">
+        <a routerLink="/privacy-policy" class="link-muted">Privacy Policy</a>
+        <span class="divider">•</span>
+        <a (click)="navigateToWhatsApp()" class="link-muted" style="display: flex; align-items: center; gap: 4px;">
+          <img src="assets/wa.png" alt="WhatsApp" style="width: 16px; height: 16px;">
+          Need Help?
+        </a>
+      </div>
+
+    </div>
+  </div>
+
 </div>

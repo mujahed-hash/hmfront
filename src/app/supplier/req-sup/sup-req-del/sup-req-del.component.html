@@ -1,27 +1,55 @@
 <!-- components/completed-products/completed-products.component.html -->
 
-<div class="component-container">
-    <div class="delivery">
-
-
-    <h2>Products Deliveries</h2>
-  
-    <div *ngIf="loading" class="loading">Loading completed products...</div>
-    <div *ngIf="error" class="error">{{ error }}</div>
-  
-    <ul *ngIf="!loading && !error">
-      <li class="del-prod" *ngFor="let product of completedProducts">
-        <h3>{{ product.name }} - {{ product.price | currency: 'INR' }}</h3>
-        
-        <p><strong>Requirement:</strong> {{ product.requirement.reqDetails }}</p>
-        <p *ngIf="product.status === 'Completed'"> status: <strong>Delivery Requested </strong></p>
-        <p *ngIf="product.status === 'Delivered'"> status: <strong>Delivered </strong></p>
-
-        <img [src]="product.image" alt="{{ product.name }}" class="product-image">
-
-      </li>
-    </ul>
-</div>
-
+<div style="margin: 0;left:0"  class="component-container">
+  <div style="margin: 0;left:0"  class="delivery-section">
+    <div class="section-header">
+      <h2>Product Deliveries....</h2>
+    </div>
+    
+    <div *ngIf="loading" class="loading-indicator">
+      <div class="spinner"></div>
+      <p>Loading deliveries...</p>
+    </div>
+    
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+      <button (click)="retryLoading()" class="retry-button">Try Again</button>
+    </div>
+    
+    <div *ngIf="!loading && !error && completedProducts.length === 0" class="empty-state">
+      <p>No delivery requests found</p>
+    </div>
+    
+    <div style="margin: 0;left:0" *ngIf="!loading && !error && completedProducts.length > 0" class="delivery-grid">
+      <div style="margin: 0;left:0" class="delivery-card" *ngFor="let product of completedProducts" 
+           [routerLink]="['/supplier/req-sup/sup-requested', product.requirement?.customIdentifier]">
+        <div class="card-image">
+          <img [src]="product.image" alt="{{ product.name }}" >
+        </div>
+        <div class="card-content">
+          <h3 class="product-name">{{ product.name }}</h3>
+          <p class="product-price">{{ product.price | currency: 'INR' }}</p>
+          
+          <div class="requirement-section">
+            <p class="requirement-label">Requirement:</p>
+            <p class="requirement-text">{{ product.requirement.reqDetails }}</p>
+          </div>
+          
+          <div class="status-badge" [ngClass]="{
+            'status-completed': product.status === 'Completed',
+            'status-delivered': product.status === 'Delivered'
+          }">
+            <span *ngIf="product.status === 'Completed'">Delivery Requested</span>
+            <span *ngIf="product.status === 'Delivered'">Delivered</span>
+          </div>
+          
+          <div class="view-details-link">
+            <span>View Details</span>
+            <i class="arrow-icon">→</i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
   

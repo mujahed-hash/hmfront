@@ -1,0 +1,42 @@
+<div class="custom-datepicker" [class.open]="isOpen">
+  <label *ngIf="label" class="datepicker-label">{{ label }}</label>
+  <div class="datepicker-display" (click)="toggleDropdown()">
+    <input
+      type="text"
+      [value]="displayDate"
+      [placeholder]="placeholder"
+      readonly
+      class="datepicker-input"
+    />
+    <mat-icon class="datepicker-icon">calendar_today</mat-icon>
+  </div>
+
+  <div class="datepicker-dropdown" *ngIf="isOpen">
+    <div class="calendar-header">
+      <button mat-icon-button (click)="prevMonth()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <span class="current-month-year">{{ displayMonth }}</span>
+      <button mat-icon-button (click)="nextMonth()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+    <div class="calendar-weekdays">
+      <span *ngFor="let day of weekdays" class="weekday">{{ day }}</span>
+    </div>
+    <div class="calendar-days">
+      <ng-container *ngFor="let week of weeks">
+        <span
+          *ngFor="let day of week"
+          class="day"
+          [class.current-month]="isDateInCurrentMonth(day)"
+          [class.selected]="isSelectedDate(day)"
+          [class.today]="isToday(day)"
+          (click)="selectDate(day)"
+        >
+          {{ day | date:'d' }}
+        </span>
+      </ng-container>
+    </div>
+  </div>
+</div>

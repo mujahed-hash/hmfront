@@ -1,61 +1,176 @@
+<!-- Notifications -->
 <div style="width: 80%;position: fixed; z-index: 5;">
-  <div style="position: relative; " *ngFor="let notification of notifications" class="notification" [ngClass]="notification.type">
+  <div style="position: relative; " *ngFor="let notification of notifications" class="notification"
+    [ngClass]="notification.type">
     {{ notification.message }}
   </div>
-  
 </div>
-<div *ngIf="products.length<1" class="checkout-all" style="">
-    <p style="background-color: white; padding: 4px 8px; border: #c8c9d4 1.5px solid; color:#0D1282; width:max-content; border-radius: 9px;">There are no Items in this category</p>
+
+<!-- No Items in Category Message (initial state before load) -->
+<div *ngIf="products.length === 0 && !isLoading" class="checkout-all" style="">
+  <p
+    style="background-color: white; padding: 4px 8px; border: #c8c9d4 1.5px solid; color:#0D1282; width:max-content; border-radius: 9px;">
+    There are no Items in this category</p>
 </div>
-<div>
+
+<!-- Buyer Search -->
+<div class="filter-n-search-container">
+  <!-- Filter Toggle and Clear Buttons (Absolute Position) -->
+  <div class="filter-container" style="width:max-content" (click)="$event.stopPropagation()">
+    <div class="filter-toggle-container-main" style="max-height: max-content;">
+      <div style="width:max-content;z-index: 5;" class="filter-toggle-container" (click)="$event.stopPropagation()">
+        <button class="filter-toggle-btn" (click)="toggleFilters()">
+          <mat-icon>{{ showFilters ? 'expand_less' : 'filter_list' }}</mat-icon>
+          <!-- {{ showFilters ? 'Hide Filters' : '' }} -->
+        </button>
+      </div>
+
+      <div style="width:max-content; z-index: 5;" class="clear-filters-container" *ngIf="isFiltering">
+        <button class="clear-filters-btn" (click)="clearAllFiltersFromOutside(); $event.stopPropagation()">
+          <mat-icon>clear_all</mat-icon> Clear
+        </button>
+      </div>
+    </div>
+  </div>
   <app-buyer-search></app-buyer-search>
 </div>
-<div class="hh" >
 
-    <div class="items-" >
-        <div class="item" *ngFor="let product of products">
-          <div  class="sub-item" style="overflow-x: hidden;"  routerLinkActive="router-link-active"   style="">
-            <div class="img">
-              <img [routerLink]="['/buyer/item/view', product.customIdentifer]"  [src]="product.images[0]" alt="{{ product.prodName }}" />
+<!-- Browse Categories -->
+<div>
+  <app-browse-categories></app-browse-categories>
+</div>
 
-            </div>
-           <div class="itemName">
-            <p style="font-weight: bold;">{{ product.prodName }}</p>
-            <!-- <p class="truncate-single-line">{{ product.prodDesc }}</p> -->
-            <button  [routerLink]="['/buyer/item/view', product.customIdentifer]" style="width: max-content;display: flex; justify-content: center; vertical-align: middle; align-items: center;  border: none; border-radius: 5px; background-color: #37B7C3; color: white; padding: 2px 8px;">   
-               <mat-icon style="color:white; font-size: 15px; position: relative; top:0.35rem">visibility</mat-icon>
-              View</button>
-            <p>{{product.prodPrice | currency:'INR'}}/{{product.prodSize}}</p>
-            <div class="count">
-              <p-inputNumber [(ngModel)]="quantities[product._id]" name="quantity" inputId="minmax" mode="decimal" [showButtons]="true" [min]="1" [max]="product.countInStock"></p-inputNumber>
-          </div>
-<!-- Assuming `product` and `quantity` are defined in your component -->
-<div *ngIf="!product.inCart" style=" width:max-content; display: flex; align-items: center; margin-top: 0.5rem;">
-  <button style=" width:100%; display: flex; align-items: center; justify-content: center; border: none; border-radius: 5px; background-color: #071952; color: white; padding: 3px 8px; box-shadow: 6px 6px 12px #c5c5c5,
-  -6px -6px 12px #ffffff;" (click)="addProductToCart(product._id)">
-    <mat-icon style="color:#F0DE36">add_shopping_cart</mat-icon>
-    Add to cart
-  </button>
+
+
+<!-- Filters Top Bar (Absolute Position) -->
+<div class="filters-topbar" [class.show-filters]="showFilters" (click)="$event.stopPropagation()">
+  <app-marketplace-filter #marketplaceFilter (filtersChanged)="onFiltersChanged($event)"
+    (filtersCleared)="onFiltersCleared()" (closeFilters)="closeFilters()">
+  </app-marketplace-filter>
 </div>
-<div *ngIf="product.inCart" style=" width:max-content; display: flex; align-items: center; margin-top: 0.5rem;">
-  <button style=" width:100%; display: flex; align-items: center; justify-content: center; border: none; border-radius: 5px; background-color: #071952; color: white; padding: 3px 8px; " routerLink="/buyer/cart">
-    <mat-icon style="color:#F0DE36">add_shopping_cart</mat-icon>
-    Go to cart
-  </button>
+
+<!-- Overlay when filters are open -->
+<div class="filter-overlay" [class.show-overlay]="showFilters" (click)="closeFilters()"></div>
+
+<!-- View Style Controls -->
+<div class="view-controls"
+  style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 20px;"
+  *ngIf="showFilterAndClear">
+  <div class="view-style-toggle">
+    <span style="font-weight: 600; color: #1e293b; margin-right: 15px;">View:</span>
+    <button *ngFor="let style of viewStyles" mat-icon-button [class.active]="viewStyle === style.value"
+      (click)="setViewStyle(style.value)" [attr.title]="style.label"
+      [style.background-color]="viewStyle === style.value ? '#3b82f6' : '#f8fafc'"
+      [style.color]="viewStyle === style.value ? 'white' : '#64748b'"
+      [style.border-color]="viewStyle === style.value ? 'gray' : 'blue'"
+      [style.border-radius]="viewStyle === style.value ? '20px' : '20px'" style="margin: 0 2px;"
+      class="view-style-toggle-btn">
+      <mat-icon>{{ style.icon }}</mat-icon>
+    </button>
+  </div>
+
+  <div class="results-info" *ngIf="products.length > 0" style="color: #64748b; font-size: 0.9rem;">
+    {{ totalProducts || products.length }} {{ (totalProducts || products.length) === 1 ? 'product' : 'products' }} found
+  </div>
 </div>
-           </div>
-           
-          </div>
-          <!-- Add more product details here -->
+
+<!-- Product Grid Section -->
+<div class="items-container">
+  <div class="product-grid" [class]="getViewStyleClass()">
+    <div class="product-card" *ngFor="let product of products" [class]="getViewStyleClass()">
+      <div class="product-image-container" *ngIf="product.countInStock >= 1">
+        <img [src]="product.images[0]" [alt]="product.prodName" class="product-image"
+          [routerLink]="['/buyer/item/view', product.customIdentifer]" />
+
+        <!-- Stock Status -->
+        <div style="width:max-content;" class="stock-badge" [class.in-stock]="product.countInStock > 0"
+          [class.out-of-stock]="product.countInStock === 0">
+          <span>{{ product.countInStock > 0 ? 'In Stock' : 'Out of Stock' }}</span>
         </div>
       </div>
-     <div class="itm-btn" >
-        <button #loadingIndicator style="" *ngIf="hasMoreProducts && !isLoading" (click)="loadProducts()" [disabled]="isLoading">
-            Load More
-          </button>
-     </div>
-  <!-- <button *ngIf="hasMoreProducts" (click)="loadProducts()" [disabled]="isLoading">
-    Load More
-  </button> -->
-</div>
 
+      <div class="product-info">
+        <h3 class="product-title">{{ product.prodName }}</h3>
+        <p class="product-price">{{ product.prodPrice | currency:'INR' }} <span *ngIf="product.prodSize">/ {{
+            product.prodSize }}</span></p>
+
+        <!-- Location Pills -->
+        <div class="location-pills" *ngIf="product.locations">
+          <!-- Show All India for products with no specific locations -->
+          <span class="location-pill all-india" *ngIf="product.locations.length === 0">
+            <mat-icon>public</mat-icon>
+            All India
+          </span>
+          <!-- Show specific cities for products with locations -->
+          <ng-container *ngIf="product.locations.length > 0">
+            <span class="location-pill" *ngFor="let location of product.locations.slice(0, 2)">
+              {{ location.city }}
+            </span>
+            <span class="location-pill more-locations" *ngIf="product.locations.length > 2">
+              +{{ product.locations.length - 2 }} more
+            </span>
+          </ng-container>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="product-actions">
+          <!-- Quantity Selector -->
+          <div class="quantity-selector" *ngIf="product.countInStock > 0">
+            <label>Qty:</label>
+            <p-inputNumber [(ngModel)]="quantities[product._id]" name="quantity" inputId="minmax" mode="decimal"
+              [showButtons]="true" [min]="1" [max]="product.countInStock" [style]="{'width': '80px'}">
+            </p-inputNumber>
+          </div>
+
+          <!-- Add to Cart / Go to Cart -->
+          <button *ngIf="!product.inCart && product.countInStock > 0" class="add-to-cart-btn"
+            (click)="addProductToCart(product._id); $event.stopPropagation()">
+            <mat-icon>add_shopping_cart</mat-icon>
+            Add to Cart
+          </button>
+
+          <button *ngIf="product.inCart" class="go-to-cart-btn" routerLink="/buyer/cart">
+            <mat-icon>shopping_cart</mat-icon>
+            Go to Cart
+          </button>
+
+          <button class="view-details-btn" [routerLink]="['/buyer/item/view', product.customIdentifer]">
+            <mat-icon>visibility</mat-icon>
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load More Button -->
+  <div class="load-more-container" *ngIf="hasMoreProducts && !isLoading">
+    <button #loadingIndicator class="load-more-btn" (click)="loadProducts()">
+      <mat-icon>expand_more</mat-icon>
+      Load More Products
+    </button>
+  </div>
+
+  <!-- No More Products Message -->
+  <div class="no-more-container" *ngIf="!hasMoreProducts && products.length > 0 && !isLoading">
+    <div class="no-more-message">
+      <mat-icon>check_circle</mat-icon>
+      <p>All products loaded! You've seen everything we have to offer.</p>
+    </div>
+  </div>
+
+  <!-- No Products Found -->
+  <div class="no-products-container" *ngIf="products.length === 0 && !isLoading">
+    <div class="no-products-message">
+      <mat-icon>search_off</mat-icon>
+      <h3>No products found</h3>
+      <p>Try adjusting your filters or search criteria to find what you're looking for.</p>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-spinner"></div>
+    <p>Loading products...</p>
+  </div>
+</div>

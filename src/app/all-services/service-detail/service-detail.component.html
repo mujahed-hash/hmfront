@@ -1,0 +1,283 @@
+<!-- Loading State -->
+<div *ngIf="isLoading" class="loading-container">
+  <mat-progress-spinner diameter="60" mode="indeterminate" color="primary"></mat-progress-spinner>
+  <p>Loading service details...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error" class="error-container">
+  <mat-icon color="warn">error_outline</mat-icon>
+  <h3>Error Loading Service</h3>
+  <p>{{ errorMessage }}</p>
+  <div class="error-actions">
+    <button mat-stroked-button (click)="backToList()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Services
+    </button>
+    <button mat-raised-button color="primary" (click)="retryLoading()">
+      <mat-icon>refresh</mat-icon>
+      Retry
+    </button>
+  </div>
+</div>
+
+<!-- Service Detail Content -->
+<div *ngIf="!isLoading && service" class="service-detail-container">
+  <!-- Header with Back Button -->
+  <div class="detail-header">
+    <button mat-icon-button (click)="backToList()" class="back-button" matTooltip="Back to all services">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-info">
+      <h1>{{ service.serviceName }}</h1>
+      <div class="header-meta">
+        <mat-chip-set>
+          <mat-chip *ngIf="service.category">{{ service.category.name }}</mat-chip>
+          <mat-chip color="primary" selected>₹{{ service.price }}</mat-chip>
+        </mat-chip-set>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button mat-icon-button (click)="shareService()" matTooltip="Share service">
+        <mat-icon>share</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="detail-content">
+    <!-- Image Gallery -->
+    <div class="image-gallery" *ngIf="service.images && service.images.length > 0">
+      <div class="main-image-container">
+        <img [src]="getImageUrl(service.images[currentImageIndex])" 
+             [alt]="service.serviceName"
+             class="main-image"
+             loading="eager"
+             (error)="handleImageError($event)">
+        
+        <!-- Image Navigation -->
+        <button *ngIf="service.images.length > 1" 
+                mat-fab 
+                class="nav-button prev-button" 
+                (click)="prevImage()"
+                matTooltip="Previous image">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button *ngIf="service.images.length > 1" 
+                mat-fab 
+                class="nav-button next-button" 
+                (click)="nextImage()"
+                matTooltip="Next image">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        
+        <!-- Image Counter -->
+        <div *ngIf="service.images.length > 1" class="image-counter">
+          {{ currentImageIndex + 1 }} / {{ service.images.length }}
+        </div>
+        
+        <!-- Image Loading Overlay -->
+        <div class="image-loading-overlay" *ngIf="imageLoading">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      </div>
+      
+      <!-- Thumbnail Gallery -->
+      <div *ngIf="service.images.length > 1" class="thumbnail-gallery">
+        <img *ngFor="let image of service.images; let i = index"
+             [src]="getImageUrl(image)"
+             [alt]="service.serviceName + ' - Image ' + (i + 1)"
+             class="thumbnail"
+             [class.active]="i === currentImageIndex"
+             (click)="selectImage(i)"
+             loading="lazy"
+             (error)="handleImageError($event)">
+      </div>
+    </div>
+    
+    <!-- No Image Placeholder -->
+    <div *ngIf="!service.images || service.images.length === 0" class="no-image-placeholder">
+      <mat-icon>image</mat-icon>
+      <p>No images available</p>
+    </div>
+
+    <!-- Service Information -->
+    <mat-card class="service-info-card">
+      <mat-card-header>
+        <mat-card-title>Service Details</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-section">
+          <h3>Description</h3>
+          <p class="description">{{ service.serviceDesc }}</p>
+        </div>
+
+        <div class="info-section" *ngIf="service.availableRegions && service.availableRegions.length > 0">
+          <h3>Available Regions</h3>
+          <mat-chip-set class="regions-chips">
+            <mat-chip *ngFor="let region of service.availableRegions">
+              <mat-icon>location_on</mat-icon>
+              {{ region }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+        <div class="info-section" *ngIf="service.availableRegions.length < 1">
+          <h3>Available Regions</h3>
+          <mat-chip-set class="regions-chips">
+            <mat-chip >
+              <mat-icon>location_on</mat-icon>
+              All India
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+        <div class="info-section">
+          <h3>Pricing</h3>
+          <div class="pricing-info">
+            <span class="price">₹{{ service.price }}</span>
+            <span class="price-note">Base price (may vary based on requirements)</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Supplier Information -->
+    <mat-card class="supplier-info-card" *ngIf="service.user">
+      <mat-card-header>
+        <mat-card-title>Service Provider Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="supplier-details">
+          <div class="supplier-basic">
+            <h4>{{ service.user.name }}</h4>
+            
+            <!-- User Image if available -->
+            <div class="supplier-image" *ngIf="service.user.image">
+              <img [src]="service.user.image" alt="Supplier Image">
+            </div>
+            
+            <div class="rating" *ngIf="service.averageRating > 0">
+              <span class="stars">
+                <mat-icon *ngFor="let filled of getStarArray(service.averageRating)" 
+                         [ngClass]="{'filled-star': filled, 'empty-star': !filled}">
+                  {{ filled ? 'star' : 'star_border' }}
+                </mat-icon>
+              </span>
+              <span class="rating-text">({{ service.averageRating }}/5)</span>
+            </div>
+            <p class="no-rating" *ngIf="!service.averageRating || service.averageRating === 0">
+              No ratings yet
+            </p>
+            
+            <!-- Additional supplier info -->
+            <div class="supplier-contact-preview" *ngIf="service.user.email || service.user.phone">
+              <p *ngIf="service.user.email">
+                <mat-icon>email</mat-icon>
+                <span>{{ service.user.email | slice:0:3 }}...{{ service.user.email | slice:-10 }}</span>
+              </p>
+              <p *ngIf="service.user.phone">
+                <mat-icon>phone</mat-icon>
+                <span>{{ service.user.phone | slice:0:3 }}...{{ service.user.phone | slice:-4 }}</span>
+              </p>
+              <p class="contact-prompt">Click "Contact Supplier" for full details</p>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="contactSupplier()">
+          <mat-icon>contact_phone</mat-icon>
+          Contact Supplier
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Contact Information (shown after clicking Contact Supplier) -->
+    <mat-card *ngIf="showContactInfo && service.contactInfo" class="contact-info-card">
+      <mat-card-header>
+        <mat-card-title>Contact Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="contact-details">
+          <div class="contact-item" *ngIf="service.contactInfo.phone">
+            <mat-icon>phone</mat-icon>
+            <span>{{ service.contactInfo.phone }}</span>
+            <button mat-icon-button (click)="callPhone(service.contactInfo.phone)" matTooltip="Call now">
+              <mat-icon>call</mat-icon>
+            </button>
+          </div>
+          
+          <div class="contact-item" *ngIf="service.contactInfo.email">
+            <mat-icon>email</mat-icon>
+            <span>{{ service.contactInfo.email }}</span>
+            <button mat-icon-button (click)="sendEmail(service.contactInfo.email)" matTooltip="Send email">
+              <mat-icon>mail_outline</mat-icon>
+            </button>
+          </div>
+          
+          <div class="contact-item" *ngIf="service.contactInfo.address">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ service.contactInfo.address }}</span>
+            <button mat-icon-button (click)="openMaps(service.contactInfo.address)" matTooltip="Open in maps">
+              <mat-icon>map</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Service Metadata -->
+    <mat-card class="metadata-card">
+      <mat-card-header>
+        <mat-card-title>Additional Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="metadata-grid">
+          <div class="metadata-item">
+            <mat-icon>verified</mat-icon>
+            <span class="label">Status:</span>
+            <span class="value approved" *ngIf="service.isApproved">Verified</span>
+            <span class="value pending" *ngIf="!service.isApproved">Pending Verification</span>
+          </div>
+          
+          <div class="metadata-item">
+            <mat-icon>schedule</mat-icon>
+            <span class="label">Listed:</span>
+            <span class="value">{{ service.date | date:'mediumDate' }}</span>
+          </div>
+          
+          <div class="metadata-item">
+            <mat-icon>category</mat-icon>
+            <span class="label">Category:</span>
+            <span class="value">{{ service.category?.name || 'Uncategorized' }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Bottom Actions -->
+  <div class="bottom-actions">
+    <button mat-stroked-button (click)="backToList()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to All Services
+    </button>
+    <button mat-raised-button color="primary" (click)="orderService()" *ngIf="!showContactInfo">
+      <mat-icon>shopping_cart</mat-icon>
+      Order Service
+    </button>
+  </div>
+</div>
+
+<!-- Service Not Found -->
+<div *ngIf="!isLoading && !service" class="not-found">
+  <mat-icon>search_off</mat-icon>
+  <h2>Service Not Found</h2>
+  <p>The service you're looking for might have been removed or doesn't exist.</p>
+  <button mat-raised-button color="primary" (click)="backToList()">
+    <mat-icon>arrow_back</mat-icon>
+    Back to All Services
+  </button>
+</div>
+
+
+<app-alert></app-alert>

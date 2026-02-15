@@ -1,0 +1,78 @@
+<div class="monitor-container">
+    <div class="header">
+        <h1>Server Monitor</h1>
+        <button mat-raised-button color="warn" (click)="clearCache()" [disabled]="clearingCache || !stats">
+            <mat-icon>{{ clearingCache ? 'hourglass_empty' : 'delete_sweep' }}</mat-icon>
+            {{ clearingCache ? 'Cleaning...' : 'Clear Cache & RAM' }}
+        </button>
+    </div>
+
+    <div class="loading-state" *ngIf="loading && !stats">
+        <p>Connecting to server...</p>
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div class="dashboard-grid" *ngIf="stats">
+        <!-- CPU Card -->
+        <mat-card class="stat-card cpu">
+            <mat-card-header>
+                <div mat-card-avatar>
+                    <mat-icon>memory</mat-icon>
+                </div>
+                <mat-card-title>CPU Load</mat-card-title>
+                <mat-card-subtitle>{{ stats.cpu.cores }} Cores detected</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="metric-big">{{ stats.cpu.load }}%</div>
+                <mat-progress-bar mode="determinate" [value]="stats.cpu.load"
+                    [color]="stats.cpu.load > 80 ? 'warn' : 'primary'"></mat-progress-bar>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- RAM Card -->
+        <mat-card class="stat-card ram">
+            <mat-card-header>
+                <div mat-card-avatar>
+                    <mat-icon>memory</mat-icon>
+                </div>
+                <mat-card-title>RAM Usage</mat-card-title>
+                <mat-card-subtitle>{{ formatBytes(stats.memory.active) }} / {{ formatBytes(stats.memory.total)
+                    }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="metric-big">{{ getRamUsagePercent() | number:'1.0-1' }}%</div>
+                <mat-progress-bar mode="determinate" [value]="getRamUsagePercent()"
+                    [color]="getRamUsagePercent() > 85 ? 'warn' : 'accent'"></mat-progress-bar>
+                <div class="details">
+                    <small>Free: {{ formatBytes(stats.memory.free) }}</small>
+                    <small>Available: {{ formatBytes(stats.memory.available) }}</small>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Storage Card -->
+        <mat-card class="stat-card storage">
+            <mat-card-header>
+                <div mat-card-avatar>
+                    <mat-icon>storage</mat-icon>
+                </div>
+                <mat-card-title>Storage</mat-card-title>
+                <mat-card-subtitle>Server Disk Space</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="metric-big">{{ formatBytes(stats.storage.used) }}</div>
+                <p>Used of {{ formatBytes(stats.storage.total) }}</p>
+                <!-- Simple visual for storage -->
+                <div class="storage-bar">
+                    <div class="used" [style.width.%]="(stats.storage.used / stats.storage.total) * 100"></div>
+                </div>
+                <small>{{ formatBytes(stats.storage.free) }} Free</small>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div class="uptime-footer" *ngIf="stats">
+        <mat-icon>schedule</mat-icon>
+        <span>Server Uptime: {{ stats.uptime | number }} seconds</span>
+    </div>
+</div>

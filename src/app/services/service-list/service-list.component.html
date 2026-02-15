@@ -1,0 +1,146 @@
+<div class="service-list-container">
+  <div class="services-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <mat-icon>{{ isMyServicesView ? 'folder_shared' : (isAdminView ? 'admin_panel_settings' : 'miscellaneous_services') }}</mat-icon>
+      </div>
+      <div class="header-text">
+        <h2>{{ isMyServicesView ? 'My Services' : (isAdminView ? 'Admin Services Management' : 'Services Management') }}</h2>
+        <p>{{ isMyServicesView ? 'Manage your posted services' : (isAdminView ? 'Manage all services across the platform' : 'Browse and manage all available services') }}</p>
+      </div>
+    </div>
+    <button mat-raised-button color="primary" routerLink="/services/create" class="create-service-btn" *ngIf="!isAdminView">
+      <mat-icon>add_circle</mat-icon>
+      <span>Create Service</span>
+    </button>
+  </div>
+
+  <div class="actions-row">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search Services</mat-label>
+      <input matInput (keyup)="applyFilter()" placeholder="Search by name, category, or provider..." #input>
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    <div class="filter-chips">
+      <mat-chip-set>
+        <mat-chip [class.selected]="selectedFilter === 'all'" (click)="setFilter('all')" class="filter-chip">
+          <mat-icon>view_list</mat-icon>
+          All Services
+        </mat-chip>
+        <mat-chip [class.selected]="selectedFilter === 'active'" (click)="setFilter('active')" class="filter-chip">
+          <mat-icon>check_circle</mat-icon>
+          Active
+        </mat-chip>
+        <mat-chip [class.selected]="selectedFilter === 'pending'" (click)="setFilter('pending')" class="filter-chip">
+          <mat-icon>schedule</mat-icon>
+          Pending
+        </mat-chip>
+      </mat-chip-set>
+    </div>
+  </div>
+
+  <div class="mat-elevation-z8 table-container">
+    <mat-spinner *ngIf="loading" class="loading-spinner"></mat-spinner>
+
+    <div class="service-cards-grid" *ngIf="!loading && services.length > 0">
+      <mat-card *ngFor="let service of services" class="service-card">
+        <div class="service-image-container">
+          <img mat-card-image [src]="service.images && service.images.length > 0 ? service.images[0] : 'assets/images/placeholder.png'" alt="Service Image">
+          <div class="service-overlay">
+            <div class="service-badges">
+              <span class="service-badge" [class.approved]="service.isApproved" [class.pending]="!service.isApproved">
+                <mat-icon>{{ service.isApproved ? 'verified' : 'pending' }}</mat-icon>
+                {{ service.isApproved ? 'Approved' : 'Pending' }}
+              </span>
+              <span class="service-badge" [class.active]="service.isActive" [class.inactive]="!service.isActive">
+                <mat-icon>{{ service.isActive ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                {{ service.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+          <div class="service-header">
+            <mat-card-title>{{service.serviceName}}</mat-card-title>
+            <div class="service-price">
+              <mat-icon>currency_rupee</mat-icon>
+              <span>{{service.price | number:'1.0-0'}}</span>
+            </div>
+          </div>
+
+        <mat-card-content>
+          <div class="service-info">
+            <div class="service-category">
+              <mat-icon>category</mat-icon>
+              <span>{{service.category?.name || 'Uncategorized'}}</span>
+            </div>
+            <div class="service-provider">
+              <mat-icon>person</mat-icon>
+              <span>{{service?.user?.name || 'Unknown Provider'}}</span>
+            </div>
+            <div class="service-date">
+              <mat-icon>event</mat-icon>
+              <span>{{service.date | date:'mediumDate'}}</span>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions class="card-actions">
+          <div class="action-buttons">
+            <button mat-icon-button (click)="viewService(service.customIdentifier)" color="primary"
+                    matTooltip="View Service Details" class="action-btn view-btn">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button (click)="viewService(service.customIdentifier)" color="primary"
+                    matTooltip="Edit Service" class="action-btn edit-btn"
+                    *ngIf="isServiceOwner(service) || isAdmin || isSuperAdmin">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="deleteService(service.customIdentifier)" color="warn"
+                    matTooltip="Delete Service" class="action-btn delete-btn"
+                    *ngIf="isServiceOwner(service) || isAdmin || isSuperAdmin">
+              <mat-icon>delete_forever</mat-icon>
+            </button>
+            <button mat-icon-button (click)="approveService(service.customIdentifier)" color="primary"
+                    matTooltip="Approve Service" class="action-btn approve-btn"
+                    *ngIf="(isAdmin || isSuperAdmin) && !service.isApproved">
+              <mat-icon>check_circle</mat-icon>
+            </button>
+            <button mat-icon-button (click)="toggleServiceStatus(service.customIdentifier)" color="primary"
+                    matTooltip="Toggle Service Status" class="action-btn status-btn"
+                    *ngIf="isAdmin || isSuperAdmin">
+              <mat-icon>{{service.isActive ? 'toggle_off' : 'toggle_on'}}</mat-icon>
+            </button>
+          </div>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <!-- No services found message -->
+    <div class="no-services-message" *ngIf="services.length === 0 && !loading">
+      No services found matching the filter.
+    </div>
+
+    <!-- Load More Button (Manual Pagination) -->
+    <div *ngIf="hasMoreServices && services.length > 0" class="load-more-container">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="loadServices()"
+        [disabled]="loading"
+        class="load-more-btn">
+        <mat-icon *ngIf="!loading">expand_more</mat-icon>
+        <mat-icon *ngIf="loading">hourglass_empty</mat-icon>
+        {{ loading ? 'Loading Services...' : 'Load More Services' }}
+      </button>
+      <p class="load-more-info">
+        Showing {{ getDisplayRange().start }} - {{ getDisplayRange().end }} of {{ totalServices }} services
+      </p>
+    </div>
+
+    <!-- End of results message -->
+    <div *ngIf="!hasMoreServices && services.length > 0" class="end-message">
+      <p>No more services to load</p>
+    </div>
+  </div>
+</div>

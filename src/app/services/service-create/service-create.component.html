@@ -1,0 +1,102 @@
+<div class="create-service-container">
+  <h2>Create New Service</h2>
+
+  <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()" class="service-form">
+
+    <!-- Service Name -->
+    <mat-form-field appearance="outline" class="full-width-field">
+      <mat-label>Service Name</mat-label>
+      <input matInput formControlName="serviceName" placeholder="e.g., House Cleaning, Plumbing Service">
+      <mat-error *ngIf="serviceForm.get('serviceName')?.hasError('required')">
+        Service Name is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Service Description -->
+    <mat-form-field appearance="outline" class="full-width-field">
+      <mat-label>Service Description</mat-label>
+      <textarea matInput formControlName="serviceDesc" placeholder="Provide a detailed description of the service" rows="4"></textarea>
+      <mat-error *ngIf="serviceForm.get('serviceDesc')?.hasError('required')">
+        Service Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Price -->
+    <mat-form-field appearance="outline" class="half-width-field">
+      <mat-label>Price (INR)</mat-label>
+      <input matInput type="number" formControlName="price" placeholder="e.g., 500">
+      <mat-error *ngIf="serviceForm.get('price')?.hasError('required')">
+        Price is <strong>required</strong>
+      </mat-error>
+      <mat-error *ngIf="serviceForm.get('price')?.hasError('min')">
+        Price must be a positive number
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Service Category -->
+      <label class="field-label">Service Category</label>
+      <app-custom-category-selector  class="full-width-field"
+        [categories]="categories"
+        formControlName="categoryCustomIdentifier"
+        placeholder="Choose a category that best fits your service"
+        [showAllOption]="false"
+        [searchable]="true"
+        [showIcons]="true"
+        [multiple]="false">
+      </app-custom-category-selector>
+
+    <!-- Available Regions -->
+    <div class="regions-selector-container">
+      <label class="field-label">Available Regions</label>
+      <app-custom-regions-selector
+        [regions]="availableRegions"
+        formControlName="availableRegions"
+        placeholder="Select cities where you provide services"
+        [showAllOption]="true"
+        allOptionText="All India"
+        [searchable]="true"
+        [multiple]="true"
+        [maxSelections]="10"
+        (selectionChange)="onRegionChange($event)">
+      </app-custom-regions-selector>
+      <mat-hint>Select specific cities or choose "All India" for nationwide service</mat-hint>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="contact-info-group">
+      <mat-form-field appearance="outline" class="half-width-field">
+        <mat-label>Contact Phone (Optional)</mat-label>
+        <input matInput formControlName="contactPhone" placeholder="e.g., +91 9876543210">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width-field">
+        <mat-label>Contact Email (Optional)</mat-label>
+        <input matInput type="email" formControlName="contactEmail" placeholder="e.g., service@example.com">
+        <mat-error *ngIf="serviceForm.get('contactEmail')?.hasError('email')">
+          Please enter a valid email address
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Image Upload -->
+    <div class="image-upload-section">
+      <label class="file-input-label">Upload Images (Max 10)</label>
+      <input type="file" multiple accept="image/*" (change)="onFileSelected($event)" #fileInput hidden>
+      <button mat-raised-button color="primary" type="button" (click)="fileInput.click()">
+        <mat-icon>cloud_upload</mat-icon> Choose Files
+      </button>
+      <div class="selected-files" *ngIf="selectedFiles.length > 0">
+        <span *ngFor="let file of selectedFiles">{{file.name}} ({{(file.size / 1024 / 1024).toFixed(2)}} MB)</span>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="serviceForm.invalid || loading">
+        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+        <span *ngIf="!loading">Create Service</span>
+      </button>
+      <button mat-stroked-button type="button" routerLink="/services/list">Back to List</button>
+    </div>
+
+  </form>
+</div>

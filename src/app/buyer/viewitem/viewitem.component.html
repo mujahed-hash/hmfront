@@ -1,39 +1,241 @@
-<div class="position-item">
+<div class="buyer-item-view">
+  <!-- Notifications -->
   <div style="position: relative;" *ngFor="let notification of notifications" class="notification" [ngClass]="notification.type">
     {{ notification.message }}
   </div>
 
-    
-  <div class="view-main" style="width: 100%; margin: 0;padding: 0; background-color: #EBF4F6; padding-left: 1rem;">
-      <div class="view-prod">
-          <div class="product-details" *ngIf="product">
-              <div class="product-image">
-                <img style="border-radius: 5px;" *ngIf="product?.images[0]" [src]="product.images[0]" alt="{{ product.prodName }}" />
-              </div>
-              <div class="product-info">
-                <div class="pro-a">
-                  <h2>{{ product.prodName }}</h2>
-                  <p class="price">{{ product.prodPrice | currency:'INR' }} per {{product?.prodSize}}</p>
-                  <p><strong>Category:</strong> {{ product.category.itemType }}</p>
-                  <div>
-                      <p-inputNumber [(ngModel)]="quantities[product.id]" name="quantity" inputId="minmax" mode="decimal" [showButtons]="true" [min]="1" [max]="product.countInStock"></p-inputNumber>
-                  </div>
-                  <p><strong>In Stock:</strong> {{ product.countInStock }}</p>
-                  <p>
-                      <strong>Description: </strong>{{product.prodDesc}}
-                  </p>
-                </div>
-                
-                <div style="">
-                  <button style=" border: none; border-radius: 5px; background-color: #071952; color: white; padding: 3px 8px; display: flex; align-items: center; width: max-content; text-align: center; " (click)="addProductToCart(product.id)">
-                    <mat-icon style="color:#F0DE36">add_shopping_cart</mat-icon>
-                    Add to cart
-                  </button>
-                </div>
-              </div>
-           
-            </div>
-            
+  <!-- Back Button -->
+  <div class="go-back-container" style="margin-bottom: 20px;">
+    <button (click)="goBack()" class="go-back-button" mat-raised-button>
+      <mat-icon>arrow_back</mat-icon>
+      Go Back
+    </button>
+  </div>
+
+  <!-- Product Details -->
+  <div class="product-view-container" *ngIf="product">
+    <!-- Product Images Gallery -->
+    <div class="product-images-section" style="margin-bottom: 30px;">
+      <div class="main-image" style="position: relative;">
+        <img
+          [src]="product.images && product.images.length > 0 ? product.images[selectedImageIndex] : 'assets/placeholder-product.png'"
+          alt="Product Image"
+          style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);"
+        />
+
+        <!-- Navigation arrows for main image -->
+        <button
+          *ngIf="product.images && product.images.length > 1"
+          class="nav-arrow nav-arrow-left"
+          (click)="previousImage()"
+          mat-icon-button
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <button
+          *ngIf="product.images && product.images.length > 1"
+          class="nav-arrow nav-arrow-right"
+          (click)="nextImage()"
+          mat-icon-button
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
       </div>
+
+      <!-- Image counter -->
+      <div class="image-counter" *ngIf="product.images && product.images.length > 1" style="text-align: center; margin-top: 10px; color: #64748b; font-size: 0.9rem;">
+        {{ selectedImageIndex + 1 }} of {{ product.images.length }}
+      </div>
+
+      <div class="image-thumbnails" *ngIf="product.images && product.images.length > 1">
+        <img
+          *ngFor="let image of product.images; let i = index"
+          [src]="image"
+          alt="Product Image {{i+1}}"
+          (click)="selectImage(i)"
+          [class.active]="selectedImageIndex === i"
+        />
+      </div>
+    </div>
+
+    <!-- Product Information -->
+    <div class="product-info-grid">
+      <!-- Left Column - Basic Info -->
+      <div class="product-basic-info">
+        <h1 class="product-title">{{ product.prodName }}</h1>
+
+        <div class="product-meta" style="display: flex; gap: 20px; margin-bottom: 20px; color: #666;">
+          <div class="meta-item">
+            <mat-icon>category</mat-icon>
+            <span>{{ product.category?.itemType || 'Not specified' }}</span>
+          </div>
+          <div class="meta-item">
+            <mat-icon>event</mat-icon>
+            <span>Posted: {{ product.date | date:'mediumDate' }}</span>
+          </div>
+          <div class="meta-item" *ngIf="product.views">
+            <mat-icon>visibility</mat-icon>
+            <span>{{ product.views }} views</span>
+          </div>
+        </div>
+
+        <div class="product-pricing" style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+          <div class="price-info">
+            <h2 class="price">{{ product.prodPrice | currency:'INR':'symbol':'1.2-2' }}</h2>
+            <div class="size-info" *ngIf="product.prodSize">
+              <span>per {{ product.prodSize }}</span>
+            </div>
+          </div>
+          <div class="stock-info">
+            <div class="stock-count">
+              <mat-icon [style.color]="product.countInStock > 0 ? '#28a745' : '#dc3545'">
+                {{ product.countInStock > 0 ? 'inventory' : 'report_problem' }}
+              </mat-icon>
+              <span [style.color]="product.countInStock > 0 ? '#28a745' : '#dc3545'">
+                <strong>{{ product.countInStock }}</strong> {{ product.countInStock === 1 ? 'item' : 'items' }} in stock
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enhanced Product Details -->
+        <div class="product-details-sections">
+          <!-- Product Information -->
+          <div class="detail-section">
+            <h3>Product Information</h3>
+            <div class="detail-grid">
+              <div class="detail-item" *ngIf="product.brand">
+                <label>Brand:</label>
+                <span>{{ product.brand }}</span>
+              </div>
+              <div class="detail-item" *ngIf="product.condition">
+                <label>Condition:</label>
+                <span class="condition-badge" [ngClass]="'condition-' + product.condition">{{ product.condition | titlecase }}</span>
+              </div>
+              <div class="detail-item" *ngIf="product.businessType">
+                <label>Business Type:</label>
+                <span>{{ product.businessType | titlecase }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Information -->
+          <div class="detail-section">
+            <h3>Order Information</h3>
+            <div class="detail-grid">
+              <div class="detail-item" *ngIf="product.minOrderQuantity && product.minOrderQuantity > 1">
+                <label>Minimum Order:</label>
+                <span>{{ product.minOrderQuantity }} units</span>
+              </div>
+              <div class="detail-item" *ngIf="product.maxOrderQuantity">
+                <label>Maximum Order:</label>
+                <span>{{ product.maxOrderQuantity }} units</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delivery Information -->
+          <div class="detail-section">
+            <h3>Delivery Information</h3>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <label>Delivery Available:</label>
+                <span class="delivery-badge" [class.available]="product.deliveryAvailable !== false">
+                  {{ product.deliveryAvailable !== false ? 'Yes' : 'No' }}
+                </span>
+              </div>
+              <div class="detail-item" *ngIf="product.deliveryAvailable !== false && product.estimatedDeliveryDays">
+                <label>Estimated Delivery:</label>
+                <span>{{ product.estimatedDeliveryDays }} days</span>
+              </div>
+              <div class="detail-item" *ngIf="product.deliveryAvailable !== false && product.freeDeliveryAbove">
+                <label>Free Delivery Above:</label>
+                <span>{{ product.freeDeliveryAbove | currency:'INR':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Locations -->
+          <div class="detail-section" *ngIf="product.locations !== undefined">
+            <h3>Available Locations</h3>
+            <div class="locations-grid" *ngIf="product.locations.length === 0">
+              <div class="location-item all-india">
+                <mat-icon>public</mat-icon>
+                <span>All India</span>
+              </div>
+            </div>
+            <div class="locations-grid" *ngIf="product.locations.length > 0">
+              <div class="location-item" *ngFor="let location of product.locations">
+                <mat-icon>location_on</mat-icon>
+                <span>{{ location.city }}, {{ location.state }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Tags -->
+          <div class="detail-section" *ngIf="product.tags && product.tags.length > 0">
+            <h3>Tags</h3>
+            <div class="tags-container">
+              <span class="tag" *ngFor="let tag of product.tags">{{ tag }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Description -->
+        <div class="product-description" style="margin-top: 30px;">
+          <h3>Description</h3>
+          <div class="description-content">
+            {{ product.prodDesc }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Cart Actions -->
+      <div class="product-actions-panel">
+        <div class="cart-section" style="background: #f8f9fa; padding: 25px; border-radius: 12px; border: 1px solid #e9ecef;">
+          <h3>Add to Cart</h3>
+
+          <div class="quantity-selector" style="margin-bottom: 20px;">
+            <label>Quantity:</label>
+            <p-inputNumber
+              [(ngModel)]="quantities[product.id]"
+              name="quantity"
+              inputId="minmax"
+              mode="decimal"
+              [showButtons]="true"
+              [min]="1"
+              [max]="product.countInStock"
+              styleClass="quantity-input"
+            ></p-inputNumber>
+          </div>
+
+          <button
+            class="add-to-cart-btn"
+            mat-raised-button
+            color="primary"
+            (click)="addProductToCart(product.id)"
+            [disabled]="product.countInStock === 0"
+            style="width: 100%; padding: 15px; font-size: 1.1rem;"
+          >
+            <mat-icon>add_shopping_cart</mat-icon>
+            {{ product.countInStock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+          </button>
+
+          <div class="cart-info" *ngIf="product.countInStock > 0" style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+            <p>{{ product.countInStock }} items available</p>
+            <p *ngIf="product.minOrderQuantity && product.minOrderQuantity > 1">
+              Minimum order: {{ product.minOrderQuantity }} units
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="!product" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading product details...</p>
   </div>
 </div>

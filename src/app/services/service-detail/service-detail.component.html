@@ -1,0 +1,163 @@
+<div class="service-detail-container">
+  <div class="loading-spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div class="service-content" *ngIf="!loading && service">
+    <div class="header-section">
+      <h1>{{service.serviceName}}</h1>
+      <div class="status-icons" *ngIf="isAdmin || isSuperAdmin">
+        <mat-icon *ngIf="service.isApproved" class="approved" matTooltip="Approved">check_circle</mat-icon>
+        <mat-icon *ngIf="!service.isApproved" class="pending" matTooltip="Pending Approval">hourglass_empty</mat-icon>
+        <mat-icon *ngIf="service.isActive" class="active" matTooltip="Active">toggle_on</mat-icon>
+        <mat-icon *ngIf="!service.isActive" class="inactive" matTooltip="Inactive">toggle_off</mat-icon>
+      </div>
+    </div>
+
+    <div class="images-section">
+      <div class="image-gallery" *ngIf="service.images && service.images.length > 0">
+        <img *ngFor="let image of service.images" [src]="image" alt="Service Image">
+      </div>
+      <img *ngIf="!service.images || service.images.length === 0" src="assets/images/placeholder.png" alt="No Image">
+    </div>
+
+    <mat-card class="details-card">
+      <mat-card-content>
+        <h2>Service Details</h2>
+        <p><strong>Price:</strong> {{service.price | currency:'INR'}}</p>
+        
+        <!-- Service Category with chip -->
+        <div class="category-display">
+          <strong>Category:</strong>
+          <mat-chip-set *ngIf="service.category && service.category.name">
+          <mat-chip color="primary" selected>
+            <mat-icon>category</mat-icon>
+            {{service.category.name}}
+          </mat-chip>
+          </mat-chip-set>
+          <span *ngIf="!service.category || !service.category.name">Uncategorized</span>
+        </div>
+        
+        <p *ngIf="service.availableRegions && service.availableRegions.length === 0"><strong>Available Regions:</strong> All India</p>
+        <p *ngIf="service.availableRegions && service.availableRegions.length > 0"><strong>Available Regions:</strong> {{service.availableRegions.join(', ')}}</p>
+        <p *ngIf="!service.availableRegions"><strong>Available Regions:</strong> N/A</p>
+        <p><strong>Description:</strong> {{service.serviceDesc}}</p>
+
+        <h2>Contact Information</h2>
+        <p><strong>Phone:</strong> {{service.contactInfo?.phone || 'N/A'}}</p>
+        <p><strong>Email:</strong> {{service.contactInfo?.email || 'N/A'}}</p>
+        
+        <h2>Vendor Information</h2>
+        <p><strong>Posted By:</strong> {{service.user?.name || 'Unknown'}}</p>
+        <p><strong>Posted On:</strong> {{service.date ? (service.date | date:'medium') : 'Unknown'}}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="actions-section">
+      <button mat-raised-button color="primary" (click)="goBack()">Back to Services</button>
+      
+      <button *ngIf="isEditMode" mat-raised-button color="primary" [disabled]="serviceForm.invalid" (click)="onSubmit()">
+        Update Service
+      </button>
+      
+      <button *ngIf="isServiceOwner || isAdmin || isSuperAdmin" mat-raised-button color="warn" (click)="deleteService()">
+        Delete Service
+      </button>
+      
+      <button *ngIf="(isAdmin || isSuperAdmin) && !service.isApproved" mat-raised-button color="primary" (click)="approveService()">
+        Approve Service
+      </button>
+      
+      <button *ngIf="isAdmin || isSuperAdmin" mat-raised-button [color]="service.isActive ? 'warn' : 'primary'" (click)="toggleServiceStatus()">
+        {{service.isActive ? 'Deactivate' : 'Activate'}} Service
+      </button>
+    </div>
+
+    <mat-card *ngIf="isEditMode" class="edit-form-card">
+      <mat-card-header>
+        <mat-card-title>Edit Service</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="serviceForm">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Service Name</mat-label>
+            <input matInput formControlName="serviceName" required>
+            <mat-error *ngIf="serviceForm.get('serviceName')?.errors?.['required']">Name is required</mat-error>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="serviceDesc" rows="5" required></textarea>
+            <mat-error *ngIf="serviceForm.get('serviceDesc')?.errors?.['required']">Description is required</mat-error>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Price (INR)</mat-label>
+            <input matInput type="number" formControlName="price" required>
+            <mat-error *ngIf="serviceForm.get('price')?.errors?.['required']">Price is required</mat-error>
+            <mat-error *ngIf="serviceForm.get('price')?.errors?.['min']">Price cannot be negative</mat-error>
+          </mat-form-field>
+          
+          <div class="category-selector-container">
+            <label class="field-label">Service Category</label>
+            <app-custom-category-selector
+              [categories]="categories"
+              formControlName="categoryCustomIdentifier"
+              placeholder="Choose a category that best fits your service"
+              [showAllOption]="false"
+              [searchable]="true"
+              [showIcons]="true"
+              [multiple]="false"
+              (selectionChange)="onCategorySelect($event)">
+            </app-custom-category-selector>
+          </div>
+          
+          <div class="regions-selector-container">
+            <label class="field-label">Available Regions</label>
+            <app-custom-regions-selector
+              [regions]="availableRegions"
+              formControlName="availableRegions"
+              placeholder="Select cities where you provide services"
+              [showAllOption]="true"
+              allOptionText="All India"
+              [searchable]="true"
+              [multiple]="true"
+              [maxSelections]="10"
+              (selectionChange)="onRegionChange($event)">
+            </app-custom-regions-selector>
+            <mat-hint>Select specific cities or choose "All India" for nationwide service</mat-hint>
+          </div>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Contact Phone</mat-label>
+            <input matInput formControlName="contactPhone">
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Contact Email</mat-label>
+            <input matInput formControlName="contactEmail" type="email">
+            <mat-error *ngIf="serviceForm.get('contactEmail')?.errors?.['email']">Please enter a valid email</mat-error>
+          </mat-form-field>
+          
+          <div class="image-upload-section">
+            <h3>Service Images</h3>
+            <div class="existing-images" *ngIf="existingImages.length > 0">
+              <div class="image-preview" *ngFor="let image of existingImages">
+                <img [src]="image" alt="Service Image">
+                <button mat-icon-button color="warn" (click)="removeExistingImage(image)" matTooltip="Remove Image">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+            
+            <div class="file-input">
+              <label>Replace or Add Images:</label>
+              <input type="file" multiple (change)="onFileSelected($event)" accept="image/*">
+              <p class="hint">Uploading new images will replace existing images</p>
+            </div>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -1,4 +1,3 @@
-
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
@@ -20,13 +19,11 @@ $hmfront-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
-$hmfront-theme: mat.define-light-theme((
-  color: (
-    primary: $hmfront-primary,
-    accent: $hmfront-accent,
-    warn: $hmfront-warn,
-  ),
-));
+$hmfront-theme: mat.define-light-theme((color: (primary: $hmfront-primary,
+        accent: $hmfront-accent,
+        warn: $hmfront-warn,
+      ),
+    ));
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
@@ -39,22 +36,184 @@ $hmfront-theme: mat.define-light-theme((
 @import '~primeng/resources/primeng.min.css';
 @import '~primeflex/primeflex.css';
 /* You can add global styles to this file, and also import other style files */
-body,html{
-    width: 100%;
-    height: 100%;
-    margin: 0;
+
+/* ===== Snackbar / Notification Theme Styles ===== */
+
+/* Light theme notification colors (default) */
+:root {
+  --notif-success-bg: #e8f5e9;
+  --notif-success-border: #4caf50;
+  --notif-success-text: #1b5e20;
+  --notif-success-action: #2e7d32;
+
+  --notif-error-bg: #ffebee;
+  --notif-error-border: #f44336;
+  --notif-error-text: #b71c1c;
+  --notif-error-action: #c62828;
+
+  --notif-info-bg: #e3f2fd;
+  --notif-info-border: #2196f3;
+  --notif-info-text: #0d47a1;
+  --notif-info-action: #1565c0;
+
+  --notif-warning-bg: #fff3e0;
+  --notif-warning-border: #ff9800;
+  --notif-warning-text: #e65100;
+  --notif-warning-action: #ef6c00;
 }
 
-a{
-    font-style: none;
-    text-decoration: none;
-    color: inherit;
+/* Dark theme notification colors */
+body.dark-theme {
+  --notif-success-bg: #1b3a1f;
+  --notif-success-border: #4caf50;
+  --notif-success-text: #a5d6a7;
+  --notif-success-action: #81c784;
+
+  --notif-error-bg: #3e1a1a;
+  --notif-error-border: #ef5350;
+  --notif-error-text: #ef9a9a;
+  --notif-error-action: #e57373;
+
+  --notif-info-bg: #0d2744;
+  --notif-info-border: #42a5f5;
+  --notif-info-text: #90caf9;
+  --notif-info-action: #64b5f6;
+
+  --notif-warning-bg: #3e2a0a;
+  --notif-warning-border: #ffa726;
+  --notif-warning-text: #ffcc80;
+  --notif-warning-action: #ffb74d;
 }
-html, body { height: 100% }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; padding: 0; width: 100%;overflow-x: hidden; 
+
+/* Mixin for snackbar styling */
+%snackbar-base {
+  border-radius: 8px !important;
+  border-left: 4px solid;
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
-*{
-    width: 100%;
+
+/* Classes used by SharedService.showNotification() */
+.notification-success {
+
+  .mdc-snackbar__surface,
+  .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+    @extend %snackbar-base;
+    background-color: var(--notif-success-bg) !important;
+    border-left-color: var(--notif-success-border);
+    color: var(--notif-success-text) !important;
+  }
+
+  .mat-mdc-snack-bar-label,
+  .mdc-snackbar__label {
+    color: var(--notif-success-text) !important;
+  }
+
+  .mat-mdc-button,
+  .mdc-snackbar__action,
+  .mat-mdc-snack-bar-action {
+    color: var(--notif-success-action) !important;
+  }
+}
+
+.notification-error {
+
+  .mdc-snackbar__surface,
+  .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+    @extend %snackbar-base;
+    background-color: var(--notif-error-bg) !important;
+    border-left-color: var(--notif-error-border);
+    color: var(--notif-error-text) !important;
+  }
+
+  .mat-mdc-snack-bar-label,
+  .mdc-snackbar__label {
+    color: var(--notif-error-text) !important;
+  }
+
+  .mat-mdc-button,
+  .mdc-snackbar__action,
+  .mat-mdc-snack-bar-action {
+    color: var(--notif-error-action) !important;
+  }
+}
+
+.notification-info {
+
+  .mdc-snackbar__surface,
+  .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+    @extend %snackbar-base;
+    background-color: var(--notif-info-bg) !important;
+    border-left-color: var(--notif-info-border);
+    color: var(--notif-info-text) !important;
+  }
+
+  .mat-mdc-snack-bar-label,
+  .mdc-snackbar__label {
+    color: var(--notif-info-text) !important;
+  }
+
+  .mat-mdc-button,
+  .mdc-snackbar__action,
+  .mat-mdc-snack-bar-action {
+    color: var(--notif-info-action) !important;
+  }
+}
+
+/* Legacy snackbar classes (keep for backwards compat) */
+.success-snackbar {
+  @extend .notification-success;
+}
+
+.error-snackbar {
+  @extend .notification-error;
+}
+
+.warning-snackbar {
+
+  .mdc-snackbar__surface,
+  .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+    @extend %snackbar-base;
+    background-color: var(--notif-warning-bg) !important;
+    border-left-color: var(--notif-warning-border);
+    color: var(--notif-warning-text) !important;
+  }
+
+  .mat-mdc-snack-bar-label,
+  .mdc-snackbar__label {
+    color: var(--notif-warning-text) !important;
+  }
+
+  .mat-mdc-button,
+  .mdc-snackbar__action,
+  .mat-mdc-snack-bar-action {
+    color: var(--notif-warning-action) !important;
+  }
+}
+
+body,
+html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+a {
+  font-style: none;
+  text-decoration: none;
+  color: inherit;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 
@@ -66,93 +225,187 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; padding: 0;
 }
 
 /* For Ionic apps specifically */
-ion-item, ion-button, ion-list, ion-content {
+ion-item,
+ion-button,
+ion-list,
+ion-content {
   --ripple-color: transparent;
 }
+
 /* Ensure no unintended ripple effect on entire screen */
 ion-content {
   --ripple-color: transparent;
 }
+
 /* Disable ripple effect globally */
 ion-ripple-effect {
   display: none !important;
 }
+
 /* Disable tap highlight globally */
 * {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
 }
+
 /* Prevent full-page selector on Android */
 * {
   -webkit-tap-highlight-color: transparent;
   outline: none;
 }
+
 input:focus {
   zoom: 1;
   outline: none;
 }
 
-router-outlet{
-  height: 100%;
-  margin-top: 1rem;
-  margin-bottom: 5rem;
+router-outlet {
+  display: block;
+  height: 0;
+  margin: 0;
+  padding: 0;
 }
+
+/* Inline notification banners (used in component templates) */
 .notification {
-  padding: 15px;
-  margin: 10px;
-  border-radius: 5px;
-  font-size: 16px;
-  color: #fff;
-  opacity: 0.9;
+  padding: 12px 16px;
+  margin: 8px 0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0.95;
   transition: opacity 0.5s ease-out;
-  margin-left: -0.3rem;
+  border-left: 4px solid;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
+
 .success {
-  background-color: #4caf50;
+  background-color: var(--notif-success-bg);
+  color: var(--notif-success-text);
+  border-left-color: var(--notif-success-border);
 }
 
 .error {
-  background-color: #f44336;
+  background-color: var(--notif-error-bg);
+  color: var(--notif-error-text);
+  border-left-color: var(--notif-error-border);
 }
 
 .info {
-  background-color: #2196f3;
+  background-color: var(--notif-info-bg);
+  color: var(--notif-info-text);
+  border-left-color: var(--notif-info-border);
 }
-@media screen and (orientation:portrait){
-  *{
+
+@media screen and (orientation:portrait) {
+
+  html,
+  body {
     overflow-x: hidden;
   }
-}
-:root {
-  --ion-font-size-base: 14px; /* Base font size */
-  --ion-icon-size-large: 32px; /* Customize icon sizes */
-}
-h1,h2,h3{
-  font-family: "Bebas Neue", serif;
-  font-weight: 400;
-  font-style: normal;
-  letter-spacing: 1px;
-}
-body,span,p{
-  font-family: "Rubik", serif;
-  font-optical-sizing: auto;
 
-  // font-weight: <weight>;
-  // font-style: normal;
+
 }
-.itm-btn{
+
+:root {
+  --zoom: 1;
+  --custom-blue-focus: #2196f3;
+
+  /* Fluid Typography Scale */
+  --ion-font-size-base: 1rem;
+  --ion-icon-size-large: 2rem;
+
+  /* Use direct rem values so they scale with html font-size */
+  --font-xs: clamp(0.625rem, 0.6rem + 0.125vw, 0.75rem);
+  --font-sm: clamp(0.75rem, 0.72rem + 0.15vw, 0.875rem);
+  --font-base: clamp(0.9375rem, 0.9rem + 0.25vw, 1.0625rem);
+  --font-lg: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+  --font-xl: clamp(1.1875rem, 1.1rem + 0.4vw, 1.3125rem);
+  --font-2xl: clamp(1.3125rem, 1.25rem + 0.5vw, 1.625rem);
+  --font-3xl: clamp(1.625rem, 1.5rem + 1vw, 2.25rem);
+}
+
+/* Global Font Enforcement */
+html,
+body,
+p,
+span,
+div,
+a,
+label,
+button,
+input,
+textarea,
+select {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-size: var(--font-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Heading Overrides */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Outfit', sans-serif !important;
+  letter-spacing: -0.01em;
+  margin-top: 0;
+}
+
+h1 {
+  font-size: var(--font-3xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: var(--font-2xl);
+  font-weight: 600;
+}
+
+h3 {
+  font-size: var(--font-xl);
+  font-weight: 600;
+}
+
+h4 {
+  font-size: var(--font-lg);
+  font-weight: 600;
+}
+
+h5 {
+  font-size: var(--font-base);
+  font-weight: 600;
+}
+
+h6 {
+  font-size: var(--font-sm);
+  font-weight: 600;
+}
+
+/* Material Icons Protection */
+.material-icons,
+.mat-icon {
+  font-family: 'Material Icons' !important;
+}
+
+.itm-btn {
   width: 100%;
   display: grid;
   justify-items: center;
   text-align: center;
   margin: 0;
   position: relative;
-  left:-5.8%;
+  left: -5.8%;
   margin-bottom: 2.4rem;
   margin-top: 0.8rem;
 }
-.itm-btn button{
-  width:max-content;
+
+.itm-btn button {
+  width: max-content;
   background-color: #2196f3;
   color: white;
   font-weight: bold;
@@ -162,14 +415,152 @@ body,span,p{
   margin: 0;
   text-align: center;
   box-shadow: 6px 6px 12px #c5c5c5,
-             -6px -6px 12px #ffffff;
+    -6px -6px 12px #ffffff;
 }
+
+.go-back-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 1rem;
+  background: transparent;
+  padding-left: 1rem;
+}
+
+.go-back-button {
+  background-color: #007bff;
+  /* Primary blue color */
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+  width: max-content;
+}
+
+.go-back-button:hover {
+  background-color: #0056b3;
+  /* Darker blue */
+  transform: translateX(-3px);
+  /* Slight left shift to enhance back effect */
+}
+
+.go-back-button:active {
+  transform: translateX(-1px) scale(0.98);
+}
+
 @media screen and (orientation:portrait) {
 
-    .itm-btn{
-      width: 100%;
-      display: grid;
-      justify-items: center;
-    }
+  .itm-btn {
+    width: 100%;
+    display: grid;
+    justify-items: center;
+  }
+}
+
+.privacy-po p {
+  background-color: white;
+  padding: 4px 8px;
+  border: #c8c9d4 1.5px solid;
+  color: #0D1282;
+  width: max-content;
+  border-radius: 9px;
+  display: inline-block;
+  /* Allow proper centering */
+  margin: 1rem auto;
+  /* Center horizontally and add top margin */
+  text-align: center;
+}
+
+// Font size multipliers for accessibility settings
+// Applied to html element by ThemeService
+html.font-size-small {
+  font-size: 85%;
+}
+
+html.font-size-medium {
+  font-size: 100%;
+}
+
+html.font-size-large {
+  font-size: 115%;
+}
+
+// Premium Quantity Selector (Pill style)
+.premium-quantity-selector {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 4px 12px !important;
+  background: #f1f5f9 !important;
+  border-radius: 100px !important;
+  width: fit-content !important;
+
+  label {
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin: 0 !important;
   }
 
+  ::ng-deep {
+    .p-inputnumber {
+      display: flex !important;
+      align-items: center !important;
+
+      .p-inputtext {
+        width: 40px !important;
+        padding: 0 !important;
+        border: none !important;
+        background: transparent !important;
+        text-align: center !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        font-size: 1rem !important;
+      }
+
+      .p-inputnumber-button {
+        background: white !important;
+        border: none !important;
+        color: #163172 !important;
+        width: 24px !important;
+        height: 24px !important;
+        border-radius: 50% !important;
+        padding: 0 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+        transition: all 0.2s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        &:hover {
+          transform: scale(1.1) !important;
+          background: #163172 !important;
+          color: white !important;
+        }
+
+        .p-button-icon {
+          font-size: 0.7rem !important;
+        }
+      }
+    }
+  }
+}
+
+// Ensure body inherits and resets
+body {
+  font-size: 1rem;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+}

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AllService } from 'src/app/services/all.service';
-import { Subject, takeUntil } from 'rxjs';
-
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-sup-req-del',
   templateUrl: './sup-req-del.component.html',
@@ -17,24 +17,37 @@ export class SupReqDelComponent {
   constructor(private productService: AllService) {}
 
   ngOnInit(): void {
-    this.token = localStorage.getItem('token')
-
-    this.productService.getCompletedProductsForSupplier(this.token).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (products) => {
-        this.completedProducts = products;
-        this.loading = false;
-        console.log(products)
-      },
-      error: (err) => {
-        this.error = err.message || 'Failed to load completed products';
-        this.loading = false;
-      }
-    });
+    this.token = localStorage.getItem('token');
+    this.loadProducts();
   }
+
+  loadProducts(): void {
+    this.loading = true;
+    this.error = null;
+    
+    this.productService.getCompletedProductsForSupplier(this.token)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (products) => {
+          this.completedProducts = products;
+          this.loading = false;
+          console.log('Loaded products:', products);
+        },
+        error: (err) => {
+          this.error = err.message || 'Failed to load completed products';
+          this.loading = false;
+          console.error('Error loading products:', err);
+        }
+      });
+  }
+
+  retryLoading(): void {
+    this.loadProducts();
+  }
+
   ngOnDestroy(): void {
     // Notify all subscriptions to complete
     this.destroy$.next();
     this.destroy$.complete();
-  
   }
 }

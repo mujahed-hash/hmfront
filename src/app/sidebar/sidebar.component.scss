@@ -1,4 +1,9 @@
-.nav-items li{
+:host {
+  display: block;
+  height: 100%;
+}
+
+.nav-items li {
   display: inline-block;
   list-style: none;
   text-decoration: none;
@@ -6,147 +11,211 @@
   width: max-content;
   margin: 0 12px;
 }
-mat-list-item{
-  height: max-content; 
+
+mat-list-item {
+  height: max-content;
   position: relative;
   width: 100%;
   overflow: hidden;
   padding-bottom: 0.5rem;
 }
-mat-list-item details{
+
+mat-list-item details {
   padding: 0.5rem 0;
 }
-details{
+
+details {
   overflow: hidden;
 }
-sidenav-container summary{
+
+sidenav-container summary {
   width: 100%;
   overflow: hidden;
   height: max-content;
 }
-mat-toolbar{
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    background-color: #071952;
-    color:white;
-    font-weight: bold;
+
+mat-toolbar {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background-color: #071952;
+  color: white;
+  font-weight: bold;
+  min-height: 56px;
+
+  // Increase height for mobile
+  @media screen and (max-width: 768px) {
+    min-height: 64px;
+    margin-bottom: 0.5rem; // Add margin-bottom for mobile
+    padding-top: 0.8rem; // Add top padding for mobile status bar
+
+    button[mat-icon-button] {
+      width: 44px !important;
+      height: 44px !important;
+
+      mat-icon {
+        font-size: 28px !important;
+        width: 28px !important;
+        height: 28px !important;
+      }
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    min-height: 70px;
+    margin-bottom: 0.7rem; // Add margin-bottom for smaller mobile
+    padding-top: 1rem; // Add top padding for smaller mobile status bar
+
+    button[mat-icon-button] {
+      width: 48px !important;
+      height: 48px !important;
+
+      mat-icon {
+        font-size: 30px !important;
+        width: 30px !important;
+        height: 30px !important;
+      }
+    }
+  }
 }
 
 .sidenav-container {
-    height: 100vh;
-  }
-
-  mat-sidenav {
-    width: 250px;
-  }
-  
-  mat-sidenav-content {
-    padding: 20px;
-    width: 100%;
-
-  }
-  mat-toolbar{
-    position:fixed;
-    top:0;
-    z-index: 2;
+  // Toolbar is position:fixed so container starts at top of viewport
+  height: 100vh;
+  width: 100%;
 }
 
-mat-sidenav-container {
-    height:100%;
-    width: 100%;
+mat-sidenav {
+  width: 250px;
 }
+
+mat-sidenav-content {
+  padding: 20px;
+}
+
+mat-toolbar {
+  position: fixed;
+  top: 0;
+  z-index: 2;
+}
+
 .mat-list-item {
-    display: flex;
-    align-items: center;
-  }
-  
-  .mat-icon {
-    margin-right: 16px;
-    position: relative;
-    top:5px;
-  }
+  display: flex;
+  align-items: center;
+}
+
+.mat-icon {
+  margin-right: 16px;
+  position: relative;
+  top: 5px;
+}
+
 //   details p{
 //     background-color: #071952;
 //     color: white;
 //     padding: 8px 5px;
 //  }
-  .active-link  {
-    // font-weight: bold;
-    color: #FCD59B; /* Change this to your desired active color */
-    background-color: #163172;
-    border-radius:none;
-    // padding: 2px 4px;
-  }
-  .active-link span{
-    color: white; /* Change this to your desired active color */
-    // padding-bottom: 0.5rem;
+.active-link {
+  // font-weight: bold;
+  color: #FCD59B;
+  /* Change this to your desired active color */
+  background-color: #163172;
+  border-radius: none;
+  // padding: 2px 4px;
+}
 
-  }
-  .active-link p{
-    background-color: who;
-  }
-  
-  .active-link mat-icon {
-    color: white; /* Change this to your desired active color */
-  }
-  .active-link .shop-icon  {
-    color: #dfc548; /* Change this to your desired active color */
-  }
-  .active-link details{
-    // background-color: white;
-    color: #071952;
-  }
-  .active-link .side-sub{
-    color: white;
+.active-link span {
+  color: white;
+  /* Change this to your desired active color */
+  // padding-bottom: 0.5rem;
 
-  }
-   .active-link summary {
-    color: white;
-  }
-  .active-2 .nav-icon{
-    color: #dfc548;
-    background-color:none;
+}
 
-  }
-  details{
-    display: grid;
-    align-content: center;
-    vertical-align: middle;
-  }
-  details p{
+.active-link p {
+  background-color: who;
+}
 
-    border: #FCD59B 2px solid;
-    border-radius: none;
-    padding: 0;
-    display: grid;
-    justify-items: center;
-    align-items: center;
-    align-content: center;
-  }
+.active-link mat-icon {
+  color: white;
+  /* Change this to your desired active color */
+}
+
+.active-link .shop-icon {
+  color: #dfc548;
+  /* Change this to your desired active color */
+}
+
+.active-link details {
+  // background-color: white;
+  color: #071952;
+}
+
+.active-link .side-sub {
+  color: white;
+
+}
+
+.active-link summary {
+  color: white;
+}
+
+.active-2 .nav-icon {
+  color: #dfc548;
+  background-color: none;
+
+}
+
+details {
+  display: grid;
+  align-content: center;
+  vertical-align: middle;
+}
+
+details p {
+
+  border: #FCD59B 2px solid;
+  border-radius: none;
+  padding: 0;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  align-content: center;
+}
+
 // Move the content down so that it won't be hidden by the toolbar
 mat-sidenav {
-    padding-top: 3.5rem;
-    @media screen and (min-width: 600px) {
-      padding-top: 4rem;
-    }
+  padding-top: 60px; // Fixed px to match 56px toolbar + spacing
 
-    .entry{
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding:0.75rem;
-    }
+  @media screen and (min-width: 600px) {
+    padding-top: 64px;
   }
 
-// Move the content down so that it won't be hidden by the toolbar
-mat-sidenav-content{
-    padding-top: 3.5rem;
-    @media screen and (min-width: 600px) {
-        padding-top: 4rem;
-    }
+  .entry {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+  }
 }
-.logo{
+
+// Move the content down so that it won't be hidden by the toolbar
+mat-sidenav-content {
+  padding-top: 60px;
+
+  @media screen and (min-width: 600px) {
+    padding-top: 64px; // 56px toolbar + 8px space
+  }
+
+  @media screen and (max-width: 768px) {
+    padding-top: 74px; // 64px toolbar + 10px space
+  }
+
+  @media screen and (max-width: 480px) {
+    padding-top: 80px; // 70px toolbar + 10px space
+  }
+}
+
+.logo {
   width: 3rem;
   height: 2.7rem;
   border-radius: 4px;
@@ -154,14 +223,15 @@ mat-sidenav-content{
   top: 0.2rem;
   border: white 2px solid;
 }
-.side-sub{
-   width:100%;
-   display:grid;
-   justify-items: center;
-   margin-bottom: 0.5rem;
+
+.side-sub {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  margin-bottom: 0.5rem;
 }
 
-.side-sub p{
+.side-sub p {
   margin-bottom: 0rem;
   padding: 0;
   padding-top: 13px;
@@ -169,51 +239,39 @@ mat-sidenav-content{
   border: #D6E4F0 2px solid;
   border-radius: none;
 }
-mat-list-item span{
+
+mat-list-item span {
   padding-bottom: 0.5rem;
 }
-.not-num{
-  position: relative;
-  background-color:#F2AE66;
-  color: #071952;
-  width: max-content;
-  left:0.3rem;
-  border-radius: 100%;
-  padding: 2px 5px;
-  font-size: 10px;
-  top:-0.8rem;
-  left:1.5rem;
+
+// Removed redundant badge styles
+
+nav mat-icon {
+  filter: none !important;
 }
 
-nav mat-icon{
-  nav mat-icon {
-    filter: 
-      drop-shadow(0px 54px 55px rgba(0, 0, 0, 0.25)) 
-      drop-shadow(0px -12px 30px rgba(0, 0, 0, 0.12)) 
-      drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.12)) 
-      drop-shadow(0px 12px 13px rgba(0, 0, 0, 0.17)) 
-      drop-shadow(0px -3px 5px rgba(0, 0, 0, 0.09));
-  }
-  }
-.wa{
+.wa {
   display: flex;
   width: 100%;
-  gap:1rem;
+  gap: 1rem;
   padding-left: 1rem;
 }
-.wa img{
+
+.wa img {
   width: 1.5rem;
 
 }
-.wa button{
-  width:max-content;
+
+.wa button {
+  width: max-content;
   background-color: green;
   color: white;
   border: none;
   border-radius: 5px;
   padding: 0 12px;
 }
-.nav-items{
+
+.nav-items {
   display: flex;
 }
 
@@ -235,6 +293,22 @@ nav mat-icon{
   top: 0;
   z-index: 2;
   overflow: hidden;
+  min-height: 56px; // Default height for desktop
+  margin-bottom: 0.4rem;
+  padding-top: 0; // Default padding for desktop
+
+  // Increase height for mobile devices for better touch targets
+  @media screen and (max-width: 768px) {
+    min-height: 64px;
+    margin-bottom: 0.5rem; // Add margin-bottom for mobile
+    padding-top: 0.8rem; // Add top padding for mobile status bar
+  }
+
+  @media screen and (max-width: 480px) {
+    min-height: 70px;
+    margin-bottom: 0.7rem; // Add margin-bottom for smaller mobile
+    padding-top: 1rem; // Add top padding for smaller mobile status bar
+  }
 }
 
 .logo-container {
@@ -252,13 +326,10 @@ nav mat-icon{
 .nav-items {
   display: flex;
   align-items: center;
-  overflow: hidden;
-  float: right;
-  width: 100%;;
-  justify-self: flex-end;
-  position: relative;
-  right:auto
-  // gap: 1rem;
+  justify-content: flex-end; // Push items to the right
+  flex: 1;
+  height: 100%;
+  overflow: visible; // Don't clip badges
 }
 
 .nav-item {
@@ -266,27 +337,44 @@ nav mat-icon{
   margin: 0;
   padding: 0;
   position: relative;
-  overflow: hidden;
+  overflow: visible !important;
+
+  // Increase touch target size for mobile
+  @media screen and (max-width: 768px) {
+    padding: 8px 12px;
+
+    .nav-icon {
+      font-size: 28px !important;
+      width: 28px !important;
+      height: 28px !important;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    padding: 10px 14px;
+
+    .nav-icon {
+      font-size: 30px !important;
+      width: 30px !important;
+      height: 30px !important;
+    }
+  }
 }
 
-.notification, .cart {
+.notification,
+.cart {
   // display: flex;
   align-items: center;
   cursor: pointer;
 }
 
-.not-num {
-  position: absolute;
-  top: 0rem;
-  left: 0.5rem;
-  background-color: #F2AE66;
-  color: #071952;
-  font-size: 10px;
-  border-radius: 50%;
-  overflow: hidden;
-}
-.nav-icon{
-  z-index: -1;
+// Redundant badge styles moved to matBadge
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .logout a {
@@ -296,57 +384,151 @@ nav mat-icon{
   font-weight: bold;
 
 }
-.sidenav-container mat-icon{
+
+.sidenav-container mat-icon {
   color: #163172;
 
 }
-.sidenav-container .active-link mat-icon{
-  color:white;
+
+.sidenav-container .active-link mat-icon {
+  color: white;
 
 }
-.logout a{
-  background-color: white;
-  color: #961313;
-  font-weight: bold;
-  padding: 7px 8px;
-  border-radius: 6px;
- 
-box-shadow: rgba(240, 82, 82, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-}
-.nav-icon{
-  // margin: 0;
-  // padding: 0;
-  // margin-right: 1rem;
-}
-.bdg{
-  // margin-right: 1rem;
-  position: relative;
-  top:7%;
-  left: -1.3rem;
-  color: #961313;
 
+.logout a {
+  background-color: transparent;
+  color: white; // Clean white icon
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none; // Removed border
+  box-shadow: none; // Removed shadow
+
+  &:hover {
+    color: white; // Keep it white, no hover effects
+    opacity: 0.8; // Very subtle feedback
+  }
+
+  mat-icon {
+    margin: 0;
+    font-size: 24px; // Slightly larger logout icon
+    width: 24px;
+    height: 24px;
+    z-index: 10;
+  }
 }
+
+// Redundant bdg styles removed
+
 @media (max-width: 768px) {
-  .nav-items li{
+  .nav-items li {
     margin: 0;
     padding: 0;
     font-size: small;
-   }
-}
-.wa{
-  margin-top: 0.7rem;
-}
-*{
-  overflow: hidden;
-}
-@media screen {
-  .nav-items li{
-   margin: 0;
-   padding: 0;
   }
 }
-mat-sidenav-container span,p, .logout a{
-  font-family: "Fira Sans", serif;
+
+.wa {
+  margin-top: 0.7rem;
+}
+
+@media screen {
+  .nav-items li {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+mat-sidenav-container span,
+p,
+.logout a {
   font-weight: 500;
   font-style: normal;
+}
+
+// Premium Icon & Badge Styling
+.premium-notif-icon,
+.premium-cart-icon {
+  color: white !important;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+  }
+}
+
+// Premium Badge Styling with ::ng-deep
+::ng-deep {
+
+  // Notification Badge - Premium Purple/Violet with glow
+  // Notification Badge - Premium Purple/Violet with glow
+  .notifi-icon .mat-badge-warn .mat-badge-content,
+  .notification .mat-badge-warn .mat-badge-content {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 12px !important; // Increased font
+    font-family: 'Inter', sans-serif !important;
+    min-width: 22px !important; // Increased size
+    height: 22px !important; // Increased size
+    line-height: 22px !important; // Match height for vertical centering
+    border-radius: 11px !important; // Half of height
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4),
+      0 0 12px rgba(139, 92, 246, 0.3) !important;
+    border: 2px solid #071952 !important;
+    display: flex !important; // Use flexbox for centering
+    align-items: center !important;
+    justify-content: center !important;
+    top: -4px !important; // Adjust position if needed
+    right: -4px !important;
+  }
+
+  // Cart Badge - Premium Amber/Gold with glow
+  .cart .mat-badge-accent .mat-badge-content {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    font-size: 12px !important; // Increased font
+    font-family: 'Inter', sans-serif !important;
+    min-width: 22px !important; // Increased size
+    height: 22px !important; // Increased size
+    line-height: 22px !important; // Match height
+    border-radius: 11px !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4),
+      0 0 12px rgba(245, 158, 11, 0.3) !important;
+    border: 2px solid #071952 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    top: -4px !important;
+    right: -4px !important;
+  }
+
+  // Animate badge on new notification (subtle pulse)
+  .mat-badge-content {
+    animation: badge-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes badge-pulse {
+
+    0%,
+    100% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  // Hide badge when count is 0
+  .mat-badge-hidden .mat-badge-content {
+    display: none;
+  }
 }

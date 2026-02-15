@@ -1,66 +1,111 @@
-<div *ngIf="!orders">
-  <p>Received Orders Appear Here</p>
-</div>
-<div class="order-container" *ngIf="orders">
+<div class="orders-page-container">
+  <!-- Status update notification -->
+  <div *ngIf="isUpadated" class="status-update-notification">
+    <div class="notification-content">
+      <i class="pi pi-sync pi-spin"></i>
+      <span>Updating Status...</span>
+    </div>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <h1>{{ isServiceOrder ? 'Service Orders Received' : 'Product Orders' }}</h1>
+    <p class="subtitle">Manage and update your {{ isServiceOrder ? 'service' : 'product' }} orders</p>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!orders || orders.length === 0" class="empty-orders-container">
+    <div class="empty-illustration">
+      <i class="pi pi-shopping-cart empty-icon"></i>
+    </div>
+    <h3>No Orders Yet</h3>
+    <p>Received orders will appear here</p>
+  </div>
+
+  <!-- Orders grid -->
+  <div class="orders-container" *ngIf="orders && orders.length > 0">
     <div *ngFor="let order of orders" class="order-card">
-      <div>
-
-      <div class="order-header">
-        <div class="order-head" [routerLink]="['/s/view-order', order.customIdentifer]">      <p>Orderd by <strong>{{order?.user?.name}}</strong></p>
-          <p style="margin-bottom: 0.5rem;overflow: hidden;"> Status:
-            <span style="background-color: #D6E4F0; padding: 3px 7px; border-radius: 5px; color: #2657C1;">{{order.status}} </span> </p>
-  </div>
-        <div class="order-head2" style="position: relative; width: 100%; margin: 0;padding: 0;">
-          <p style="position: relative; width:max-content; float: right;">
-           <strong>{{order?.totalPrice | currency : 'INR'}} </strong> for <span>{{order?.orderItems.length}}</span> item
-          </p>
+      <!-- Order header section -->
+      <div class="order-header" [routerLink]="isServiceOrder ? ['/supplier/service-orders', order.customIdentifier] : ['/s/view-order', order.customIdentifier]">
+        <div class="customer-info">
+          <div class="customer-name">
+            <i class="pi pi-user"></i>
+            <span>{{ order?.user?.name }}</span>
+          </div>
+          <div class="order-status-badge" [ngClass]="'status-' + order.status?.toLowerCase()">
+            {{ getStatusDisplay(order.status) }}
+          </div>
         </div>
-        </div>
-      <div *ngFor="let or of order.orderItems" class="order-item">
-      <div>
-        <!-- <div style="position: relative; width: 100%;" >            
-            <p  style="position: relative; width:max-content; float: right;">{{order?.totalPrice | currency : 'INR'}} for       
-                   {{or?.quantity}} item</p>
-         </div> -->
-        <div class="item">
-            <p class="product-name">Order for: <strong>{{or.product.prodName}}</strong> 
-            </p> 
-            <p class="order-details product-info product-price">Order Size type: <strong>{{or.prodSize}}</strong></p>
-            <p class="order-details product-info product-price">Item quantity : <strong>{{or.quantity}}</strong></p>
-
+        <div class="order-meta">
+          <div class="order-price">
+            <span class="price-value">{{ order?.totalPrice | currency : 'INR' }}</span>
+            <span class="item-count">{{ isServiceOrder ? (order?.service?.serviceName || 'Service Order') : (order?.productName || 'Product Order') }}</span>
+          </div>
+          <div class="order-date">
+            <i class="pi pi-calendar"></i>
+            <span>{{ order.date | date: 'medium' }}</span>
+          </div>
         </div>
       </div>
-   
-      </div>
-      <div class="order-status" >
-        <select [(ngModel)]="newStatus[order._id]" class="status-select form-select">
-          <option value="Pending">Pending</option>
-          <option value="Approved">Approved</option>
-          <option value="Delivered">Delivered</option>
-          <option value="Cancelled">Cancelled</option>
 
-        </select>
-        <button (click)="updateStatus(order._id, order.user._id)" class="update-button">Update Status</button>
+      <!-- Order details -->
+      <div class="order-details" [routerLink]="isServiceOrder ? ['/supplier/service-orders', order.customIdentifier] : ['/s/view-order', order.customIdentifier]">
+        <div class="item-details">
+          <h4 class="service-name">{{ isServiceOrder ? (order?.service?.serviceName || 'Service Order') : (order?.productName || 'Product Order') }}</h4>
+          <div class="service-specs">
+            <div class="spec-item">
+              <span class="spec-label">Price:</span>
+              <span class="spec-value">{{ order?.price | currency : 'INR' }}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Customer:</span>
+              <span class="spec-value">{{ order?.user?.name || 'Unknown' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Order status update section -->
+      <div class="order-actions">
+        <div class="status-update-form">
+          <div class="select-wrapper">
+            <select [(ngModel)]="newStatus[order._id]" class="status-select" [disabled]="isLoading">
+              <ng-container *ngIf="isServiceOrder">
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="awaiting_user_response">Awaiting User Response</option>
+                <option value="awaiting_admin_action">Awaiting Admin Action</option>
+              </ng-container>
+              <ng-container *ngIf="!isServiceOrder">
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Cancelled">Cancelled</option>
+              </ng-container>
+            </select>
+          </div>
+          <button (click)="updateStatus(order._id, order?.user?._id)" class="update-button" [disabled]="isLoading">
+            <span><i class="pi pi-check" *ngIf="!isLoading"></i>
+              <i class="pi pi-spin pi-spinner" *ngIf="isLoading"></i></span>
+            <span>{{ isLoading ? 'Updating...' : 'Update Status' }}</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
-  <div *ngIf="orders.length != 0" class="itm-btn">
-    <button #loadingIndicator style="" *ngIf="hasMoreOrders && !isLoading" (click)="getPlacedOrders()" [disabled]="isLoading">
-    {{orders? 'Load More': 'No items' }}
+
+  <!-- Load more button -->
+  <div *ngIf="orders && orders.length > 0" class="load-more-container">
+    <button *ngIf="hasMoreOrders && !isLoading" (click)="getPlacedOrders()" class="load-more-button" [disabled]="isLoading">
+      <i class="pi pi-plus"></i>
+      <span>Load More Orders</span>
     </button>
- </div>
-  </div>
-  
-
- <!-- <div *ngFor="let order of orders">
-    <div>
-      <h3>Order {{order._id}}</h3>
-      <p>Status: {{order.status}}</p>
-      <select [(ngModel)]="newStatus[order._id]">
-        <option value="Pending">Pending</option>
-        <option value="Approved">Approved</option>
-        <option value="Delivered">Delivered</option>
-      </select>
-      <button (click)="updateStatus(order._id)">Update Status</button>
+    <div *ngIf="isLoading" class="loading-indicator">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Loading more orders...</span>
     </div>
-  </div> -->
+  </div>
+</div>

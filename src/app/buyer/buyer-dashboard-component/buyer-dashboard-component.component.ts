@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { BuyerService } from '../buyer.service';
-import { Subject, takeUntil } from 'rxjs';
-
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-buyer-dashboard-component',
