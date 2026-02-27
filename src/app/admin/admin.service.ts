@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { baseUrl } from '../services/allurls';
-import { environment } from 'environments/environment.prod';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -187,11 +187,29 @@ export class AdminService {
   }
 
   getSystemStats(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/monitoring/stats`);
+    return this.http.get(`${this.baseUrl}/admin/monitoring/stats`);
   }
 
   clearCache(): Observable<any> {
-    return this.http.post(`${this.baseUrl}/monitoring/clear-cache`, {});
+    return this.http.post(`${this.baseUrl}/admin/monitoring/clear-cache`, {});
+  }
+
+  logoutAllUsers(): Observable<any> {
+    return this.http.post(`${this.baseUrl}/admin/monitoring/logout-all`, {});
+  }
+
+  getOrphanedFiles(token: any): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    return this.http.get(`${this.baseUrl}/admin/monitoring/orphaned-files`, { headers });
+  }
+
+  deleteOrphanedFiles(files: string[], token: any): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    return this.http.post(`${this.baseUrl}/admin/monitoring/delete-orphans`, { files }, { headers });
   }
 
   // users

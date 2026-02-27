@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from './auth/auth.service';
 import { Router, RouterOutlet, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { Location } from '@angular/common';
-import { Network } from '@capacitor/network';
 import { App } from '@capacitor/app';
 import { ToastController } from '@ionic/angular';
 import { trigger, transition, style, animate, query, group } from '@angular/animations';
 import { filter, map } from 'rxjs/operators';
 import { ThemeService } from './settings/theme.service';
 import { SplashScreen } from '@capacitor/splash-screen';
+import { NetworkService } from './shared/services/network.service';
+import { Subscription } from 'rxjs';
 
 // Define the animation
 const routeAnimations = trigger('routeAnimations', [
@@ -42,11 +43,13 @@ const routeAnimations = trigger('routeAnimations', [
   styleUrls: ['./app.component.scss'],
   animations: [routeAnimations]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'Hotel Mart';
   token: any;
   animationData: string | null = null;
   showBackButton: boolean = false;
+  private backButtonHandle?: any;
+  private networkSub?: Subscription;
 
   private excludedRoutes = [
     '/home',
@@ -62,7 +65,8 @@ export class AppComponent implements OnInit {
     private toastController: ToastController,
     private activatedRoute: ActivatedRoute,
     private themeService: ThemeService,
-    private location: Location
+    private location: Location,
+    private networkService: NetworkService
   ) {
     // Listen to route changes to toggle back button
     this.router.events.pipe(
@@ -80,10 +84,18 @@ export class AppComponent implements OnInit {
       SplashScreen.hide();
     }, 1000);
 
-    // Initialize network status monitoring
-    this.checkNetworkStatus();
+    // Network toasts — powered by the centralized NetworkService.
+    // NetworkService already handles all debouncing and resume awareness.
+    // AppComponent only shows a toast when the stable status changes.
+    this.networkSub = this.networkService.isOnline$.subscribe(isOnline => {
+      if (!isOnline) {
+        this.presentToast('You are offline. Showing cached content.', 'warning');
+      } else {
+        this.presentToast('Back online! Refreshing data...', 'success');
+      }
+    });
 
-    // Handle Hardware Back Button
+    // Handle Hardware Back Button — store handle so we can remove it in ngOnDestroy
     App.addListener('backButton', ({ canGoBack }: { canGoBack: boolean }) => {
       if (this.router.url === '/home' || this.router.url === '/login') {
         App.exitApp();
@@ -92,7 +104,7 @@ export class AppComponent implements OnInit {
       } else {
         this.router.navigate(['/home'], { replaceUrl: true });
       }
-    });
+    }).then(handle => { this.backButtonHandle = handle; });
 
     // Listen for router events to get animation data
     this.router.events.pipe(
@@ -143,20 +155,9 @@ export class AppComponent implements OnInit {
     return this.animationData;
   }
 
-  async checkNetworkStatus() {
-    const status = await Network.getStatus();
-    if (!status.connected) {
-      this.presentToast('You are offline. Showing cached content.', 'warning');
-    }
-
-    Network.addListener('networkStatusChange', (status) => {
-      console.log('Network status changed', status);
-      if (!status.connected) {
-        this.presentToast('You are offline. Showing cached content.', 'warning');
-      } else {
-        this.presentToast('Back online! Refreshing data...', 'success');
-      }
-    });
+  ngOnDestroy() {
+    this.networkSub?.unsubscribe();
+    this.backButtonHandle?.remove();
   }
 
   async presentToast(message: string, color: string = 'primary') {

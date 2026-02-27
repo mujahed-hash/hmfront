@@ -97,6 +97,12 @@
         <span>Admin Dashboard</span>
       </mat-list-item>
 
+      <mat-list-item (click)="toggleSidenav()" routerLink="/admin/server-monitor" routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }" *ngIf="authService.isAdmin()">
+        <mat-icon>dns</mat-icon>
+        <span>Server Monitor</span>
+      </mat-list-item>
+
       <mat-list-item style="height: max-content; position: relative; width: 100%; padding-bottom: 0.5rem;"
         routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }" *ngIf="authService.isAdmin()">
         <details>

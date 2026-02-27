@@ -7,6 +7,7 @@ import { Capacitor } from '@capacitor/core';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { SharedService } from './shared/shared.service';
 import { StateService } from './services/state.service';
+import { Router } from '@angular/router';
 
 export interface Notification {
   message: string;
@@ -29,6 +30,7 @@ export class NotificationService {
     private http: HttpClient,
     private sharedService: SharedService,
     private stateService: StateService,
+    private router: Router,
     private ngZone: NgZone
   ) {
     // Initialize Push Notifications
@@ -94,6 +96,18 @@ export class NotificationService {
       console.log('[NotificationService] Received cartCountUpdate:', count);
       this.ngZone.run(() => {
         this.stateService.updateCartCount(count);
+      });
+    });
+
+    // 4. Global Logout (Force Redirect)
+    this.socket.on('logoutAll', (data: any) => {
+      console.log('[NotificationService] RECEIVED GLOBAL LOGOUT SIGNAL:', data);
+      this.ngZone.run(() => {
+        this.sharedService.showNotification('Your session has been terminated by an administrator.', 'info');
+        localStorage.removeItem('token');
+        this.stateService.resetCart();
+        this.disconnect();
+        this.router.navigate(['/login']);
       });
     });
 

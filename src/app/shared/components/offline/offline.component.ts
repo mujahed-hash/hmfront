@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { skip } from 'rxjs/operators';
 import { NetworkService } from '../../services/network.service';
 
 @Component({
@@ -10,7 +11,7 @@ import { NetworkService } from '../../services/network.service';
   styleUrls: ['./offline.component.scss']
 })
 export class OfflineComponent implements OnInit, OnDestroy {
-  isOnline: boolean = true;
+  isOnline: boolean = false;
   isNative: boolean = false;
   private networkSubscription?: Subscription;
 
@@ -23,33 +24,31 @@ export class OfflineComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // Subscribe to network status changes
-    this.networkSubscription = this.networkService.isOnline$.subscribe(
+    // Skip first emission (which is the initial state that brought us here)
+    // and wait for the next change — a genuine recovery to online state.
+    this.networkSubscription = this.networkService.isOnline$.pipe(skip(1)).subscribe(
       isOnline => {
         this.isOnline = isOnline;
         if (isOnline) {
-          // Add a small delay to ensure the app has time to restore its state
+          // Navigate back to where the user was, or home if no last route.
+          const lastRoute = localStorage.getItem('lastRoute') || '/home';
           setTimeout(() => {
-            this.router.navigate(['/home']);
-          }, 1000);
+            this.router.navigateByUrl(lastRoute, { replaceUrl: true });
+          }, 500);
         }
       }
     );
-
-    // Initial check
-    this.networkService.checkNetworkStatus();
   }
 
   ngOnDestroy() {
-    if (this.networkSubscription) {
-      this.networkSubscription.unsubscribe();
-    }
+    this.networkSubscription?.unsubscribe();
   }
 
   async retryConnection() {
     const isOnline = await this.networkService.checkNetworkStatus();
     if (isOnline) {
-      this.router.navigate(['/home']);
+      const lastRoute = localStorage.getItem('lastRoute') || '/home';
+      this.router.navigateByUrl(lastRoute, { replaceUrl: true });
     }
   }
-} 
+}

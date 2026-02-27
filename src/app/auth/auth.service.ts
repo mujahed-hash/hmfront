@@ -163,7 +163,14 @@ export class AuthService implements OnDestroy {
     }
   }
   isAdmin(): boolean {
-    return this.getUserRole() === 'admin';
+    const token = this.getToken();
+    if (!token) return false;
+    try {
+      const decoded = this.decodeToken(token);
+      return !!(decoded && (decoded.isAdmin || decoded.isSuperAdmin));
+    } catch (e) {
+      return false;
+    }
   }
 
   isSupplier(): boolean {

@@ -13,6 +13,10 @@ export class ServerMonitorComponent implements OnInit, OnDestroy {
   stats: any = null;
   loading = true;
   clearingCache = false;
+  loggingOutAll = false;
+  orphans: any[] = [];
+  scanningOrphans = false;
+  deletingOrphans = false;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -59,6 +63,79 @@ export class ServerMonitorComponent implements OnInit, OnDestroy {
         this.clearingCache = false;
       }
     });
+  }
+
+  logoutAllUsers() {
+    if (this.loggingOutAll) return;
+
+    if (confirm('Are you sure? This will immediately log out every single user on the platform.')) {
+      this.loggingOutAll = true;
+      this.adminService.logoutAllUsers().subscribe({
+        next: (res) => {
+          this.sharedService.showNotification('All users logged out successfully', 'success');
+          this.loggingOutAll = false;
+        },
+        error: (err) => {
+          this.sharedService.showNotification('Failed to invalidate sessions', 'error');
+          this.loggingOutAll = false;
+        }
+      });
+    }
+  }
+
+  scanOrphans() {
+    if (this.scanningOrphans) return;
+
+    this.scanningOrphans = true;
+    const token = localStorage.getItem('token');
+    this.adminService.getOrphanedFiles(token).subscribe({
+      next: (res) => {
+        this.orphans = res.orphans;
+        this.scanningOrphans = false;
+        if (this.orphans.length === 0) {
+          this.sharedService.showNotification('No orphaned files found. Your storage is clean!', 'success');
+        } else {
+          this.sharedService.showNotification(`Found ${this.orphans.length} orphaned files.`, 'info');
+        }
+      },
+      error: (err) => {
+        this.sharedService.showNotification('Failed to scan for orphaned files', 'error');
+        this.scanningOrphans = false;
+      }
+    });
+  }
+
+  deleteOrphans() {
+    if (this.orphans.length === 0 || this.deletingOrphans) return;
+
+    if (confirm(`Are you sure you want to delete ${this.orphans.length} orphaned files? This will permanently reclaim storage space.`)) {
+      this.deletingOrphans = true;
+      const filePaths = this.orphans.map(o => o.fullPath);
+      const token = localStorage.getItem('token');
+      this.adminService.deleteOrphanedFiles(filePaths, token).subscribe({
+        next: (res) => {
+          this.sharedService.showNotification(`Successfully deleted ${res.deletedCount} orphaned files.`, 'success');
+          this.orphans = [];
+          this.deletingOrphans = false;
+        },
+        error: (err) => {
+          this.sharedService.showNotification('Failed to delete orphaned files', 'error');
+          this.deletingOrphans = false;
+        }
+      });
+    }
+  }
+
+  getThumbUrl(path: string): string {
+    return this.adminService.baseUrl.replace('/api', '') + path;
+  }
+
+  handleImgError(event: any) {
+    event.target.src = 'assets/images/placeholder.png';
+  }
+
+  getTotalOrphanSize(): number {
+    return this.orphans.reduce((acc, curr) => acc + curr.size, 0);
   }
 
   ngOnDestroy(): void {

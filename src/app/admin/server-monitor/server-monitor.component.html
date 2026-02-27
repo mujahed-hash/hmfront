@@ -1,10 +1,16 @@
 <div class="monitor-container">
     <div class="header">
         <h1>Server Monitor</h1>
-        <button mat-raised-button color="warn" (click)="clearCache()" [disabled]="clearingCache || !stats">
-            <mat-icon>{{ clearingCache ? 'hourglass_empty' : 'delete_sweep' }}</mat-icon>
-            {{ clearingCache ? 'Cleaning...' : 'Clear Cache & RAM' }}
-        </button>
+        <div class="header-actions">
+            <button mat-raised-button color="accent" (click)="clearCache()" [disabled]="clearingCache || !stats">
+                <mat-icon>{{ clearingCache ? 'hourglass_empty' : 'delete_sweep' }}</mat-icon>
+                {{ clearingCache ? 'Cleaning...' : 'Clear Cache & RAM' }}
+            </button>
+            <button mat-raised-button color="warn" (click)="logoutAllUsers()" [disabled]="loggingOutAll || !stats">
+                <mat-icon>logout</mat-icon>
+                {{ loggingOutAll ? 'Invalidating...' : 'Log Out All Users' }}
+            </button>
+        </div>
     </div>
 
     <div class="loading-state" *ngIf="loading && !stats">
@@ -67,6 +73,61 @@
                     <div class="used" [style.width.%]="(stats.storage.used / stats.storage.total) * 100"></div>
                 </div>
                 <small>{{ formatBytes(stats.storage.free) }} Free</small>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Storage Cleanup Section -->
+    <div class="cleanup-section" *ngIf="stats">
+        <mat-card class="cleanup-card">
+            <mat-card-header>
+                <mat-icon mat-card-avatar>cleaning_services</mat-icon>
+                <mat-card-title>Storage Cleanup</mat-card-title>
+                <mat-card-subtitle>Identify and remove orphaned image files</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="cleanup-actions">
+                    <button mat-raised-button color="primary" (click)="scanOrphans()" [disabled]="scanningOrphans">
+                        <mat-icon>{{ scanningOrphans ? 'hourglass_empty' : 'search' }}</mat-icon>
+                        {{ scanningOrphans ? 'Scanning...' : 'Scan for Orphaned Files' }}
+                    </button>
+                    <button mat-raised-button color="warn" *ngIf="orphans.length > 0" (click)="deleteOrphans()"
+                        [disabled]="deletingOrphans">
+                        <mat-icon>{{ deletingOrphans ? 'hourglass_empty' : 'delete_forever' }}</mat-icon>
+                        Purge {{ orphans.length }} Orphans ({{ formatBytes(getTotalOrphanSize()) }})
+                    </button>
+                </div>
+
+                <div class="orphan-list" *ngIf="orphans.length > 0">
+                    <h3>Orphaned Files Found</h3>
+                    <div class="scroll-area">
+                        <table mat-table class="full-width">
+                            <thead>
+                                <tr>
+                                    <th>Preview</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Size</th>
+                                    <th>Date Modified</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let orphan of orphans">
+                                    <td>
+                                        <div class="thumb-container">
+                                            <img [src]="getThumbUrl(orphan.path)" (error)="handleImgError($event)"
+                                                alt="Orphan">
+                                        </div>
+                                    </td>
+                                    <td><small>{{ orphan.name }}</small></td>
+                                    <td><span class="category-badge">{{ orphan.category }}</span></td>
+                                    <td>{{ formatBytes(orphan.size) }}</td>
+                                    <td>{{ orphan.mtime | date:'short' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </mat-card-content>
         </mat-card>
     </div>
